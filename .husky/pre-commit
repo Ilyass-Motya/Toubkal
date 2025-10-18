@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Run lint-staged (only lint changed files)
+npx lint-staged
+
+# For C++ files, run clang-format
+git diff --cached --name-only --diff-filter=ACM | grep -E '\.(cc|h)$' | xargs clang-format -i
+
+# Re-add formatted files
+git diff --cached --name-only --diff-filter=ACM | xargs git add
