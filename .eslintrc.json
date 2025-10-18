@@ -12,6 +12,7 @@
     "sourceType": "module",
     "project": "./tsconfig.json"
   },
+  "ignorePatterns": ["node_modules/**", "out/**", "build/**", "dist/**"],
   "plugins": ["@typescript-eslint", "react", "react-hooks"],
   "rules": {
     // CRITICAL: Enforce CODING-RULES.md

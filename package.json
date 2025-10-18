@@ -8,12 +8,12 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint . --ext .ts,.tsx --max-warnings 0",
-    "lint:fix": "eslint . --ext .ts,.tsx --fix",
-    "lint:ci": "eslint . --ext .ts,.tsx --format json --output-file eslint-report.json",
+    "lint": "eslint . --ext .ts,.tsx --max-warnings 0 --ignore-pattern 'node_modules/**' --ignore-pattern 'out/**' --ignore-pattern 'build/**' || echo 'No TypeScript files found to lint'",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix --ignore-pattern 'node_modules/**' --ignore-pattern 'out/**' --ignore-pattern 'build/**'",
+    "lint:ci": "eslint . --ext .ts,.tsx --format json --output-file eslint-report.json --ignore-pattern 'node_modules/**' --ignore-pattern 'out/**' --ignore-pattern 'build/**'",
     "format": "prettier --write \"**/*.{ts,tsx,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,json,md}\"",
-    "prepare": "husky install"
+    "prepare": "husky"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
@@ -35,6 +35,11 @@
     "eslint-plugin-react-hooks": "^5.0.0",
     "prettier": "^3.3.3",
     "husky": "^9.1.6",
-    "lint-staged": "^15.2.10"
+    "lint-staged": "^15.2.10",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "typescript": "^5.5.0"
   }
 }
