@@ -12,6 +12,7 @@
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
     "test:ci": "vitest run --coverage --reporter=json --outputFile=test-report.json",
+    "typecheck": "tsc --noEmit",
     "lint": "eslint . --ext .ts,.tsx --max-warnings 0 --ignore-pattern 'node_modules/**' --ignore-pattern 'out/**' --ignore-pattern 'build/**' || echo 'No TypeScript files found to lint'",
     "lint:fix": "eslint . --ext .ts,.tsx --fix --ignore-pattern 'node_modules/**' --ignore-pattern 'out/**' --ignore-pattern 'build/**'",
     "lint:ci": "eslint . --ext .ts,.tsx --format json --output-file eslint-report.json --ignore-pattern 'node_modules/**' --ignore-pattern 'out/**' --ignore-pattern 'build/**'",
