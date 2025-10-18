@@ -3,7 +3,7 @@
 **Status**: Accepted
 **Date**: 2025-10-18
 **Deciders**: Ilyass Motya, Engineering Team
-**Technical Story**: [PRD Section 5: Technology Stack](../TOUBKAL-PRD.md#technical-architecture-overview)
+**Technical Story**: [Story 1.5: Basic Transparency Dashboard](../stories/phase1-week1-2/story-005-transparency-dashboard.md)
 
 ---
 
@@ -501,6 +501,8 @@ action("build_ui") {
 3. Inspect Tailwind classes � verify JIT compiler generates minimal CSS
 4. Test Mojo IPC � click "Export Audit Log" � verify C++ backend receives call
 5. Check bundle size � verify settings.js <200KB gzipped
+6. Test responsive design � verify UI adapts to different screen sizes
+7. Verify accessibility � check WCAG compliance with screen readers
 
 **Automated Tests**:
 
@@ -552,6 +554,23 @@ test('exports audit logs as JSON', async () => {
 
   expect(window.toubkal.privacy.exportAuditLogs).toHaveBeenCalledWith('json');
 });
+
+test('UI components render consistently across browsers', async () => {
+  render(<AuditLogViewer />);
+
+  // Visual regression test
+  const screenshot = await page.screenshot();
+  expect(screenshot).toMatchVisualSnapshot('audit-log-viewer');
+
+  // Responsive design test
+  await page.setViewportSize({ width: 768, height: 1024 }); // Tablet
+  const tabletScreenshot = await page.screenshot();
+  expect(tabletScreenshot).toMatchVisualSnapshot('audit-log-viewer-tablet');
+
+  await page.setViewportSize({ width: 375, height: 667 }); // Mobile
+  const mobileScreenshot = await page.screenshot();
+  expect(mobileScreenshot).toMatchVisualSnapshot('audit-log-viewer-mobile');
+});
 ```
 
 **Performance Tests**:
@@ -582,6 +601,22 @@ lighthouse toubkal://settings --output=json | jq '.categories.performance.score'
 - [ADR-003: IPC Framework](ADR-003-ipc-framework.md)  Mojo IPC enables browser � UI communication (TypeScript � C++)
 - [ADR-007: UI Security](ADR-007-ui-security.md)  Strict CSP and Trusted Types for React-rendered AI content
 - [ADR-008: Custom URL Scheme](ADR-008-url-schema.md)  `toubkal://` URLs serve React-based internal pages
+
+---
+
+## Related Epics
+
+This ADR is implemented by the following epics:
+
+- **[Epic 1.2: Brand Identity & Internal Pages](../epics/epic-1.2-brand-identity.md)** (Week 5-6)
+  - Implements React dashboards for `toubkal://audit` and `toubkal://consent`
+  - Integrates Vite build system with GN build configuration
+  - Creates internal page scaffolding with React 19 + TypeScript
+
+- **[Epic 1.3: Privacy Controls & Consent Fabric](../epics/epic-1.3-privacy-controls.md)** (Week 7-10)
+  - Implements real-time transparency dashboard (React UI)
+  - Creates forensic replay mode UI components
+  - Integrates Mojo IPC for consent banners and audit streaming
 
 ---
 

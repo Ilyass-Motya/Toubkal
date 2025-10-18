@@ -10,7 +10,50 @@
 <critical>Project analysis already completed - proceeding directly to technical specification</critical>
 <critical>NO PRD generated - uses tech_spec_template + story templates</critical>
 
-<step n="0" goal="Check for workflow status file - REQUIRED">
+<step n="0" goal="Toubkal-specific validation - Check if tech specs already exist">
+
+<action>Check if {toubkal_prd_path} exists</action>
+
+<check if="exists AND toubkal_validation_enabled == true">
+  <output>**🚨 TOUBKAL PROJECT DETECTED**
+
+This project already has comprehensive technical specifications:
+
+**Existing Documentation:**
+- ✅ TOUBKAL-PRD.md Section 5 (Technical Architecture)
+- ✅ 8 Architecture Decision Records (ADRs)
+- ✅ Architecture documentation (mcp-sandbox.md, audit-trail.md)
+- ✅ CODING-RULES.md (implementation standards)
+- ✅ testing-strategy.md (quality requirements)
+
+**Current Phase:** Week 0 (Pre-Phase 1) - Tooling Setup
+
+**Why This Workflow Is Not Needed:**
+- Technical specifications are COMPLETE
+- Week 0 focus: ESLint, Husky, Vitest, CI/CD setup
+- Phase 1 starts after Week 0 tooling complete
+
+**Recommended Action:**
+Run: `/bmad:bmm:agents:pm` then select `*toubkal-status`
+
+This will show you:
+- Current project status
+- Outstanding Week 0 tasks
+- Next actionable steps
+
+**To Override This Check:**
+If you're creating tech specs for a NEW feature outside Toubkal's existing scope, set `toubkal_validation_enabled: false` in workflow.yaml
+</output>
+<action>Exit workflow - Toubkal tech specs already complete</action>
+</check>
+
+<check if="not exists OR toubkal_validation_enabled == false">
+  <action>Proceed to Step 0.5 (generic workflow status check)</action>
+</check>
+
+</step>
+
+<step n="0.5" goal="Check for workflow status file - REQUIRED">
 
 <action>Check if bmm-workflow-status.md exists in {output_folder}/</action>
 

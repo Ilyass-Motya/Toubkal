@@ -1,0 +1,214 @@
+# Toubkal Browser - Chromium Fork Configuration
+# This file configures the Chromium source synchronization for Toubkal Browser
+# Copy this file to .gclient and customize as needed
+
+solutions = [
+  {
+    "name": "src",
+    "url": "https://chromium.googlesource.com/chromium/src.git",
+    "managed": False,
+    "custom_deps": {
+      # Toubkal Browser specific dependencies
+      "src/third_party/toubkal": "https://github.com/Ilyass-Motya/Toubkal.git",
+      "src/third_party/toubkal/browser": "https://github.com/Ilyass-Motya/Toubkal.git",
+      "src/third_party/toubkal/common": "https://github.com/Ilyass-Motya/Toubkal.git",
+    },
+    "custom_vars": {
+      # Build configuration
+      "checkout_android": False,
+      "checkout_ios": False,
+      "checkout_nacl": False,
+      "checkout_linux": True,
+      "checkout_mac": True,
+      "checkout_win": True,
+      
+      # Toubkal-specific variables
+      "toubkal_enable_ai": True,
+      "toubkal_enable_privacy": True,
+      "toubkal_enable_audit": True,
+      "toubkal_enable_mcp": True,
+      
+      # Security and privacy
+      "disable_telemetry": True,
+      "disable_crash_reporting": True,
+      "disable_usage_statistics": True,
+      "disable_google_services": True,
+      
+      # Build optimization
+      "use_goma": True,
+      "use_sccache": True,
+      "enable_ninja": True,
+    },
+  },
+]
+
+# Target platform detection
+target_os = [
+  "linux",  # Linux builds
+  "mac",    # macOS builds  
+  "win",    # Windows builds
+]
+
+# Target CPU architectures
+target_cpu = [
+  "x64",    # x86_64/AMD64
+  "arm64",  # ARM64 (Apple Silicon, ARM servers)
+]
+
+# Sync hooks for Toubkal Browser integration
+hooks = [
+  {
+    "name": "toubkal_patches",
+    "pattern": ".",
+    "action": ["python", "scripts/apply-toubkal-patches.py"],
+  },
+  {
+    "name": "toubkal_build_config",
+    "pattern": ".",
+    "action": ["python", "scripts/setup-toubkal-build.py"],
+  },
+  {
+    "name": "toubkal_dependencies",
+    "pattern": ".",
+    "action": ["python", "scripts/install-toubkal-deps.py"],
+  },
+]
+
+# Cache configuration for faster syncs
+cache_dir = ".gclient_cache"
+
+# Network configuration
+# Only allow connections to sanctioned domains
+allowed_hosts = [
+  "chromium.googlesource.com",
+  "storage.googleapis.com", 
+  "commondatastorage.googleapis.com",
+  "dl.google.com",
+  "github.com",
+  "githubusercontent.com",
+]
+
+# Proxy configuration (if needed)
+# proxy = "http://proxy.company.com:8080"
+
+# Authentication (if using private repositories)
+# git_oauth2_refresh_token = "your_token_here"
+
+# Sync configuration
+sync_hooks = True
+delete_unversioned_trees = True
+delete_unversioned_files = True
+
+# Platform-specific configurations
+if "win" in target_os:
+  # Windows-specific settings
+  target_os = ["win"]
+  target_cpu = ["x64"]
+  
+  # Windows build tools
+  custom_vars = {
+    "checkout_win": True,
+    "checkout_linux": False,
+    "checkout_mac": False,
+  }
+  
+elif "mac" in target_os:
+  # macOS-specific settings
+  target_os = ["mac"]
+  target_cpu = ["x64", "arm64"]
+  
+  # macOS build tools
+  custom_vars = {
+    "checkout_mac": True,
+    "checkout_linux": False,
+    "checkout_win": False,
+  }
+  
+elif "linux" in target_os:
+  # Linux-specific settings
+  target_os = ["linux"]
+  target_cpu = ["x64"]
+  
+  # Linux build tools
+  custom_vars = {
+    "checkout_linux": True,
+    "checkout_mac": False,
+    "checkout_win": False,
+  }
+
+# Toubkal Browser specific configuration
+toubkal_config = {
+  "version": "1.0.0",
+  "build_type": "development",  # development, staging, production
+  "features": {
+    "ai_integration": True,
+    "privacy_dashboard": True,
+    "audit_logging": True,
+    "mcp_server": True,
+    "zero_telemetry": True,
+  },
+  "security": {
+    "disable_telemetry": True,
+    "disable_crash_reporting": True,
+    "disable_usage_statistics": True,
+    "disable_google_services": True,
+    "network_monitoring": True,
+  },
+  "build": {
+    "use_goma": True,
+    "use_sccache": True,
+    "enable_ninja": True,
+    "deterministic_builds": True,
+  },
+}
+
+# Validation rules
+validation_rules = [
+  "no_unsanctioned_network_requests",
+  "deterministic_builds",
+  "zero_telemetry",
+  "privacy_first",
+]
+
+# Error handling
+error_handling = {
+  "retry_attempts": 3,
+  "retry_delay": 5,  # seconds
+  "fail_fast": False,
+  "log_level": "INFO",
+}
+
+# Performance optimization
+performance = {
+  "parallel_downloads": 8,
+  "chunk_size": 1048576,  # 1MB
+  "timeout": 300,  # 5 minutes
+  "keep_alive": True,
+}
+
+# Monitoring and logging
+monitoring = {
+  "enable_logging": True,
+  "log_file": ".gclient.log",
+  "log_level": "INFO",
+  "enable_metrics": True,
+  "metrics_file": ".gclient_metrics.json",
+}
+
+# Backup and recovery
+backup = {
+  "enable_backup": True,
+  "backup_dir": ".gclient_backup",
+  "backup_frequency": "daily",
+  "max_backups": 7,
+}
+
+# Integration with Toubkal Browser development
+toubkal_integration = {
+  "auto_apply_patches": True,
+  "auto_update_dependencies": True,
+  "auto_verify_build": True,
+  "development_mode": True,
+}
+
+# End of configuration

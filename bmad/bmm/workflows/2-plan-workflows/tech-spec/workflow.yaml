@@ -11,6 +11,10 @@ user_name: "{config_source}:user_name"
 communication_language: "{config_source}:communication_language"
 date: system-generated
 
+# Toubkal-specific validation
+toubkal_prd_path: "{project-root}/TOUBKAL-PRD.md"
+toubkal_validation_enabled: true
+
 # Workflow components
 installed_path: "{project-root}/bmad/bmm/workflows/2-plan-workflows/tech-spec"
 instructions: "{installed_path}/instructions.md"

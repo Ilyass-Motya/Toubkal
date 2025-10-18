@@ -1,6 +1,10 @@
-# Story 1.5: Basic Transparency Dashboard
+# Story 1.6: Basic Transparency Dashboard
 
-Status: Draft
+Status: Ready for Development
+Priority: P0 (Foundation)
+Dependencies: Phase 0.5 crypto + audit foundation (Stories 0.5.1-0.5.6)
+Estimated Effort: 5 days
+Owner: Frontend Engineer
 
 ## Story
 

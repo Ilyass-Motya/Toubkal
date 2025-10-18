@@ -1,0 +1,319 @@
+<!-- Powered by BMAD-CORE™ -->
+
+# Auto-Update Tracking Documents
+
+**Purpose**: Universal pattern for automatically updating tracking documents after workflow completion
+**Version**: 1.0.0
+**Last Updated**: 2025-10-18
+**Used By**: ALL BMAD workflows and agents
+
+---
+
+## CRITICAL RULE
+
+**NEVER ASK USER: "Would you like me to update tracking?"**
+
+**ALWAYS AUTO-UPDATE** tracking documents automatically and inform user afterward.
+
+---
+
+## Usage Pattern
+
+Include this XML fragment in the FINAL step of every workflow:
+
+```xml
+<step n="FINAL" goal="Auto-update tracking documents">
+  <invoke-task halt="false">{project-root}/bmad/core/tasks/auto-update-tracking.xml</invoke-task>
+</step>
+```
+
+---
+
+## Auto-Update Instructions
+
+### Step 1: Update Workflow Status File
+
+**File:** `{output_folder}/bmm-workflow-status.md`
+
+**Actions:**
+
+1. **Update current_step field:**
+   ```
+   current_step: "{{workflow_name}} ({{artifact_id}})"
+   ```
+
+2. **Update current_workflow field:**
+   ```
+   current_workflow: "{{workflow_name}} - Complete"
+   ```
+
+3. **Update progress_percentage:**
+   ```
+   progress_percentage: {{old_percentage}} + {{workflow_weight}}%
+   ```
+
+   **Workflow Weights (use appropriate value):**
+   - Analysis workflows (brainstorm, research): 5%
+   - Planning workflows (PRD, tech-spec): 10%
+   - Solutioning workflows (architecture): 15%
+   - Story creation: 5%
+   - Story development: 20% (largest weight)
+   - Test automation: 10%
+   - Review workflows: 5%
+
+4. **Add decisions_log entry:**
+   ```markdown
+   - **{{date}}**: Completed {{workflow_name}} for {{artifact_id}} ({{artifact_title}}). {{summary_of_changes}}. Status: {{new_status}}. Next: {{recommended_next_action}}.
+   ```
+
+---
+
+### Step 2: Update Artifact File (if applicable)
+
+**Artifacts:** Stories, Epics, PRDs, Architecture docs, etc.
+
+**Actions:**
+
+1. **Update Status field:**
+   - Draft → Approved
+   - In Progress → Ready for Review
+   - Ready for Review → Complete
+   - (Use status appropriate to workflow)
+
+2. **Update Last Updated timestamp:**
+   ```
+   Last Updated: {{current_date_iso}}
+   ```
+
+3. **Add Change Log entry:**
+   ```markdown
+   ## Change Log
+
+   - **{{date}}**: {{workflow_name}} completed. {{summary_of_changes}}. Updated by {{agent_name}}.
+   ```
+
+4. **Update completion metrics (if applicable):**
+   - Story: Mark tasks as [x] (complete)
+   - Epic: Update completion percentage (stories complete / total stories)
+   - PRD: Update section completion checkboxes
+
+---
+
+### Step 3: Update Related Artifacts (if applicable)
+
+**Epic → Story relationship:**
+
+When story completes:
+1. Find parent epic (from story metadata)
+2. Update epic completion percentage:
+   ```
+   Completion: {{completed_stories}} / {{total_stories}} stories ({{percentage}}%)
+   ```
+3. If all epic stories complete → Update epic Status: "Complete"
+
+**Roadmap → Phase tracking:**
+
+When phase milestone completes:
+1. Update PRODUCT-ROADMAP.md phase status
+2. Update Week X completion checkboxes
+3. Log phase transition in decisions_log
+
+---
+
+### Step 4: Inform User (DO NOT ASK)
+
+**Template:**
+
+```
+✅ {{Workflow_Name}} Complete!
+
+**Artifact Details:**
+- ID: {{artifact_id}}
+- Title: {{artifact_title}}
+- Status: {{old_status}} → {{new_status}}
+
+**Tracking Updated:**
+- bmm-workflow-status.md: ✅ Updated
+- {{artifact_file}}: ✅ Updated
+- Epic/Roadmap: ✅ Updated (if applicable)
+
+**Progress:**
+- Overall: {{progress_percentage}}%
+- Current Step: {{current_step}}
+
+**Next Recommended Action:**
+{{recommended_next_action}}
+```
+
+**CRITICAL:**
+- DO NOT ask: "Would you like me to update...?"
+- DO NOT prompt: "Should I save changes?"
+- ALWAYS auto-update silently
+- INFORM user afterward with confirmation message above
+
+---
+
+## Project-Specific Auto-Update Rules
+
+### Toubkal Browser
+
+When `TOUBKAL-PRD.md` detected:
+
+**Additional Updates:**
+
+1. **Update toubkal-status-checker.md:**
+   - If Week 0 task complete → Update Week 0 table (⚠️ PENDING → ✅ COMPLETE)
+   - If Phase 1 story complete → Update Phase 1 progress
+   - Update "Last Review" timestamp
+
+2. **Privacy Compliance Tracking:**
+   - If story touches telemetry/privacy → Log in privacy-compliance.md
+   - Update consent flow documentation if applicable
+
+3. **Testing Coverage Tracking:**
+   - If story includes tests → Update test coverage dashboard
+   - If coverage ≥80% → Mark quality gate passed
+
+4. **Roadmap Phase Tracking:**
+   - Verify story within current phase (Week 0, Phase 1-4)
+   - Update PRODUCT-ROADMAP.md phase completion percentages
+   - Log phase blockers if detected
+
+---
+
+## Validation Checklist
+
+Before completing auto-update step, verify:
+
+- [ ] bmm-workflow-status.md updated (current_step, current_workflow, progress_percentage, decisions_log)
+- [ ] Artifact file updated (Status, Last Updated, Change Log)
+- [ ] Related artifacts updated (Epic completion, Roadmap phase)
+- [ ] Project-specific files updated (toubkal-status-checker.md, etc.)
+- [ ] User informed with confirmation message (NOT asked for permission)
+
+---
+
+## Anti-Patterns (NEVER DO THIS)
+
+❌ **BAD:** "Would you like me to update bmm-workflow-status.md?"
+✅ **GOOD:** "✅ Workflow complete! bmm-workflow-status.md updated automatically."
+
+❌ **BAD:** "Should I mark the story as complete?"
+✅ **GOOD:** "✅ Story marked complete. Epic completion: 3/5 (60%)."
+
+❌ **BAD:** Wait for user to manually ask for updates
+✅ **GOOD:** Auto-update proactively after EVERY workflow completion
+
+❌ **BAD:** Update only when user remembers to ask
+✅ **GOOD:** Update automatically as part of workflow final step
+
+---
+
+## Implementation Examples
+
+### Example 1: Story Creation Workflow
+
+```xml
+<step n="8" goal="Auto-update tracking documents">
+  <action>Update {output_folder}/bmm-workflow-status.md:</action>
+  - current_step: "create-story (Story 1.1)"
+  - current_workflow: "create-story - Complete"
+  - progress_percentage: 45% (was 40%, +5% for story creation)
+  - decisions_log: "2025-10-18: Created story 1.1 (Privacy Consent Prompt). Status: Draft. Next: Run *story-ready to approve for development."
+
+  <action>Update story file status/story-1.1.md:</action>
+  - Status: "Draft"
+  - Last Updated: "2025-10-18T10:30:00Z"
+  - Change Log: "2025-10-18: Story created by SM agent (Bob). Includes 5 ACs, 8 tasks, context references."
+
+  <output>✅ Story Creation Complete!
+
+**Story Details:**
+- ID: 1.1
+- Title: Privacy Consent Prompt
+- Status: Draft
+
+**Tracking Updated:**
+- bmm-workflow-status.md: ✅ Updated
+- story-1.1.md: ✅ Created
+- Epic 1 (Foundation): 0/5 stories (0%)
+
+**Progress:**
+- Overall: 45%
+- Current Step: create-story (Story 1.1)
+
+**Next Recommended Action:**
+Run *story-ready to approve story 1.1 for development.</output>
+</step>
+```
+
+### Example 2: Story Development Complete
+
+```xml
+<step n="8" goal="Auto-update tracking documents">
+  <action>Update {output_folder}/bmm-workflow-status.md:</action>
+  - current_step: "dev-story (Story 1.1)"
+  - current_workflow: "dev-story - Complete (Ready for Review)"
+  - progress_percentage: 65% (was 45%, +20% for dev-story)
+  - decisions_log: "2025-10-20: Completed dev-story for Story 1.1 (Privacy Consent Prompt). All tasks complete, tests passing (85% coverage). Status: Ready for Review. Next: User reviews and runs story-approved when satisfied."
+
+  <action>Update story file status/story-1.1.md:</action>
+  - Status: "Draft" → "Ready for Review"
+  - Last Updated: "2025-10-20T15:45:00Z"
+  - Change Log: "2025-10-20: Development completed by DEV agent (Amelia). All 8 tasks complete, 12 tests added (85% coverage), 15 files modified."
+  - Tasks: All marked [x] (complete)
+
+  <action>Update Epic 1 (Foundation):</action>
+  - Completion: 1/5 stories (20%)
+  - Status: "In Progress"
+
+  <action>Update toubkal-status-checker.md (Toubkal-specific):</action>
+  - Phase 1 Progress: 1 story complete
+  - Privacy Compliance: Consent prompt implemented ✅
+
+  <output>✅ Story Development Complete!
+
+**Story Details:**
+- ID: 1.1
+- Title: Privacy Consent Prompt
+- Status: Draft → Ready for Review
+- Coverage: 85% (✅ Exceeds 80% minimum)
+
+**Tracking Updated:**
+- bmm-workflow-status.md: ✅ Updated
+- story-1.1.md: ✅ Updated
+- Epic 1 (Foundation): ✅ Updated (1/5 stories, 20%)
+- toubkal-status-checker.md: ✅ Updated (Phase 1 progress)
+
+**Progress:**
+- Overall: 65%
+- Current Step: dev-story (Story 1.1)
+
+**Next Recommended Action:**
+Review implemented story and test changes. When satisfied, run *story-approved to mark complete and advance queue.</output>
+</step>
+```
+
+---
+
+## Status Transitions
+
+**Stories:**
+- Created → Draft
+- Approved for Dev → In Progress
+- Dev Complete → Ready for Review
+- Review Passed → Complete
+
+**Epics:**
+- Created → In Progress (when first story starts)
+- All Stories Complete → Complete
+
+**Phases (Toubkal):**
+- Week 0 → Phase 1 (when all Week 0 tasks complete)
+- Phase 1 → Phase 2 (when all Phase 1 stories complete)
+
+---
+
+**Version**: 1.0.0
+**Status**: Production
+**Usage**: Include in ALL workflow final steps

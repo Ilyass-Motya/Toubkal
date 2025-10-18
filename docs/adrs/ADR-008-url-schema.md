@@ -3,7 +3,7 @@
 **Status**: Accepted  
 **Date**: 2025-10-18  
 **Deciders**: Ilyass Motya, Engineering Team  
-**Technical Story**: [PRD Section 4.6: Brand Identity Features](../TOUBKAL-PRD.md#brand-identity--user-experience-features-p0)
+**Technical Story**: [Story 1.5: Brand Identity Implementation](../stories/phase1-week1-2/story-004-brand-identity.md)
 
 ---
 
@@ -182,6 +182,15 @@ Content-Security-Policy:
 - Internal `toubkal://` pages should only be accessible from browser UI
 - Block external navigation to `toubkal://` from web pages (security boundary)
 - Enforce origin checks for Mojo IPC calls from `toubkal://` pages
+- Implement URL scheme isolation to prevent privilege escalation
+- Rate limit URL scheme access to prevent DoS attacks
+
+**URL Scheme Hardening**:
+
+- Validate all URL parameters and fragments for malicious input
+- Implement URL canonicalization to prevent bypass attempts
+- Log all URL scheme access for security auditing
+- Implement URL scheme-specific security policies per internal page
 
 ---
 
@@ -729,6 +738,19 @@ valgrind --leak-check=full ./toubkal --test-redirect-loop
 
 - [ADR-002: Browser Engine](ADR-002-browser-engine.md) - Chromium fork provides base URL infrastructure
 - [ADR-001: UI Framework](ADR-001-ui-framework.md) - React UI for internal pages uses `toubkal://` URLs
+
+---
+
+## Related Epics
+
+This ADR is implemented by the following epic:
+
+- **[Epic 1.2: Brand Identity & Internal Pages](../epics/epic-1.2-brand-identity.md)** (Week 5-6)
+  - Implements `toubkal://` URL scheme registration
+  - Creates `chrome://` → `toubkal://` auto-redirect
+  - Implements internal pages: `toubkal://settings`, `toubkal://about`, `toubkal://version`
+  - Creates React dashboards: `toubkal://audit`, `toubkal://consent`
+  - Establishes WebUI controllers for all `toubkal://` pages
 
 ---
 

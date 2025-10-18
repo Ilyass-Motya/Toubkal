@@ -1,6 +1,10 @@
-# Story 1.3: Enable Privacy Defaults (Fingerprinting Protection + Tracker Blocking)
+# Story 1.4: Enable Privacy Defaults (Fingerprinting Protection + Tracker Blocking)
 
-Status: In Progress - Phase 2 Complete (25% Complete)
+Status: Ready for Development
+Priority: P0 (Foundation)
+Dependencies: Phase 0.5 ad blocking (Stories 0.5.7-0.5.10)
+Estimated Effort: 4 days
+Owner: Privacy Engineer
 
 ## Story
 

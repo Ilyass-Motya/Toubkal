@@ -131,8 +131,8 @@ All reports will be reviewed confidentially within 48 hours.
 # Click "Fork" at https://github.com/toubkal/toubkal
 
 # 2. Clone your fork
-git clone https://github.com/YOUR_USERNAME/toubkal.git
-cd toubkal
+git clone https://github.com/Ilyass-Motya/Toubkal.git C:\ToubkalBrowser
+cd C:\ToubkalBrowser
 
 # 3. Add upstream remote
 git remote add upstream https://github.com/toubkal/toubkal.git
@@ -156,7 +156,7 @@ pnpm test
 # Prerequisites: Complete Phase 0.5 setup above
 
 # 1. Install depot_tools (Chromium's build toolchain)
-git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
+git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git C:\depot_tools
 export PATH="$PATH:$(pwd)/depot_tools"  # Add to ~/.bashrc or ~/.zshrc
 
 # 2. Sync Chromium and dependencies (user-managed, see build-instructions.md)

@@ -12,6 +12,93 @@
 
 <workflow>
 
+  <step n="0" goal="Pre-flight quality baseline check (Toubkal-specific)">
+    <critical>TOUBKAL ONLY: Verify codebase quality baseline BEFORE starting implementation</critical>
+
+    <action>Check if this is a Toubkal project (detect TOUBKAL-PRD.md existence)</action>
+
+    <check if="TOUBKAL-PRD.md exists">
+      <action>Run baseline quality checks:</action>
+
+      <check name="TypeScript Compilation">
+        <command>npm run type-check || tsc --noEmit</command>
+        <halt-if-failing>YES - Cannot implement on broken baseline</halt-if-failing>
+        <message-if-failing>**🚨 BASELINE BROKEN: TypeScript Compilation Errors**
+
+Current errors detected. You MUST fix baseline before implementing new features.
+
+**Why This Matters:**
+- New code will inherit existing errors
+- Cannot distinguish new bugs from old bugs
+- Violates CODING-RULES.md quality standards
+
+**Required Action:**
+1. Run: `npm run type-check` or `tsc --noEmit`
+2. Fix ALL TypeScript errors (target: 0 errors)
+3. Commit fixes separately from feature work
+4. Re-run dev-story workflow
+
+**Current Error Count:** {{error_count}} (Target: 0)
+
+HALTING WORKFLOW - Fix baseline first.</message-if-failing>
+      </check>
+
+      <check name="ESLint Baseline">
+        <command>npm run lint || npx eslint .</command>
+        <halt-if-failing>YES - Cannot implement on broken baseline</halt-if-failing>
+        <message-if-failing>**🚨 BASELINE BROKEN: ESLint Errors**
+
+Current linting errors detected. You MUST fix baseline before implementing new features.
+
+**Why This Matters:**
+- Week 0 tooling (ESLint) exists to prevent quality issues
+- Cannot distinguish new violations from old violations
+- "Enforced rules" mean nothing if baseline is broken
+
+**Required Action:**
+1. Run: `npm run lint` or `npx eslint .`
+2. Fix ALL ESLint errors (target: 0 errors)
+3. Use `--fix` flag for auto-fixable issues
+4. Commit fixes separately from feature work
+5. Re-run dev-story workflow
+
+**Current Error Count:** {{error_count}} (Target: 0)
+
+HALTING WORKFLOW - Fix baseline first.</message-if-failing>
+      </check>
+
+      <check name="Test Baseline">
+        <command>npm test || npm run test:ci</command>
+        <halt-if-failing>YES - Cannot implement on broken baseline</halt-if-failing>
+        <message-if-failing>**🚨 BASELINE BROKEN: Test Failures**
+
+Existing tests are failing. You MUST fix baseline before implementing new features.
+
+**Why This Matters:**
+- Cannot achieve 80% coverage if existing tests fail
+- New features may depend on broken functionality
+- Violates testing-strategy.md requirements
+
+**Required Action:**
+1. Run: `npm test` or `npm run test:ci`
+2. Fix ALL failing tests (target: 100% pass rate)
+3. Commit fixes separately from feature work
+4. Re-run dev-story workflow
+
+**Current Failing Tests:** {{failing_count}} (Target: 0)
+
+HALTING WORKFLOW - Fix baseline first.</message-if-failing>
+      </check>
+
+      <action>If ALL baseline checks pass → Proceed to Step 1</action>
+      <action>If ANY baseline check fails → HALT with specific error message above</action>
+    </check>
+
+    <check if="TOUBKAL-PRD.md does not exist">
+      <action>Skip pre-flight checks (generic BMAD mode) → Proceed to Step 1</action>
+    </check>
+  </step>
+
   <step n="1" goal="Load story from status file IN PROGRESS section">
     <action>Read {output_folder}/bmm-workflow-status.md (if exists)</action>
     <action>Navigate to "### Implementation Progress (Phase 4 Only)" section</action>
@@ -72,13 +159,42 @@
   </step>
 
   <step n="4" goal="Run validations and tests">
+    <critical>MANDATORY EXECUTION - Tests MUST be run and MUST pass 100% before proceeding</critical>
+
     <action>Determine how to run tests for this repo (infer or use {{run_tests_command}} if provided)</action>
-    <action>Run all existing tests to ensure no regressions</action>
-    <action>Run the new tests to verify implementation correctness</action>
-    <action>Run linting and code quality checks if configured</action>
+
+    <check name="Toubkal Test Execution">
+      <action>Run linting first: `npm run lint` or `npx eslint .`</action>
+      <action>Run type checking: `npm run type-check` or `tsc --noEmit`</action>
+      <action>Run all tests: `npm test` or `npm run test:coverage`</action>
+
+      <halt-conditions>
+        <halt-if>Linting fails → FIX immediately, do NOT continue to next step</halt-if>
+        <halt-if>Type checking fails → FIX immediately, do NOT continue to next step</halt-if>
+        <halt-if>ANY test fails (regression or new) → FIX immediately, do NOT continue to next step</halt-if>
+        <halt-if>Coverage below 80% → ADD more tests, do NOT continue to next step</halt-if>
+      </halt-conditions>
+
+      <critical>DO NOT LIE about test results. ALWAYS run the actual commands and show output.</critical>
+      <critical>100% pass rate is MANDATORY. "Most tests pass" is NOT acceptable.</critical>
+      <critical>80% coverage is MINIMUM. "Close to 80%" is NOT acceptable.</critical>
+    </check>
+
     <action>Validate implementation meets ALL story acceptance criteria; if ACs include quantitative thresholds (e.g., test pass rate), ensure they are met before marking complete</action>
-    <check>If regression tests fail → STOP and fix before continuing</check>
-    <check>If new tests fail → STOP and fix before continuing</check>
+
+    <check>If linting errors exist → HALT: "Fix linting errors before continuing. Run: npm run lint --fix"</check>
+    <check>If type errors exist → HALT: "Fix TypeScript errors before continuing. Run: npm run type-check"</check>
+    <check>If regression tests fail → HALT: "Fix regression failures before continuing. Old functionality must not break."</check>
+    <check>If new tests fail → HALT: "Fix new test failures before continuing. New code must work correctly."</check>
+    <check>If coverage below 80% → HALT: "Add more tests to achieve 80% minimum coverage. Current: {{coverage_percent}}%"</check>
+
+    <success-criteria>
+      ✅ Linting: 0 errors
+      ✅ Type checking: 0 errors
+      ✅ All tests: 100% pass rate
+      ✅ Coverage: ≥80%
+      ✅ All acceptance criteria: Met
+    </success-criteria>
   </step>
 
   <step n="5" goal="Mark task complete and update story">

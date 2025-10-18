@@ -10,6 +10,10 @@ import { INTERNAL_PAGES } from '@/constants/url-schemes'
 import SettingsPage from '@/components/pages/SettingsPage'
 import NewTabPage from '@/components/pages/NewTabPage'
 import ErrorPage from '@/components/pages/ErrorPage'
+import AuditPage from '@/components/pages/AuditPage'
+import AIPage from '@/components/pages/AIPage'
+import MCPPage from '@/components/pages/MCPPage'
+import ConsentPage from '@/components/pages/ConsentPage'
 
 interface InternalPageRouterProps {
   currentUrl: string
@@ -172,70 +176,16 @@ export const InternalPageRouter: React.FC<InternalPageRouterProps> = ({
         )
       
       case 'audit':
-        return (
-          <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-            <div className="max-w-6xl mx-auto px-4 py-8">
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">
-                Transparency Dashboard
-              </h1>
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8">
-                <p className="text-gray-600 dark:text-gray-400 mb-6">
-                  View all consent decisions and data access logs for complete transparency.
-                </p>
-                <div className="text-center py-12">
-                  <div className="text-6xl mb-4">📊</div>
-                  <p className="text-gray-500 dark:text-gray-400">
-                    Audit dashboard coming soon...
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )
+        return <AuditPage />
       
       case 'ai':
-        return (
-          <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-            <div className="max-w-4xl mx-auto px-4 py-8">
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">
-                AI Assistant
-              </h1>
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8">
-                <p className="text-gray-600 dark:text-gray-400 mb-6">
-                  Chat with your local AI assistant powered by Ollama.
-                </p>
-                <div className="text-center py-12">
-                  <div className="text-6xl mb-4">🤖</div>
-                  <p className="text-gray-500 dark:text-gray-400">
-                    AI interface coming soon...
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )
+        return <AIPage />
       
       case 'mcp':
-        return (
-          <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-            <div className="max-w-4xl mx-auto px-4 py-8">
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">
-                MCP Servers
-              </h1>
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8">
-                <p className="text-gray-600 dark:text-gray-400 mb-6">
-                  Manage your Model Context Protocol servers for enhanced AI capabilities.
-                </p>
-                <div className="text-center py-12">
-                  <div className="text-6xl mb-4">🔌</div>
-                  <p className="text-gray-500 dark:text-gray-400">
-                    MCP management coming soon...
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )
+        return <MCPPage />
+      
+      case 'consent':
+        return <ConsentPage />
       
       case 'help':
         return (
@@ -253,6 +203,8 @@ export const InternalPageRouter: React.FC<InternalPageRouterProps> = ({
                     <li>• <a href={INTERNAL_PAGES.SETTINGS} className="text-blue-600 hover:underline">Settings</a></li>
                     <li>• <a href={INTERNAL_PAGES.PRIVACY} className="text-blue-600 hover:underline">Privacy Features</a></li>
                     <li>• <a href={INTERNAL_PAGES.AI} className="text-blue-600 hover:underline">AI Assistant</a></li>
+                    <li>• <a href={INTERNAL_PAGES.MCP} className="text-blue-600 hover:underline">MCP Servers</a></li>
+                    <li>• <a href={INTERNAL_PAGES.CONSENT} className="text-blue-600 hover:underline">Consent History</a></li>
                   </ul>
                 </div>
                 <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">

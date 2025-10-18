@@ -276,7 +276,7 @@ VERSION=$1
 slsa-generator generate \
   --artifact out/Release/toubkal \
   --version $VERSION \
-  --source github.com/Inopsio/toubkal-browser \
+  --source github.com/Ilyass-Motya/Toubkal \
   --output out/Release/toubkal.intoto.jsonl
 
 # Sign provenance
@@ -296,10 +296,10 @@ gpg --armor --detach-sign out/Release/toubkal.intoto.jsonl
   ],
   "predicateType": "https://slsa.dev/provenance/v0.2",
   "predicate": {
-    "builder": { "id": "https://github.com/Inopsio/toubkal-browser/actions/workflows/release.yml" },
-    "buildType": "https://github.com/Inopsio/toubkal-browser/build/gn",
+    "builder": { "id": "https://github.com/Ilyass-Motya/Toubkal/actions/workflows/release.yml" },
+    "buildType": "https://github.com/Ilyass-Motya/Toubkal/build/gn",
     "materials": [
-      { "uri": "git+https://github.com/Inopsio/toubkal-browser@v1.2.0" }
+      { "uri": "git+https://github.com/Ilyass-Motya/Toubkal@v1.2.0" }
     ]
   }
 }

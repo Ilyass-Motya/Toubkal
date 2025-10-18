@@ -1,6 +1,10 @@
 # Story 1.1: Remove Brave Telemetry and Implement Zero-Telemetry Enforcement
 
-Status: COMPLETED ✅
+Status: Completed ✅
+Priority: P0 (Foundation)
+Dependencies: None
+Estimated Effort: 3 days (completed)
+Owner: Privacy Engineer
 
 ## Story
 

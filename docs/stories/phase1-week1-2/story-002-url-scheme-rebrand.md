@@ -1,6 +1,10 @@
-# Story 1.2: Rebrand URL Scheme (chrome:// → toubkal://)
+# Story 1.3: Rebrand URL Scheme (chrome:// → toubkal://)
 
 Status: Ready for Development
+Priority: P1 (Enhancement)
+Dependencies: Phase 0.5 crypto foundation complete
+Estimated Effort: 3 days
+Owner: Frontend Engineer
 
 ## Story
 

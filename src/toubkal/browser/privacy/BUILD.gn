@@ -1,0 +1,217 @@
+# Toubkal Browser Privacy Module BUILD.gn
+#
+# Build configuration for privacy protection components including
+# fingerprinting protection, tracker blocking, and Brave Shields integration.
+
+import("//build/config/features.gni")
+import("//mojo/public/tools/bindings/mojom.gni")
+
+# Generate Mojo bindings for privacy interfaces
+mojom("privacy") {
+  sources = [
+    "//toubkal/common/privacy.mojom",
+  ]
+  
+  public_deps = [
+    "//mojo/public/mojom/base",
+  ]
+}
+
+# Privacy Manager Library
+source_set("privacy_manager") {
+  sources = [
+    "privacy_manager.cc",
+    "privacy_manager.h",
+  ]
+  
+  deps = [
+    ":fingerprinting_protection",
+    ":tracker_blocker", 
+    ":brave_shields_manager",
+    "//base",
+    "//crypto",
+    "//mojo/public/cpp/bindings",
+    "//net/base",
+    "//toubkal/common/privacy",
+  ]
+  
+  public_deps = [
+    "//toubkal/common/privacy",
+  ]
+}
+
+# Fingerprinting Protection Library
+source_set("fingerprinting_protection") {
+  sources = [
+    "fingerprinting_protection.cc",
+    "fingerprinting_protection.h",
+  ]
+  
+  deps = [
+    "//base",
+    "//mojo/public/cpp/bindings",
+    "//toubkal/common/privacy",
+  ]
+  
+  public_deps = [
+    "//toubkal/common/privacy",
+  ]
+}
+
+# Tracker Blocker Library
+source_set("tracker_blocker") {
+  sources = [
+    "tracker_blocker.cc",
+    "tracker_blocker.h",
+  ]
+  
+  deps = [
+    "//base",
+    "//net/base",
+    "//mojo/public/cpp/bindings",
+    "//toubkal/common/privacy",
+  ]
+  
+  public_deps = [
+    "//toubkal/common/privacy",
+  ]
+}
+
+# Brave Shields Manager Library
+source_set("brave_shields_manager") {
+  sources = [
+    "brave_shields_manager.cc",
+    "brave_shields_manager.h",
+  ]
+  
+  deps = [
+    "//base",
+    "//mojo/public/cpp/bindings",
+    "//toubkal/common/privacy",
+  ]
+  
+  public_deps = [
+    "//toubkal/common/privacy",
+  ]
+}
+
+# Privacy Module (combines all components)
+source_set("privacy") {
+  sources = []
+  
+  deps = [
+    ":privacy_manager",
+    ":fingerprinting_protection",
+    ":tracker_blocker",
+    ":brave_shields_manager",
+  ]
+  
+  public_deps = [
+    "//toubkal/common/privacy",
+  ]
+}
+
+# Unit Tests
+test("privacy_manager_unittests") {
+  sources = [
+    "privacy_manager_test.cc",
+  ]
+  
+  deps = [
+    ":privacy_manager",
+    "//base/test:test_support",
+    "//testing/gtest",
+    "//mojo/public/cpp/bindings",
+  ]
+  
+  data_deps = [
+    "//toubkal/common/privacy",
+  ]
+}
+
+test("fingerprinting_protection_unittests") {
+  sources = [
+    "fingerprinting_protection_test.cc",
+  ]
+  
+  deps = [
+    ":fingerprinting_protection",
+    "//base/test:test_support",
+    "//testing/gtest",
+    "//mojo/public/cpp/bindings",
+  ]
+  
+  data_deps = [
+    "//toubkal/common/privacy",
+  ]
+}
+
+test("tracker_blocker_unittests") {
+  sources = [
+    "tracker_blocker_test.cc",
+  ]
+  
+  deps = [
+    ":tracker_blocker",
+    "//base/test:test_support",
+    "//testing/gtest",
+    "//mojo/public/cpp/bindings",
+  ]
+  
+  data_deps = [
+    "//toubkal/common/privacy",
+  ]
+}
+
+test("brave_shields_manager_unittests") {
+  sources = [
+    "brave_shields_manager_test.cc",
+  ]
+  
+  deps = [
+    ":brave_shields_manager",
+    "//base/test:test_support",
+    "//testing/gtest",
+    "//mojo/public/cpp/bindings",
+  ]
+  
+  data_deps = [
+    "//toubkal/common/privacy",
+  ]
+}
+
+# Integration Tests
+test("privacy_integration_tests") {
+  sources = [
+    "privacy_integration_test.cc",
+  ]
+  
+  deps = [
+    ":privacy",
+    "//base/test:test_support",
+    "//testing/gtest",
+    "//mojo/public/cpp/bindings",
+  ]
+  
+  data_deps = [
+    "//toubkal/common/privacy",
+  ]
+}
+
+# Performance Tests
+test("privacy_performance_tests") {
+  sources = [
+    "privacy_performance_test.cc",
+  ]
+  
+  deps = [
+    ":privacy",
+    "//base/test:test_support",
+    "//testing/gtest",
+    "//mojo/public/cpp/bindings",
+  ]
+  
+  data_deps = [
+    "//toubkal/common/privacy",
+  ]
+}

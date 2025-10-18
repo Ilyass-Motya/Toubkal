@@ -1,8 +1,17 @@
 # Build Instructions
 
-**Last Updated**: 2025-10-18  
-**Status**: Active  
+**Last Updated**: 2025-10-18
+**Status**: Active
 **Audience**: Developers (Deep Dive - Chromium Build System)
+
+## Project Paths
+
+**Important**: These are the specific paths used in the Toubkal Browser project:
+
+- **Project Root**: `C:\ToubkalBrowser`
+- **Depot Tools**: `C:\depot_tools`
+- **Chromium Fork**: `C:\chromium`
+- **GitHub Repository**: https://github.com/Ilyass-Motya/Toubkal.git
 
 Comprehensive guide for building Toubkal Browser from source, covering prerequisites, Chromium build system (GN + Siso), and troubleshooting.
 
@@ -143,8 +152,8 @@ echo 'export PATH="$HOME/depot_tools:$PATH"' >> ~/.bashrc
 
 ```
 # Clone Toubkal (Brave fork)
-git clone https://github.com/Inopsio/toubkal-browser.git
-cd toubkal-browser
+git clone https://github.com/Ilyass-Motya/Toubkal.git C:\ToubkalBrowser
+cd C:\ToubkalBrowser
 
 # Install Node.js dependencies
 pnpm install
