@@ -1,0 +1,23 @@
+# BUILD.gn for Toubkal Browser URL Scheme Implementation
+
+import("//build/config/compiler/compiler.gni")
+
+source_set("url_scheme") {
+  sources = [
+    "url_scheme_registration.cc",
+    "url_redirect_handler.cc",
+  ]
+
+  public_deps = [
+    "//base",
+    "//url",
+  ]
+
+  public = [
+    "url_scheme_registration.h",
+    "url_redirect_handler.h",
+  ]
+
+  # Enable C++17 features
+  cflags_cc = [ "-std=c++17" ]
+}

@@ -1,0 +1,198 @@
+/**
+ * Toubkal Browser Privacy Mojo Interface
+ * 
+ * Defines the Mojo IPC interface for privacy management
+ * between the browser process and renderer process.
+ */
+
+module toubkal.common.privacy;
+
+// Privacy settings structure
+struct PrivacySettings {
+  bool fingerprinting_protection;
+  bool tracker_blocking;
+  bool brave_shields_aggressive;
+  bool protection_enabled;
+  int64 last_modified;
+  string user_id;
+};
+
+// Privacy status structure
+struct PrivacyStatus {
+  string status; // "enabled", "disabled", "partial"
+  PrivacyFeatures features;
+  PrivacyPerformance performance;
+  string last_audit_id;
+};
+
+struct PrivacyFeatures {
+  bool fingerprinting;
+  bool tracking;
+  bool shields;
+};
+
+struct PrivacyPerformance {
+  int64 activation_time;
+  int64 first_run_time;
+};
+
+// Fingerprinting test result
+struct FingerprintingTestResult {
+  string test_name;
+  string test_url;
+  int32 score;
+  bool passed;
+  FingerprintingTestDetails details;
+  int64 timestamp;
+};
+
+struct FingerprintingTestDetails {
+  bool canvas_fingerprint;
+  bool webgl_fingerprint;
+  bool font_fingerprint;
+  bool audio_fingerprint;
+  bool screen_fingerprint;
+  bool timezone_fingerprint;
+};
+
+// Audit log entry
+struct AuditLogEntry {
+  string event_id;
+  int64 timestamp;
+  string event_type;
+  map<string, Value> details;
+  string signature;
+  array<string> merkle_proof;
+};
+
+// Privacy warning
+struct PrivacyWarning {
+  string type; // "REDUCED_PRIVACY", "TRACKING_ENABLED", "FINGERPRINTING_ENABLED"
+  string message;
+  bool acknowledged;
+  int64 timestamp;
+};
+
+// Privacy event types
+enum PrivacyEventType {
+  PRIVACY_SETTINGS_CHANGED,
+  FINGERPRINTING_BLOCKED,
+  TRACKER_BLOCKED,
+  SHIELDS_UPDATED,
+  BLOCKLIST_UPDATED,
+  PRIVACY_WARNING_SHOWN
+};
+
+// Privacy event
+struct PrivacyEvent {
+  PrivacyEventType type;
+  map<string, Value> data;
+  int64 timestamp;
+  string user_id;
+};
+
+// Main privacy manager interface
+interface PrivacyManager {
+  // Initialization
+  Initialize() => (bool success, string? error, PrivacyStatus? status);
+
+  // Settings management
+  GetSettings() => (bool success, string? error, PrivacySettings? settings);
+  UpdateSettings(PrivacySettings settings) => (bool success, string? error, PrivacySettings? updated_settings);
+
+  // Protection control
+  EnableProtection() => (bool success, string? error, bool enabled);
+  DisableProtection() => (bool success, string? error, bool disabled);
+
+  // Fingerprinting tests
+  RunFingerprintingTests() => (bool success, string? error, array<FingerprintingTestResult>? results);
+
+  // Audit logging
+  GetAuditLog(int32? limit) => (bool success, string? error, array<AuditLogEntry>? entries);
+  ExportAuditLog(string format) => (bool success, string? error, string? data);
+
+  // Status queries
+  IsProtectionEnabled() => (bool enabled);
+  IsFingerprintingEnabled() => (bool enabled);
+  IsTrackerBlockingEnabled() => (bool enabled);
+  IsBraveShieldsEnabled() => (bool enabled);
+
+  // Performance metrics
+  GetActivationTime() => (int64 time_ms);
+  GetFirstRunTime() => (int64 time_ms);
+
+  // Event notifications
+  OnPrivacySettingsChanged(PrivacySettings old_settings, PrivacySettings new_settings);
+  OnProtectionStateChanged(bool enabled);
+  OnFingerprintingTestCompleted(array<FingerprintingTestResult> results);
+  OnPrivacyWarningShown(PrivacyWarning warning);
+};
+
+// Fingerprinting protection interface
+interface FingerprintingProtection {
+  // Canvas fingerprinting
+  SetCanvasProtection(bool enabled) => (bool success);
+  GetCanvasProtection() => (bool enabled);
+  
+  // WebGL fingerprinting
+  SetWebGLProtection(bool enabled) => (bool success);
+  GetWebGLProtection() => (bool enabled);
+  
+  // Font fingerprinting
+  SetFontProtection(bool enabled) => (bool success);
+  GetFontProtection() => (bool enabled);
+  
+  // Audio fingerprinting
+  SetAudioProtection(bool enabled) => (bool success);
+  GetAudioProtection() => (bool enabled);
+  
+  // Overall protection
+  SetProtectionEnabled(bool enabled) => (bool success);
+  IsProtectionEnabled() => (bool enabled);
+  
+  // Test execution
+  RunCanvasTest() => (FingerprintingTestResult result);
+  RunWebGLTest() => (FingerprintingTestResult result);
+  RunFontTest() => (FingerprintingTestResult result);
+  RunAudioTest() => (FingerprintingTestResult result);
+  RunAllTests() => (array<FingerprintingTestResult> results);
+};
+
+// Tracker blocking interface
+interface TrackerBlocker {
+  // Blocking control
+  SetBlockingEnabled(bool enabled) => (bool success);
+  IsBlockingEnabled() => (bool enabled);
+  
+  // URL checking
+  IsUrlBlocked(string url) => (bool blocked, string? reason);
+  CheckUrl(string url) => (bool should_block, string? rule_matched);
+  
+  // Blocklist management
+  UpdateBlocklists() => (bool success, string? error);
+  GetBlocklistStats() => (map<string, int32> stats);
+  
+  // Rule management
+  AddCustomRule(string rule) => (bool success, string? error);
+  RemoveCustomRule(string rule) => (bool success);
+  GetCustomRules() => (array<string> rules);
+};
+
+// Brave Shields interface
+interface BraveShieldsManager {
+  // Shield control
+  SetShieldsEnabled(bool enabled) => (bool success);
+  IsShieldsEnabled() => (bool enabled);
+  
+  // Mode control
+  SetShieldMode(string mode) => (bool success); // "standard", "aggressive"
+  GetShieldMode() => (string mode);
+  
+  // Per-site control
+  SetShieldForSite(string site, bool enabled) => (bool success);
+  GetShieldForSite(string site) => (bool enabled);
+  
+  // Shield statistics
+  GetShieldStats() => (map<string, int32> stats);
+  GetBlockedRequests() => (array<string> urls);
+};

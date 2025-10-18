@@ -1,0 +1,73 @@
+# Story Update Workflow
+name: story-update
+description: "Allows SM, QA, and Dev agents to update specific sections of user stories with appropriate permissions and validation"
+author: "BMad"
+
+# Critical variables from config
+config_source: "{project-root}/bmad/bmm/config.yaml"
+output_folder: "{config_source}:output_folder"
+user_name: "{config_source}:user_name"
+communication_language: "{config_source}:communication_language"
+date: system-generated
+
+# Workflow components
+installed_path: "{project-root}/bmad/bmm/workflows/4-implementation/story-update"
+instructions: "{installed_path}/instructions.md"
+validation: "{installed_path}/checklist.md"
+
+# This is an action workflow (no output template document)
+template: false
+
+# Variables (can be provided by caller)
+variables:
+  story_path: "" # Explicit path to a story markdown file
+  story_dir: "{config_source}:dev_story_location" # Directory containing story markdown files
+  story_selection_limit: 10
+  agent_type: "" # Required: "sm", "qa", "dev", or "auto" (auto-detect from context)
+  update_section: "" # Optional: specific section to update (e.g., "tasks", "acceptance_criteria", "dev_notes")
+  update_content: "" # Content to add/update in the specified section
+  update_type: "append" # "append", "replace", "prepend", "update_field"
+  field_name: "" # For update_type="update_field", specify which field to update
+  field_value: "" # For update_type="update_field", specify the new value
+  validation_mode: "strict" # "strict", "lenient", "skip"
+  backup_original: true # Create backup before updating
+  auto_commit: false # Automatically commit changes (for dev updates)
+
+# Agent-specific permissions
+agent_permissions:
+  sm:
+    allowed_sections:
+      - "story" # Main story content
+      - "acceptance_criteria"
+      - "tasks"
+      - "dev_notes"
+      - "status"
+      - "epic_reference"
+    update_types: ["append", "replace", "prepend", "update_field"]
+    requires_approval: false
+  qa:
+    allowed_sections:
+      - "test_requirements"
+      - "test_cases"
+      - "qa_notes"
+      - "test_coverage"
+      - "validation_notes"
+    update_types: ["append", "replace", "prepend"]
+    requires_approval: true
+  dev:
+    allowed_sections:
+      - "dev_agent_record"
+      - "completion_notes"
+      - "file_list"
+      - "change_log"
+      - "debug_log_references"
+      - "tasks" # Can update task completion status
+    update_types: ["append", "replace", "prepend", "update_field"]
+    requires_approval: false
+
+# Recommended inputs
+recommended_inputs:
+  - story_markdown: "Path to the story markdown file to update"
+  - agent_type: "Type of agent making the update (sm, qa, dev)"
+  - update_section: "Specific section to update"
+  - update_content: "Content to add/update"

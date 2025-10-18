@@ -1,9 +1,17 @@
 {
-  "name": "toubkalbrowser",
-  "version": "1.0.0",
+  "name": "toubkal-browser",
+  "version": "0.0.5",
   "type": "module",
-  "description": "🏔️ **The intelligent browser that protects your mind.**",
+  "description": "Chromium-based privacy-first AI browser with local inference, zero telemetry, and cryptographically verifiable audit trail",
   "main": "index.js",
+  "homepage": "https://github.com/Ilyass-Motya/Toubkal",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Ilyass-Motya/Toubkal.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Ilyass-Motya/Toubkal/issues"
+  },
   "directories": {
     "doc": "docs"
   },
@@ -29,9 +37,24 @@
       "clang-format -i"
     ]
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "browser",
+    "chromium",
+    "privacy",
+    "ai",
+    "local-ai",
+    "ollama",
+    "mcp",
+    "model-context-protocol",
+    "zero-telemetry",
+    "audit-trail",
+    "cryptography",
+    "ed25519",
+    "privacy-first",
+    "open-source"
+  ],
+  "author": "Ilyass Motya",
+  "license": "MPL-2.0",
   "devDependencies": {
     "eslint": "^9.15.0",
     "@typescript-eslint/parser": "^8.15.0",
