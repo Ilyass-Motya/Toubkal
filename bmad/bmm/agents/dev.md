@@ -12,13 +12,15 @@
       - VERIFY: If config not loaded, STOP and report error to user
       - DO NOT PROCEED to step 3 until config is successfully loaded and variables stored</step>
   <step n="2.5">🚨 TOUBKAL-SPECIFIC CONTEXT LOADING:
+      - Load {project-root}/QUICK-START.md (CRITICAL: Read first - testing framework, file naming, critical rules)
       - Load {project-root}/TOUBKAL-PRD.md (product vision, privacy principles, tech stack)
       - Load {project-root}/CODING-RULES.md (TypeScript strict mode, error handling, no any types)
-      - Load {project-root}/testing-strategy.md (80% coverage, test structure requirements)
+      - Load {project-root}/docs/contributing/testing-strategy.md (80% coverage, test structure requirements)
       - Load {project-root}/PRIVACY-ETHICS-POLICY.md (zero-telemetry-by-default, consent model)
       - Store key facts: Current phase = Week 0 (Pre-Phase 1), Phase 1 = Foundation & Privacy (Weeks 1-8)
       - Store architecture facts: Electron app (main process = C++/Node, renderer process = React/TypeScript)
       - Store project paths: Project=C:\ToubkalBrowser, DepotTools=C:\depot_tools, Chromium=C:\chromium, GitHub=https://github.com/Ilyass-Motya/Toubkal.git
+      - 🔴 CRITICAL: Testing Framework = VITEST (NOT Jest) - Use vi.fn() not jest.fn() - See QUICK-START.md
       - VERIFY: If context files not loaded, WARN user and proceed with generic BMAD mode</step>
   <step n="3">Remember: user's name is {user_name}</step>
   <step n="4">DO NOT start implementation until a story is loaded and Status == Approved</step>
@@ -106,7 +108,40 @@
       - Direct system API calls from renderer process (violates Electron security model)
       - IPC channels without input validation in main process (security vulnerability)
       - C++ code without corresponding unit tests (Google Test framework required)
+      - 🔴 CRITICAL: Jest usage (jest.fn(), jest.mock(), etc.) - We use VITEST (vi.fn(), vi.mock())
     </toubkal-forbidden-implementations>
+
+    <toubkal-testing-framework-check>
+      🚨 MANDATORY PRE-FLIGHT CHECK BEFORE WRITING ANY TEST:
+
+      STEP 1: Verify Testing Framework
+      - ✅ CORRECT: import { vi } from 'vitest'
+      - ❌ WRONG: import { jest } from '@jest/globals'
+
+      STEP 2: Common Mistake - Package Name Confusion
+      - Package '@testing-library/jest-dom' appears in package.json
+      - This package works with BOTH Jest and Vitest
+      - We use it with VITEST, not Jest
+      - Don't let the package name fool you!
+
+      STEP 3: Mock Function Syntax
+      - ✅ CORRECT: const mock = vi.fn()
+      - ✅ CORRECT: vi.clearAllMocks()
+      - ✅ CORRECT: vi.spyOn(obj, 'method')
+      - ❌ WRONG: const mock = jest.fn()
+      - ❌ WRONG: jest.clearAllMocks()
+
+      STEP 4: Use VS Code Snippet
+      - Type "vitest-test" and press Tab
+      - Instant correct template with Vitest imports
+
+      ENFORCEMENT:
+      - ESLint will block jest.* usage (toubkal-custom/no-jest-usage rule)
+      - Pre-commit hook will reject commits with jest.*
+      - CI/CD will fail PR if Jest usage detected
+
+      See QUICK-START.md for detailed testing guide.
+    </toubkal-testing-framework-check>
 
     <toubkal-c++-implementation-awareness>
       When a story requires C++ implementation (main process features):

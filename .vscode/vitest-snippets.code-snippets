@@ -1,0 +1,154 @@
+{
+  "Vitest Test File": {
+    "prefix": "vitest-test",
+    "description": "Complete Vitest test file with React Testing Library",
+    "scope": "typescript,typescriptreact",
+    "body": [
+      "/**",
+      " * ${1:ComponentName} Tests",
+      " *",
+      " * ${2:Description of what this test suite validates.}",
+      " */",
+      "",
+      "import { describe, it, expect, vi, beforeEach } from 'vitest'",
+      "import { render, screen } from '@testing-library/react'",
+      "import userEvent from '@testing-library/user-event'",
+      "import { ${1:ComponentName} } from './${1:ComponentName}'",
+      "",
+      "describe('${1:ComponentName}', () => {",
+      "  beforeEach(() => {",
+      "    vi.clearAllMocks()",
+      "  })",
+      "",
+      "  describe('rendering', () => {",
+      "    it('${3:should render without errors}', () => {",
+      "      // Arrange",
+      "      const props = { $4 }",
+      "",
+      "      // Act",
+      "      render(<${1:ComponentName} {...props} />)",
+      "",
+      "      // Assert",
+      "      expect(screen.getByRole('${5:heading}')).toBeInTheDocument()",
+      "    })",
+      "  })",
+      "",
+      "  describe('user interactions', () => {",
+      "    it('${6:should handle click events}', async () => {",
+      "      // Arrange",
+      "      const onClick = vi.fn()",
+      "      render(<${1:ComponentName} onClick={onClick} />)",
+      "",
+      "      // Act",
+      "      await userEvent.click(screen.getByRole('button'))",
+      "",
+      "      // Assert",
+      "      expect(onClick).toHaveBeenCalledTimes(1)",
+      "    })",
+      "  })",
+      "})",
+      "$0"
+    ]
+  },
+  "Vitest Test Suite": {
+    "prefix": "vdescribe",
+    "description": "Vitest describe block",
+    "scope": "typescript,typescriptreact",
+    "body": [
+      "describe('${1:suite name}', () => {",
+      "  ${0}",
+      "})"
+    ]
+  },
+  "Vitest Test Case": {
+    "prefix": "vit",
+    "description": "Vitest it/test block with AAA pattern",
+    "scope": "typescript,typescriptreact",
+    "body": [
+      "it('${1:should do something}', () => {",
+      "  // Arrange",
+      "  ${2}",
+      "",
+      "  // Act",
+      "  ${3}",
+      "",
+      "  // Assert",
+      "  expect(${4:actual}).toBe(${5:expected})",
+      "})",
+      "$0"
+    ]
+  },
+  "Vitest Async Test": {
+    "prefix": "vit-async",
+    "description": "Vitest async test with waitFor",
+    "scope": "typescript,typescriptreact",
+    "body": [
+      "it('${1:should handle async operation}', async () => {",
+      "  // Arrange",
+      "  ${2}",
+      "",
+      "  // Act",
+      "  ${3}",
+      "",
+      "  // Assert",
+      "  await waitFor(() => {",
+      "    expect(${4:actual}).toBe(${5:expected})",
+      "  })",
+      "})",
+      "$0"
+    ]
+  },
+  "Vitest Mock Function": {
+    "prefix": "vmock",
+    "description": "Create a Vitest mock function",
+    "scope": "typescript,typescriptreact",
+    "body": [
+      "const ${1:mockFunction} = vi.fn()$0"
+    ]
+  },
+  "Vitest Spy": {
+    "prefix": "vspy",
+    "description": "Create a Vitest spy",
+    "scope": "typescript,typescriptreact",
+    "body": [
+      "vi.spyOn(${1:object}, '${2:method}')$0"
+    ]
+  },
+  "Vitest Mock Implementation": {
+    "prefix": "vmock-impl",
+    "description": "Mock function with implementation",
+    "scope": "typescript,typescriptreact",
+    "body": [
+      "const ${1:mockFunction} = vi.fn().mockImplementation((${2:args}) => {",
+      "  ${0:return value}",
+      "})"
+    ]
+  },
+  "Vitest BeforeEach": {
+    "prefix": "vbefore",
+    "description": "Vitest beforeEach hook",
+    "scope": "typescript,typescriptreact",
+    "body": [
+      "beforeEach(() => {",
+      "  vi.clearAllMocks()",
+      "  ${0}",
+      "})"
+    ]
+  },
+  "React Testing Library Render": {
+    "prefix": "vrender",
+    "description": "Render component with React Testing Library",
+    "scope": "typescript,typescriptreact",
+    "body": [
+      "render(<${1:Component} ${2:props} />)$0"
+    ]
+  },
+  "User Event Click": {
+    "prefix": "vclick",
+    "description": "User event click",
+    "scope": "typescript,typescriptreact",
+    "body": [
+      "await userEvent.click(screen.getByRole('${1:button}'))$0"
+    ]
+  }
+}
