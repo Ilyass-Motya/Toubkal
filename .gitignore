@@ -1,0 +1,289 @@
+# Toubkal Browser - .gitignore
+# Last Updated: 2025-10-18
+# Purpose: Exclude test files, system libraries, and unnecessary files from GitHub
+
+# =============================================================================
+# NODE.JS & PACKAGE MANAGERS
+# =============================================================================
+
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Package manager lock files (keep package-lock.json for consistency)
+# yarn.lock
+# pnpm-lock.yaml
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# =============================================================================
+# TEST FILES & DIRECTORIES
+# =============================================================================
+
+# Test files (exclude only temporary/validation test files)
+test-validation.ts
+test.ts
+
+# Test directories (exclude only temporary test directories)
+# src/test/ - KEEP (essential test setup directory)
+test-*/
+*-test/
+*-tests/
+
+# Test configuration (exclude only temporary configs)
+# vitest.config.ts - KEEP (essential test configuration)
+# jest.config.js - KEEP (essential test configuration)
+# jest.config.ts - KEEP (essential test configuration)
+# cypress.config.js - KEEP (essential test configuration)
+# playwright.config.js - KEEP (essential test configuration)
+
+# Test results
+test-results/
+playwright-report/
+coverage/
+.nyc_output/
+
+# Test validation files (already excluded above)
+# test-validation.ts - excluded above
+# test.ts - excluded above
+
+# IDE and editor specific files
+.claude/
+.cursor/
+.cursorrules
+
+# =============================================================================
+# BUILD OUTPUTS & COMPILED FILES
+# =============================================================================
+
+# Build directories
+dist/
+build/
+out/
+target/
+bin/
+obj/
+
+# Compiled files
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+*.dylib
+
+# TypeScript compiled files
+*.js.map
+*.d.ts.map
+
+# =============================================================================
+# SYSTEM FILES & DIRECTORIES
+# =============================================================================
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Windows
+desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+
+# =============================================================================
+# IDE & EDITOR FILES
+# =============================================================================
+
+# VSCode
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# =============================================================================
+# CHROMIUM BUILD SYSTEM
+# =============================================================================
+
+# GN build outputs
+out/
+out-*/
+.gn/
+.ninja_log
+.ninja_deps
+
+# Chromium specific
+src/third_party/
+src/chrome/test/data/
+src/content/test/data/
+src/net/test/data/
+
+# =============================================================================
+# TOUBKAL SPECIFIC
+# =============================================================================
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Husky generated files (keep the actual hooks, exclude generated ones)
+--help/
+--versio/
+--version/
+-v/
+
+# Development and validation files (already excluded above)
+# test-validation.ts - excluded above
+# test.ts - excluded above
+
+# =============================================================================
+# SECURITY & SECRETS
+# =============================================================================
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# API keys and secrets
+*.key
+*.pem
+*.p12
+*.pfx
+secrets.json
+config/secrets.json
+
+# =============================================================================
+# DOCUMENTATION GENERATED FILES
+# =============================================================================
+
+# Generated documentation
+docs/generated/
+docs/build/
+
+# =============================================================================
+# MISC
+# =============================================================================
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# parcel-bundler cache (https://parceljs.org/)
+.cache
+.parcel-cache
+
+# Next.js build output
+.next
+
+# Nuxt.js build / generate output
+.nuxt
+dist
+
+# Gatsby files
+.cache/
+public
+
+# Storybook build outputs
+.out
+.storybook-out
+
+# Temporary folders
+tmp/
+temp/
+
+# =============================================================================
+# KEEP THESE FILES (UNCOMMENT TO IGNORE)
+# =============================================================================
+
+# Uncomment these if you want to ignore them:
+# package-lock.json
+# pnpm-lock.yaml
+# yarn.lock
