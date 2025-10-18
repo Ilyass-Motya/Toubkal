@@ -20,10 +20,12 @@ export default defineConfig({
         '**/out/**',
       ],
       // CRITICAL: Enforce 80% coverage (CODING-RULES.md requirement)
-      branches: 80,
-      functions: 80,
-      lines: 80,
-      statements: 80,
+      thresholds: {
+        branches: 80,
+        functions: 80,
+        lines: 80,
+        statements: 80,
+      },
     },
     // Test timeout for async operations
     testTimeout: 10000,

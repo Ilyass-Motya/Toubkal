@@ -2,13 +2,13 @@
 
 **Last Updated**: 2025-10-18
 **Current Phase**: Phase 1 (Foundation & Privacy)
-**Current Step**: story-ready (Story 1.2)
-**Current Workflow**: story-ready (Story 1.2) - Complete
+**Current Step**: story-context (Story 1.2)
+**Current Workflow**: story-context (Story 1.2) - Complete
 
 ## Progress Overview
 
-**Overall Progress**: 15%
-**Phase 1 Progress**: 15%
+**Overall Progress**: 16%
+**Phase 1 Progress**: 16%
 
 ### Implementation Progress (Phase 4 Only)
 
@@ -29,6 +29,7 @@
 - **2025-10-18**: Story 1.2 (Chromium Fork Setup Documentation) marked ready for development by SM agent. Status updated from Draft to Ready in status file.
 - **2025-10-18**: Completed create-story for Story 1.2 (Chromium Fork Setup Documentation). Story file: story-002-chromium-fork-setup-docs.md. Status: Draft (needs review via story-ready). Next: Review and approve story.
 - **2025-10-18**: Renumbered Phase 1 stories to eliminate duplicates (Story 1.2 → Story 1.3 for URL scheme, etc.). Updated all cross-references in ADRs and documentation.
+- **2025-10-18**: Completed story-context for Story 1.2 (Chromium Fork Setup Documentation). Context file: docs/stories/story-context-1.2.xml. Status updated to ContextReadyDraft. Next: DEV agent should run dev-story to implement.
 
 ## Current Sprint Focus
 
@@ -41,13 +42,13 @@
 
 ## Next Actions
 
-1. Review Story 1.2 (Chromium Fork Setup Documentation)
-2. Run `story-ready` to approve for development
-3. Begin implementation of Story 1.2
-4. Prepare for Phase 1 implementation (Stories 1.3-1.6)
+1. Generate context for Story 1.2 implementation
+2. Run `story-context` workflow to create implementation context XML
+3. Begin development of Story 1.2 using `dev-story` workflow
+4. Complete Phase 1 implementation (Stories 1.3-1.6)
 
 ## Blockers
 
-- Phase 1 stories (1.3-1.6) are blocked by Story 1.2 completion
-- Story 1.2 is critical path for Phase 1 timeline
+- Story 1.2 implementation is now ready - can proceed to development
+- Phase 1 stories (1.3-1.6) remain blocked until Story 1.2 is complete
 - Some Phase 1 stories also depend on Phase 0.5 completion (ad blocking, crypto)

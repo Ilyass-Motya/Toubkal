@@ -147,7 +147,7 @@ so that I can quickly onboard new developers and ensure consistent build environ
 
 ### Context Reference
 
-<!-- Path(s) to story context XML will be added here by context workflow -->
+- docs/stories/story-context-1.2.xml
 
 ### Agent Model Used
 
