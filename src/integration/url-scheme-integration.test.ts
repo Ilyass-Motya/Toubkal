@@ -190,17 +190,22 @@ describe('URL Scheme Integration', () => {
     it('should handle URL scheme manager errors gracefully', async () => {
       // Arrange
       const url = INTERNAL_PAGES.SETTINGS
-      
+
       // Mock a processing error
       const originalProcessUrl = urlSchemeManager.processUrl
-      vi.spyOn(urlSchemeManager, 'processUrl').mockRejectedValue(new Error('Processing failed'))
+      vi.spyOn(urlSchemeManager, 'processUrl').mockResolvedValue({
+        success: false,
+        error: 'Processing failed'
+      })
 
       // Act
       const result = await urlSchemeManager.processUrl(url)
 
       // Assert
       expect(result.success).toBe(false)
-      expect(result.error).toBe('Processing failed')
+      if (!result.success) {
+        expect(result.error).toBe('Processing failed')
+      }
 
       // Restore original method
       vi.restoreAllMocks()
@@ -231,7 +236,9 @@ describe('URL Scheme Integration', () => {
 
       // Assert
       expect(result.success).toBe(false)
-      expect(result.error).toContain('No toubkal:// equivalent')
+      if (!result.success) {
+        expect(result.error).toContain('No toubkal:// equivalent')
+      }
     })
   })
 
@@ -289,9 +296,9 @@ describe('URL Scheme Integration', () => {
       expect(true).toBe(true)
     })
 
-    it('should clear performance metrics correctly', () => {
+    it('should clear performance metrics correctly', async () => {
       // Arrange
-      urlSchemeManager.processUrl(INTERNAL_PAGES.SETTINGS)
+      await urlSchemeManager.processUrl(INTERNAL_PAGES.SETTINGS)
 
       // Act
       urlSchemeManager.clearPerformanceMetrics()

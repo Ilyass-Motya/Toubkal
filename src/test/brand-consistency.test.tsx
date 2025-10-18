@@ -5,13 +5,13 @@
  * Ensures color palette compliance, typography consistency, and accessibility standards.
  */
 
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { brandConsistencyChecker, BRAND_COLORS, TYPOGRAPHY_STANDARDS } from '../services/brand-consistency-checker'
 
 describe('Brand Consistency Checker', () => {
   beforeEach(() => {
     // Reset violations before each test
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   describe('Color Compliance', () => {
