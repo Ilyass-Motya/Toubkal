@@ -1,6 +1,6 @@
 /**
  * Audit Logger Service
- * 
+ *
  * Handles cryptographic audit logging for privacy events with Ed25519 signatures
  * and Merkle tree integrity verification.
  */
@@ -30,9 +30,9 @@ export class AuditLogger {
       maxEntries: 10000,
       enableMerkleTree: true,
       enableSignatures: true,
-      ...config
+      ...config,
     }
-    
+
     // Generate a mock private key for development
     this.privateKey = this.generateMockPrivateKey()
   }
@@ -48,7 +48,7 @@ export class AuditLogger {
     try {
       const timestamp = Date.now()
       const eventId = this.generateEventId()
-      
+
       // Create audit entry
       const entry: AuditLogEntry = {
         eventId,
@@ -56,10 +56,10 @@ export class AuditLogger {
         eventType,
         details: {
           ...data,
-          userId
+          userId,
         },
         signature: '',
-        merkleProof: []
+        merkleProof: [],
       }
 
       // Generate signature if enabled
@@ -91,30 +91,32 @@ export class AuditLogger {
   /**
    * Get audit log entries with optional filtering
    */
-  getEntries(options: {
-    limit?: number
-    eventType?: PrivacyEventType
-    userId?: string
-    startTime?: number
-    endTime?: number
-  } = {}): AuditLogEntry[] {
+  getEntries(
+    options: {
+      limit?: number
+      eventType?: PrivacyEventType
+      userId?: string
+      startTime?: number
+      endTime?: number
+    } = {}
+  ): AuditLogEntry[] {
     let filtered = [...this.entries]
 
     // Apply filters
     if (options.eventType) {
-      filtered = filtered.filter(entry => entry.eventType === options.eventType)
+      filtered = filtered.filter((entry) => entry.eventType === options.eventType)
     }
 
     if (options.userId != null && options.userId.length > 0) {
-      filtered = filtered.filter(entry => entry.details.userId === options.userId)
+      filtered = filtered.filter((entry) => entry.details.userId === options.userId)
     }
 
-    if (options.startTime !== undefined) {
-      filtered = filtered.filter(entry => entry.timestamp >= options.startTime)
+    if (options.startTime !== undefined && options.startTime != null) {
+      filtered = filtered.filter((entry) => entry.timestamp >= options.startTime)
     }
 
-    if (options.endTime !== undefined) {
-      filtered = filtered.filter(entry => entry.timestamp <= options.endTime)
+    if (options.endTime !== undefined && options.endTime != null) {
+      filtered = filtered.filter((entry) => entry.timestamp <= options.endTime)
     }
 
     // Sort by timestamp (newest first)
@@ -157,14 +159,14 @@ export class AuditLogger {
         success: true,
         data: {
           valid: errors.length === 0,
-          errors
-        }
+          errors,
+        },
       }
     } catch (error) {
       console.error('[AuditLogger] Integrity verification failed:', error)
       return {
         success: false,
-        error: 'Failed to verify audit log integrity'
+        error: 'Failed to verify audit log integrity',
       }
     }
   }
@@ -215,7 +217,7 @@ export class AuditLogger {
     merkleRoot: string
   } {
     const eventTypeCounts = {} as Record<PrivacyEventType, number>
-    
+
     for (const entry of this.entries) {
       eventTypeCounts[entry.eventType] = (eventTypeCounts[entry.eventType] || 0) + 1
     }
@@ -223,9 +225,9 @@ export class AuditLogger {
     return {
       totalEntries: this.entries.length,
       eventTypeCounts,
-      oldestEntry: this.entries.length > 0 ? Math.min(...this.entries.map(e => e.timestamp)) : 0,
-      newestEntry: this.entries.length > 0 ? Math.max(...this.entries.map(e => e.timestamp)) : 0,
-      merkleRoot: this.getMerkleRoot()
+      oldestEntry: this.entries.length > 0 ? Math.min(...this.entries.map((e) => e.timestamp)) : 0,
+      newestEntry: this.entries.length > 0 ? Math.max(...this.entries.map((e) => e.timestamp)) : 0,
+      merkleRoot: this.getMerkleRoot(),
     }
   }
 
@@ -246,9 +248,9 @@ export class AuditLogger {
       eventId: entry.eventId,
       timestamp: entry.timestamp,
       eventType: entry.eventType,
-      details: entry.details
+      details: entry.details,
     })
-    
+
     // Mock signature generation
     const hash = await this.sha256(dataToSign)
     return `ed25519_${hash}_${this.privateKey.slice(-8)}`
@@ -260,12 +262,12 @@ export class AuditLogger {
       eventId: entry.eventId,
       timestamp: entry.timestamp,
       eventType: entry.eventType,
-      details: entry.details
+      details: entry.details,
     })
-    
+
     const hash = await this.sha256(dataToSign)
     const expectedSignature = `ed25519_${hash}_${this.privateKey.slice(-8)}`
-    
+
     return entry.signature === expectedSignature
   }
 
@@ -275,7 +277,7 @@ export class AuditLogger {
     const dataBuffer = encoder.encode(data)
     const hashBuffer = await globalThis.crypto.subtle.digest('SHA-256', dataBuffer)
     const hashArray = Array.from(new Uint8Array(hashBuffer))
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+    return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('')
   }
 
   private updateMerkleTree(entry: AuditLogEntry): string[] {
@@ -297,29 +299,29 @@ export class AuditLogger {
     }
 
     // Create leaf hashes for all entries
-    const leafHashes = this.entries.map(entry => this.hashEntry(entry))
-    
+    const leafHashes = this.entries.map((entry) => this.hashEntry(entry))
+
     // Build tree bottom-up
     this.merkleTree = [...leafHashes]
     let currentLevel = leafHashes
 
     while (currentLevel.length > 1) {
       const nextLevel: string[] = []
-      
+
       for (let i = 0; i < currentLevel.length; i += 2) {
         const left = currentLevel[i]
         const right = currentLevel[i + 1] || left // Handle odd number of nodes
         const combined = left + right
         nextLevel.push(this.hashString(combined))
       }
-      
+
       this.merkleTree.push(...nextLevel)
       currentLevel = nextLevel
     }
   }
 
   private generateMerkleProof(eventId: string): string[] {
-    const entryIndex = this.entries.findIndex(entry => entry.eventId === eventId)
+    const entryIndex = this.entries.findIndex((entry) => entry.eventId === eventId)
     if (entryIndex === -1) {
       return []
     }
@@ -327,7 +329,7 @@ export class AuditLogger {
     // Find the leaf hash index
     const leafIndex = entryIndex
     const proof: string[] = []
-    
+
     // Walk up the tree to build proof
     let currentIndex = leafIndex
     let levelSize = this.entries.length
@@ -335,7 +337,7 @@ export class AuditLogger {
 
     while (levelSize > 1) {
       const siblingIndex = currentIndex % 2 === 0 ? currentIndex + 1 : currentIndex - 1
-      
+
       if (siblingIndex < levelStart + levelSize) {
         const siblingHash = this.merkleTree[levelStart + siblingIndex]
         if (siblingHash) {
@@ -359,7 +361,7 @@ export class AuditLogger {
     // Rebuild tree and compare with stored tree
     const expectedTree = [...this.merkleTree]
     this.rebuildMerkleTree()
-    
+
     return JSON.stringify(this.merkleTree) === JSON.stringify(expectedTree)
   }
 
@@ -368,7 +370,7 @@ export class AuditLogger {
       eventId: entry.eventId,
       timestamp: entry.timestamp,
       eventType: entry.eventType,
-      details: entry.details
+      details: entry.details,
     })
     return this.hashString(data)
   }
@@ -378,7 +380,7 @@ export class AuditLogger {
     let hash = 0
     for (let i = 0; i < data.length; i++) {
       const char = data.charCodeAt(i)
-      hash = ((hash << 5) - hash) + char
+      hash = (hash << 5) - hash + char
       hash = hash & hash // Convert to 32-bit integer
     }
     return Math.abs(hash).toString(16)
@@ -386,16 +388,16 @@ export class AuditLogger {
 
   private convertToCSV(entries: AuditLogEntry[]): string {
     const headers = ['eventId', 'timestamp', 'eventType', 'userId', 'signature', 'merkleProof']
-    const rows = entries.map(entry => [
+    const rows = entries.map((entry) => [
       entry.eventId,
       entry.timestamp,
       entry.eventType,
       entry.details.userId,
       entry.signature,
-      entry.merkleProof.join('|')
+      entry.merkleProof.join('|'),
     ])
 
-    return [headers, ...rows].map(row => row.join(',')).join('\n')
+    return [headers, ...rows].map((row) => row.join(',')).join('\n')
   }
 }
 
@@ -408,4 +410,3 @@ export function getAuditLogger(): AuditLogger {
   }
   return auditLoggerInstance
 }
-

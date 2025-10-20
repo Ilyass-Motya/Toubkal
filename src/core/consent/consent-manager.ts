@@ -38,7 +38,7 @@ class InMemoryConsentManager implements ConsentManager {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to request consent'
+        error: error instanceof Error ? error.message : 'Failed to request consent',
       }
     }
   }
@@ -46,16 +46,16 @@ class InMemoryConsentManager implements ConsentManager {
   hasConsent(actionType: string, userId: string): Promise<boolean> {
     const key = `${userId}:${actionType}`
     const consent = this.consents.get(key)
-    return consent?.granted === true
+    return Promise.resolve(consent?.granted === true)
   }
 
   revokeConsent(actionType: string, userId: string): Promise<boolean> {
     try {
       const key = `${userId}:${actionType}`
       this.consents.delete(key)
-      return true
+      return Promise.resolve(true)
     } catch {
-      return false
+      return Promise.resolve(false)
     }
   }
 
@@ -71,7 +71,7 @@ class InMemoryConsentManager implements ConsentManager {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to get consent history'
+        error: error instanceof Error ? error.message : 'Failed to get consent history',
       }
     }
   }

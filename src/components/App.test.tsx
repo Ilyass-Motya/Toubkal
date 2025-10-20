@@ -1,6 +1,6 @@
 /**
  * App Component Tests
- * 
+ *
  * Test suite for main App component covering URL scheme integration,
  * navigation handling, and error states as per AC1-AC8.
  */
@@ -214,7 +214,7 @@ describe('App', () => {
   describe('loading states', () => {
     it('should show loading state during URL processing', async () => {
       // Arrange
-      let resolveProcessUrl: (value: Result<UrlValidationResult>) => void
+      let resolveProcessUrl: (value: Result<UrlValidationResult>) => void = () => {}
       const processUrlPromise = new Promise<Result<UrlValidationResult>>((resolve) => {
         resolveProcessUrl = resolve
       })

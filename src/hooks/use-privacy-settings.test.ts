@@ -1,6 +1,6 @@
 /**
  * Privacy Settings Hook Tests
- * 
+ *
  * Unit tests for the usePrivacySettings React hook
  * following AAA pattern and mocking external dependencies.
  */
@@ -9,11 +9,17 @@ import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
 import { renderHook, act, waitFor } from '@testing-library/react'
 import { usePrivacySettings } from './use-privacy-settings'
 import { PrivacyManager } from '@/services/privacy-manager'
-import { PrivacySettings, PrivacyStatus, FingerprintingTestResult, PrivacyManagerConfig, PrivacyEvent } from '@/types/PrivacyTypes'
+import {
+  PrivacySettings,
+  PrivacyStatus,
+  FingerprintingTestResult,
+  PrivacyManagerConfig,
+  PrivacyEvent,
+} from '@/types/PrivacyTypes'
 import { Result } from '@/types/CommonTypes'
 
 // Mock the privacy manager - must match full PrivacyManager interface
-const mockPrivacyManager = {
+const mockPrivacyManager: Partial<PrivacyManager> = {
   // Public methods
   initialize: vi.fn(),
   getSettings: vi.fn(),
@@ -30,14 +36,14 @@ const mockPrivacyManager = {
   // Private properties (mocked for testing)
   settings: {} as PrivacySettings,
   config: {} as PrivacyManagerConfig,
-  auditLog: [],        // AuditLogEntry[]
-  blocklists: [],      // TrackerBlocklist[]
-  warnings: [],        // PrivacyWarning[]
-  eventListeners: new Map<string, (event: PrivacyEvent) => void>()
-} as PrivacyManager
+  auditLog: [], // AuditLogEntry[]
+  blocklists: [], // TrackerBlocklist[]
+  warnings: [], // PrivacyWarning[]
+  eventListeners: new Map<string, (event: PrivacyEvent) => void>(),
+} as Partial<PrivacyManager>
 
 vi.mock('@/services/privacy-manager', () => ({
-  getPrivacyManager: vi.fn(() => mockPrivacyManager)
+  getPrivacyManager: vi.fn(() => mockPrivacyManager),
 }))
 
 // Import the mocked function
@@ -46,19 +52,46 @@ const mockGetPrivacyManager = vi.mocked(getPrivacyManager)
 
 describe('usePrivacySettings', () => {
   beforeEach(() => {
-    mockGetPrivacyManager.mockReturnValue(mockPrivacyManager)
+    mockGetPrivacyManager.mockReturnValue(mockPrivacyManager as PrivacyManager)
     vi.clearAllMocks()
-    
+
     // Setup mock return values
-    vi.mocked(mockPrivacyManager.initialize).mockResolvedValue({ success: true })
-    vi.mocked(mockPrivacyManager.getSettings).mockReturnValue({} as PrivacySettings)
-    vi.mocked(mockPrivacyManager.getStatus).mockReturnValue({} as PrivacyStatus)
-    vi.mocked(mockPrivacyManager.updateSettings).mockResolvedValue({ success: true, data: {} as PrivacySettings })
-    vi.mocked(mockPrivacyManager.enableProtection).mockResolvedValue({ success: true, data: true })
-    vi.mocked(mockPrivacyManager.disableProtection).mockResolvedValue({ success: true, data: true })
-    vi.mocked(mockPrivacyManager.runFingerprintingTests).mockResolvedValue({ success: true, data: [] as FingerprintingTestResult[] })
-    vi.mocked(mockPrivacyManager.getAuditLog).mockReturnValue([])
-    vi.mocked(mockPrivacyManager.exportAuditLog).mockResolvedValue({ success: true, data: 'mock-export' })
+    if (mockPrivacyManager.initialize)
+      vi.mocked(mockPrivacyManager.initialize).mockResolvedValue({
+        success: true,
+        data: {} as PrivacyStatus,
+      })
+    if (mockPrivacyManager.getSettings)
+      vi.mocked(mockPrivacyManager.getSettings).mockReturnValue({} as PrivacySettings)
+    if (mockPrivacyManager.getStatus)
+      vi.mocked(mockPrivacyManager.getStatus).mockReturnValue({} as PrivacyStatus)
+    if (mockPrivacyManager.updateSettings)
+      vi.mocked(mockPrivacyManager.updateSettings).mockResolvedValue({
+        success: true,
+        data: {} as PrivacySettings,
+      })
+    if (mockPrivacyManager.enableProtection)
+      vi.mocked(mockPrivacyManager.enableProtection).mockResolvedValue({
+        success: true,
+        data: true,
+      })
+    if (mockPrivacyManager.disableProtection)
+      vi.mocked(mockPrivacyManager.disableProtection).mockResolvedValue({
+        success: true,
+        data: true,
+      })
+    if (mockPrivacyManager.runFingerprintingTests)
+      vi.mocked(mockPrivacyManager.runFingerprintingTests).mockResolvedValue({
+        success: true,
+        data: [] as FingerprintingTestResult[],
+      })
+    if (mockPrivacyManager.getAuditLog)
+      vi.mocked(mockPrivacyManager.getAuditLog).mockResolvedValue({ success: true, data: [] })
+    if (mockPrivacyManager.exportAuditLog)
+      vi.mocked(mockPrivacyManager.exportAuditLog).mockResolvedValue({
+        success: true,
+        data: 'mock-export',
+      })
   })
 
   afterEach(() => {
@@ -68,29 +101,32 @@ describe('usePrivacySettings', () => {
   describe('initialization', () => {
     it('should initialize with loading state', () => {
       // Arrange
-      vi.mocked(mockPrivacyManager.initialize).mockResolvedValue({
-        success: true,
-        data: {
+      if (mockPrivacyManager.initialize)
+        vi.mocked(mockPrivacyManager.initialize).mockResolvedValue({
+          success: true,
+          data: {
+            status: 'enabled',
+            features: { fingerprinting: true, tracking: true, shields: true },
+            performance: { activationTime: 100, firstRunTime: 500 },
+            lastAuditId: 'audit_123',
+          },
+        })
+      if (mockPrivacyManager.getSettings)
+        vi.mocked(mockPrivacyManager.getSettings).mockReturnValue({
+          fingerprintingProtection: true,
+          trackerBlocking: true,
+          braveShieldsAggressive: true,
+          protectionEnabled: true,
+          lastModified: Date.now(),
+          userId: 'user_123',
+        })
+      if (mockPrivacyManager.getStatus)
+        vi.mocked(mockPrivacyManager.getStatus).mockReturnValue({
           status: 'enabled',
           features: { fingerprinting: true, tracking: true, shields: true },
           performance: { activationTime: 100, firstRunTime: 500 },
-          lastAuditId: 'audit_123'
-        }
-      })
-      vi.mocked(mockPrivacyManager.getSettings).mockReturnValue({
-        fingerprintingProtection: true,
-        trackerBlocking: true,
-        braveShieldsAggressive: true,
-        protectionEnabled: true,
-        lastModified: Date.now(),
-        userId: 'user_123'
-      })
-      vi.mocked(mockPrivacyManager.getStatus).mockReturnValue({
-        status: 'enabled',
-        features: { fingerprinting: true, tracking: true, shields: true },
-        performance: { activationTime: 100, firstRunTime: 500 },
-        lastAuditId: 'audit_123'
-      })
+          lastAuditId: 'audit_123',
+        })
 
       // Act
       const { result } = renderHook(() => usePrivacySettings())
@@ -110,22 +146,25 @@ describe('usePrivacySettings', () => {
         braveShieldsAggressive: true,
         protectionEnabled: true,
         lastModified: Date.now(),
-        userId: 'user_123'
+        userId: 'user_123',
       }
 
       const mockStatus: PrivacyStatus = {
         status: 'enabled',
         features: { fingerprinting: true, tracking: true, shields: true },
         performance: { activationTime: 100, firstRunTime: 500 },
-        lastAuditId: 'audit_123'
+        lastAuditId: 'audit_123',
       }
 
-      vi.mocked(mockPrivacyManager.initialize).mockResolvedValue({
-        success: true,
-        data: mockStatus
-      })
-      vi.mocked(mockPrivacyManager.getSettings).mockReturnValue(mockSettings)
-      vi.mocked(mockPrivacyManager.getStatus).mockReturnValue(mockStatus)
+      if (mockPrivacyManager.initialize)
+        vi.mocked(mockPrivacyManager.initialize).mockResolvedValue({
+          success: true,
+          data: mockStatus,
+        })
+      if (mockPrivacyManager.getSettings)
+        vi.mocked(mockPrivacyManager.getSettings).mockReturnValue(mockSettings)
+      if (mockPrivacyManager.getStatus)
+        vi.mocked(mockPrivacyManager.getStatus).mockReturnValue(mockStatus)
 
       // Act
       const { result } = renderHook(() => usePrivacySettings())
@@ -145,10 +184,11 @@ describe('usePrivacySettings', () => {
     it('should handle initialization errors', async () => {
       // Arrange
       const errorMessage = 'Initialization failed'
-      vi.mocked(mockPrivacyManager.initialize).mockResolvedValue({
-        success: false,
-        error: errorMessage
-      })
+      if (mockPrivacyManager.initialize)
+        vi.mocked(mockPrivacyManager.initialize).mockResolvedValue({
+          success: false,
+          error: errorMessage,
+        })
 
       // Act
       const { result } = renderHook(() => usePrivacySettings())
@@ -166,29 +206,32 @@ describe('usePrivacySettings', () => {
   describe('settings management', () => {
     beforeEach(async () => {
       // Setup successful initialization
-      vi.mocked(mockPrivacyManager.initialize).mockResolvedValue({
-        success: true,
-        data: {
+      if (mockPrivacyManager.initialize)
+        vi.mocked(mockPrivacyManager.initialize).mockResolvedValue({
+          success: true,
+          data: {
+            status: 'enabled',
+            features: { fingerprinting: true, tracking: true, shields: true },
+            performance: { activationTime: 100, firstRunTime: 500 },
+            lastAuditId: 'audit_123',
+          },
+        })
+      if (mockPrivacyManager.getSettings)
+        vi.mocked(mockPrivacyManager.getSettings).mockReturnValue({
+          fingerprintingProtection: true,
+          trackerBlocking: true,
+          braveShieldsAggressive: true,
+          protectionEnabled: true,
+          lastModified: Date.now(),
+          userId: 'user_123',
+        })
+      if (mockPrivacyManager.getStatus)
+        vi.mocked(mockPrivacyManager.getStatus).mockReturnValue({
           status: 'enabled',
           features: { fingerprinting: true, tracking: true, shields: true },
           performance: { activationTime: 100, firstRunTime: 500 },
-          lastAuditId: 'audit_123'
-        }
-      })
-      vi.mocked(mockPrivacyManager.getSettings).mockReturnValue({
-        fingerprintingProtection: true,
-        trackerBlocking: true,
-        braveShieldsAggressive: true,
-        protectionEnabled: true,
-        lastModified: Date.now(),
-        userId: 'user_123'
-      })
-      vi.mocked(mockPrivacyManager.getStatus).mockReturnValue({
-        status: 'enabled',
-        features: { fingerprinting: true, tracking: true, shields: true },
-        performance: { activationTime: 100, firstRunTime: 500 },
-        lastAuditId: 'audit_123'
-      })
+          lastAuditId: 'audit_123',
+        })
 
       const { result } = renderHook(() => usePrivacySettings())
       await waitFor(() => {
@@ -205,20 +248,23 @@ describe('usePrivacySettings', () => {
         braveShieldsAggressive: true,
         protectionEnabled: true,
         lastModified: Date.now() + 1000,
-        userId: 'user_123'
+        userId: 'user_123',
       }
 
-      vi.mocked(mockPrivacyManager.updateSettings).mockResolvedValue({
-        success: true,
-        data: updatedSettings
-      })
-      vi.mocked(mockPrivacyManager.getSettings).mockReturnValue(updatedSettings)
-      vi.mocked(mockPrivacyManager.getStatus).mockReturnValue({
-        status: 'enabled',
-        features: { fingerprinting: false, tracking: true, shields: true },
-        performance: { activationTime: 100, firstRunTime: 500 },
-        lastAuditId: 'audit_123'
-      })
+      if (mockPrivacyManager.updateSettings)
+        vi.mocked(mockPrivacyManager.updateSettings).mockResolvedValue({
+          success: true,
+          data: updatedSettings,
+        })
+      if (mockPrivacyManager.getSettings)
+        vi.mocked(mockPrivacyManager.getSettings).mockReturnValue(updatedSettings)
+      if (mockPrivacyManager.getStatus)
+        vi.mocked(mockPrivacyManager.getStatus).mockReturnValue({
+          status: 'enabled',
+          features: { fingerprinting: false, tracking: true, shields: true },
+          performance: { activationTime: 100, firstRunTime: 500 },
+          lastAuditId: 'audit_123',
+        })
 
       const { result } = renderHook(() => usePrivacySettings())
       await waitFor(() => {
@@ -241,10 +287,11 @@ describe('usePrivacySettings', () => {
       const updates = { fingerprintingProtection: false }
       const errorMessage = 'Update failed'
 
-      vi.mocked(mockPrivacyManager.updateSettings).mockResolvedValue({
-        success: false,
-        error: errorMessage
-      })
+      if (mockPrivacyManager.updateSettings)
+        vi.mocked(mockPrivacyManager.updateSettings).mockResolvedValue({
+          success: false,
+          error: errorMessage,
+        })
 
       const { result } = renderHook(() => usePrivacySettings())
       await waitFor(() => {
@@ -268,29 +315,32 @@ describe('usePrivacySettings', () => {
   describe('protection control', () => {
     beforeEach(async () => {
       // Setup successful initialization
-      vi.mocked(mockPrivacyManager.initialize).mockResolvedValue({
-        success: true,
-        data: {
+      if (mockPrivacyManager.initialize)
+        vi.mocked(mockPrivacyManager.initialize).mockResolvedValue({
+          success: true,
+          data: {
+            status: 'enabled',
+            features: { fingerprinting: true, tracking: true, shields: true },
+            performance: { activationTime: 100, firstRunTime: 500 },
+            lastAuditId: 'audit_123',
+          },
+        })
+      if (mockPrivacyManager.getSettings)
+        vi.mocked(mockPrivacyManager.getSettings).mockReturnValue({
+          fingerprintingProtection: true,
+          trackerBlocking: true,
+          braveShieldsAggressive: true,
+          protectionEnabled: true,
+          lastModified: Date.now(),
+          userId: 'user_123',
+        })
+      if (mockPrivacyManager.getStatus)
+        vi.mocked(mockPrivacyManager.getStatus).mockReturnValue({
           status: 'enabled',
           features: { fingerprinting: true, tracking: true, shields: true },
           performance: { activationTime: 100, firstRunTime: 500 },
-          lastAuditId: 'audit_123'
-        }
-      })
-      vi.mocked(mockPrivacyManager.getSettings).mockReturnValue({
-        fingerprintingProtection: true,
-        trackerBlocking: true,
-        braveShieldsAggressive: true,
-        protectionEnabled: true,
-        lastModified: Date.now(),
-        userId: 'user_123'
-      })
-      vi.mocked(mockPrivacyManager.getStatus).mockReturnValue({
-        status: 'enabled',
-        features: { fingerprinting: true, tracking: true, shields: true },
-        performance: { activationTime: 100, firstRunTime: 500 },
-        lastAuditId: 'audit_123'
-      })
+          lastAuditId: 'audit_123',
+        })
 
       const { result } = renderHook(() => usePrivacySettings())
       await waitFor(() => {
@@ -300,24 +350,27 @@ describe('usePrivacySettings', () => {
 
     it('should enable protection', async () => {
       // Arrange
-      vi.mocked(mockPrivacyManager.enableProtection).mockResolvedValue({
-        success: true,
-        data: true
-      })
-      vi.mocked(mockPrivacyManager.getSettings).mockReturnValue({
-        fingerprintingProtection: true,
-        trackerBlocking: true,
-        braveShieldsAggressive: true,
-        protectionEnabled: true,
-        lastModified: Date.now(),
-        userId: 'user_123'
-      })
-      vi.mocked(mockPrivacyManager.getStatus).mockReturnValue({
-        status: 'enabled',
-        features: { fingerprinting: true, tracking: true, shields: true },
-        performance: { activationTime: 100, firstRunTime: 500 },
-        lastAuditId: 'audit_123'
-      })
+      if (mockPrivacyManager.enableProtection)
+        vi.mocked(mockPrivacyManager.enableProtection).mockResolvedValue({
+          success: true,
+          data: true,
+        })
+      if (mockPrivacyManager.getSettings)
+        vi.mocked(mockPrivacyManager.getSettings).mockReturnValue({
+          fingerprintingProtection: true,
+          trackerBlocking: true,
+          braveShieldsAggressive: true,
+          protectionEnabled: true,
+          lastModified: Date.now(),
+          userId: 'user_123',
+        })
+      if (mockPrivacyManager.getStatus)
+        vi.mocked(mockPrivacyManager.getStatus).mockReturnValue({
+          status: 'enabled',
+          features: { fingerprinting: true, tracking: true, shields: true },
+          performance: { activationTime: 100, firstRunTime: 500 },
+          lastAuditId: 'audit_123',
+        })
 
       const { result } = renderHook(() => usePrivacySettings())
       await waitFor(() => {
@@ -337,24 +390,27 @@ describe('usePrivacySettings', () => {
 
     it('should disable protection', async () => {
       // Arrange
-      vi.mocked(mockPrivacyManager.disableProtection).mockResolvedValue({
-        success: true,
-        data: true
-      })
-      vi.mocked(mockPrivacyManager.getSettings).mockReturnValue({
-        fingerprintingProtection: true,
-        trackerBlocking: true,
-        braveShieldsAggressive: true,
-        protectionEnabled: false,
-        lastModified: Date.now(),
-        userId: 'user_123'
-      })
-      vi.mocked(mockPrivacyManager.getStatus).mockReturnValue({
-        status: 'disabled',
-        features: { fingerprinting: true, tracking: true, shields: true },
-        performance: { activationTime: 100, firstRunTime: 500 },
-        lastAuditId: 'audit_123'
-      })
+      if (mockPrivacyManager.disableProtection)
+        vi.mocked(mockPrivacyManager.disableProtection).mockResolvedValue({
+          success: true,
+          data: true,
+        })
+      if (mockPrivacyManager.getSettings)
+        vi.mocked(mockPrivacyManager.getSettings).mockReturnValue({
+          fingerprintingProtection: true,
+          trackerBlocking: true,
+          braveShieldsAggressive: true,
+          protectionEnabled: false,
+          lastModified: Date.now(),
+          userId: 'user_123',
+        })
+      if (mockPrivacyManager.getStatus)
+        vi.mocked(mockPrivacyManager.getStatus).mockReturnValue({
+          status: 'disabled',
+          features: { fingerprinting: true, tracking: true, shields: true },
+          performance: { activationTime: 100, firstRunTime: 500 },
+          lastAuditId: 'audit_123',
+        })
 
       const { result } = renderHook(() => usePrivacySettings())
       await waitFor(() => {
@@ -376,29 +432,32 @@ describe('usePrivacySettings', () => {
   describe('fingerprinting tests', () => {
     beforeEach(async () => {
       // Setup successful initialization
-      vi.mocked(mockPrivacyManager.initialize).mockResolvedValue({
-        success: true,
-        data: {
+      if (mockPrivacyManager.initialize)
+        vi.mocked(mockPrivacyManager.initialize).mockResolvedValue({
+          success: true,
+          data: {
+            status: 'enabled',
+            features: { fingerprinting: true, tracking: true, shields: true },
+            performance: { activationTime: 100, firstRunTime: 500 },
+            lastAuditId: 'audit_123',
+          },
+        })
+      if (mockPrivacyManager.getSettings)
+        vi.mocked(mockPrivacyManager.getSettings).mockReturnValue({
+          fingerprintingProtection: true,
+          trackerBlocking: true,
+          braveShieldsAggressive: true,
+          protectionEnabled: true,
+          lastModified: Date.now(),
+          userId: 'user_123',
+        })
+      if (mockPrivacyManager.getStatus)
+        vi.mocked(mockPrivacyManager.getStatus).mockReturnValue({
           status: 'enabled',
           features: { fingerprinting: true, tracking: true, shields: true },
           performance: { activationTime: 100, firstRunTime: 500 },
-          lastAuditId: 'audit_123'
-        }
-      })
-      vi.mocked(mockPrivacyManager.getSettings).mockReturnValue({
-        fingerprintingProtection: true,
-        trackerBlocking: true,
-        braveShieldsAggressive: true,
-        protectionEnabled: true,
-        lastModified: Date.now(),
-        userId: 'user_123'
-      })
-      vi.mocked(mockPrivacyManager.getStatus).mockReturnValue({
-        status: 'enabled',
-        features: { fingerprinting: true, tracking: true, shields: true },
-        performance: { activationTime: 100, firstRunTime: 500 },
-        lastAuditId: 'audit_123'
-      })
+          lastAuditId: 'audit_123',
+        })
 
       const { result } = renderHook(() => usePrivacySettings())
       await waitFor(() => {
@@ -420,16 +479,17 @@ describe('usePrivacySettings', () => {
             fontFingerprint: false,
             audioFingerprint: false,
             screenFingerprint: false,
-            timezoneFingerprint: false
+            timezoneFingerprint: false,
           },
-          timestamp: Date.now()
-        }
+          timestamp: Date.now(),
+        },
       ]
 
-      vi.mocked(mockPrivacyManager.runFingerprintingTests).mockResolvedValue({
-        success: true,
-        data: mockTestResults
-      })
+      if (mockPrivacyManager.runFingerprintingTests)
+        vi.mocked(mockPrivacyManager.runFingerprintingTests).mockResolvedValue({
+          success: true,
+          data: mockTestResults,
+        })
 
       const { result } = renderHook(() => usePrivacySettings())
       await waitFor(() => {
@@ -453,10 +513,11 @@ describe('usePrivacySettings', () => {
     it('should handle fingerprinting test errors', async () => {
       // Arrange
       const errorMessage = 'Test failed'
-      vi.mocked(mockPrivacyManager.runFingerprintingTests).mockResolvedValue({
-        success: false,
-        error: errorMessage
-      })
+      if (mockPrivacyManager.runFingerprintingTests)
+        vi.mocked(mockPrivacyManager.runFingerprintingTests).mockResolvedValue({
+          success: false,
+          error: errorMessage,
+        })
 
       const { result } = renderHook(() => usePrivacySettings())
       await waitFor(() => {
@@ -480,29 +541,32 @@ describe('usePrivacySettings', () => {
   describe('warning management', () => {
     beforeEach(async () => {
       // Setup successful initialization
-      vi.mocked(mockPrivacyManager.initialize).mockResolvedValue({
-        success: true,
-        data: {
+      if (mockPrivacyManager.initialize)
+        vi.mocked(mockPrivacyManager.initialize).mockResolvedValue({
+          success: true,
+          data: {
+            status: 'enabled',
+            features: { fingerprinting: true, tracking: true, shields: true },
+            performance: { activationTime: 100, firstRunTime: 500 },
+            lastAuditId: 'audit_123',
+          },
+        })
+      if (mockPrivacyManager.getSettings)
+        vi.mocked(mockPrivacyManager.getSettings).mockReturnValue({
+          fingerprintingProtection: true,
+          trackerBlocking: true,
+          braveShieldsAggressive: true,
+          protectionEnabled: true,
+          lastModified: Date.now(),
+          userId: 'user_123',
+        })
+      if (mockPrivacyManager.getStatus)
+        vi.mocked(mockPrivacyManager.getStatus).mockReturnValue({
           status: 'enabled',
           features: { fingerprinting: true, tracking: true, shields: true },
           performance: { activationTime: 100, firstRunTime: 500 },
-          lastAuditId: 'audit_123'
-        }
-      })
-      vi.mocked(mockPrivacyManager.getSettings).mockReturnValue({
-        fingerprintingProtection: true,
-        trackerBlocking: true,
-        braveShieldsAggressive: true,
-        protectionEnabled: true,
-        lastModified: Date.now(),
-        userId: 'user_123'
-      })
-      vi.mocked(mockPrivacyManager.getStatus).mockReturnValue({
-        status: 'enabled',
-        features: { fingerprinting: true, tracking: true, shields: true },
-        performance: { activationTime: 100, firstRunTime: 500 },
-        lastAuditId: 'audit_123'
-      })
+          lastAuditId: 'audit_123',
+        })
 
       const { result } = renderHook(() => usePrivacySettings())
       await waitFor(() => {
@@ -513,14 +577,14 @@ describe('usePrivacySettings', () => {
     it('should acknowledge warnings', () => {
       // Arrange
       const { result } = renderHook(() => usePrivacySettings())
-      
+
       // Add a warning to state
       act(() => {
         result.current.warnings.push({
           type: 'REDUCED_PRIVACY',
           message: 'Test warning',
           acknowledged: false,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         })
       })
 
@@ -536,7 +600,7 @@ describe('usePrivacySettings', () => {
     it('should clear warnings', () => {
       // Arrange
       const { result } = renderHook(() => usePrivacySettings())
-      
+
       // Add warnings to state
       act(() => {
         result.current.warnings.push(
@@ -544,13 +608,13 @@ describe('usePrivacySettings', () => {
             type: 'REDUCED_PRIVACY',
             message: 'Test warning 1',
             acknowledged: false,
-            timestamp: Date.now()
+            timestamp: Date.now(),
           },
           {
             type: 'TRACKING_ENABLED',
             message: 'Test warning 2',
             acknowledged: false,
-            timestamp: Date.now()
+            timestamp: Date.now(),
           }
         )
       })
@@ -568,29 +632,32 @@ describe('usePrivacySettings', () => {
   describe('computed values', () => {
     beforeEach(async () => {
       // Setup successful initialization
-      vi.mocked(mockPrivacyManager.initialize).mockResolvedValue({
-        success: true,
-        data: {
+      if (mockPrivacyManager.initialize)
+        vi.mocked(mockPrivacyManager.initialize).mockResolvedValue({
+          success: true,
+          data: {
+            status: 'enabled',
+            features: { fingerprinting: true, tracking: true, shields: true },
+            performance: { activationTime: 100, firstRunTime: 500 },
+            lastAuditId: 'audit_123',
+          },
+        })
+      if (mockPrivacyManager.getSettings)
+        vi.mocked(mockPrivacyManager.getSettings).mockReturnValue({
+          fingerprintingProtection: true,
+          trackerBlocking: true,
+          braveShieldsAggressive: true,
+          protectionEnabled: true,
+          lastModified: Date.now(),
+          userId: 'user_123',
+        })
+      if (mockPrivacyManager.getStatus)
+        vi.mocked(mockPrivacyManager.getStatus).mockReturnValue({
           status: 'enabled',
           features: { fingerprinting: true, tracking: true, shields: true },
           performance: { activationTime: 100, firstRunTime: 500 },
-          lastAuditId: 'audit_123'
-        }
-      })
-      vi.mocked(mockPrivacyManager.getSettings).mockReturnValue({
-        fingerprintingProtection: true,
-        trackerBlocking: true,
-        braveShieldsAggressive: true,
-        protectionEnabled: true,
-        lastModified: Date.now(),
-        userId: 'user_123'
-      })
-      vi.mocked(mockPrivacyManager.getStatus).mockReturnValue({
-        status: 'enabled',
-        features: { fingerprinting: true, tracking: true, shields: true },
-        performance: { activationTime: 100, firstRunTime: 500 },
-        lastAuditId: 'audit_123'
-      })
+          lastAuditId: 'audit_123',
+        })
 
       const { result } = renderHook(() => usePrivacySettings())
       await waitFor(() => {
@@ -615,7 +682,10 @@ describe('usePrivacySettings', () => {
 
     it('should handle null settings gracefully', () => {
       // Arrange
-      vi.mocked(mockPrivacyManager.getSettings).mockReturnValue(null)
+      if (mockPrivacyManager.getSettings)
+        vi.mocked(mockPrivacyManager.getSettings).mockReturnValue(
+          null as unknown as PrivacySettings
+        )
       const { result } = renderHook(() => usePrivacySettings())
 
       // Act & Assert

@@ -1,6 +1,6 @@
 /**
  * Privacy Settings Component Tests
- * 
+ *
  * Unit tests for the PrivacySettings React component
  * following AAA pattern and mocking external dependencies.
  */
@@ -13,7 +13,7 @@ import { usePrivacySettings } from '@/hooks/use-privacy-settings'
 
 // Mock the privacy settings hook
 vi.mock('@/hooks/use-privacy-settings', () => ({
-  usePrivacySettings: vi.fn()
+  usePrivacySettings: vi.fn(),
 }))
 
 const mockUsePrivacySettings = vi.mocked(usePrivacySettings)
@@ -26,20 +26,20 @@ describe('PrivacySettings', () => {
       braveShieldsAggressive: true,
       protectionEnabled: true,
       lastModified: Date.now(),
-      userId: 'user_123'
+      userId: 'user_123',
     },
     status: {
       status: 'enabled' as const,
       features: {
         fingerprinting: true,
         tracking: true,
-        shields: true
+        shields: true,
       },
       performance: {
         activationTime: 100,
-        firstRunTime: 500
+        firstRunTime: 500,
       },
-      lastAuditId: 'audit_123'
+      lastAuditId: 'audit_123',
     },
     warnings: [],
     isLoading: false,
@@ -53,7 +53,7 @@ describe('PrivacySettings', () => {
     refresh: vi.fn(),
     isProtectionEnabled: true,
     isFingerprintingEnabled: true,
-    isTrackerBlockingEnabled: true
+    isTrackerBlockingEnabled: true,
   }
 
   beforeEach(() => {
@@ -72,7 +72,7 @@ describe('PrivacySettings', () => {
         ...defaultMockReturn,
         isLoading: true,
         settings: null,
-        status: null
+        status: null,
       })
 
       // Act
@@ -94,7 +94,7 @@ describe('PrivacySettings', () => {
         ...defaultMockReturn,
         error: errorMessage,
         settings: null,
-        status: null
+        status: null,
       })
 
       // Act
@@ -151,9 +151,9 @@ describe('PrivacySettings', () => {
         ...defaultMockReturn,
         status: {
           ...defaultMockReturn.status,
-          status: 'disabled'
+          status: 'disabled',
         },
-        isProtectionEnabled: false
+        isProtectionEnabled: false,
       })
 
       // Act
@@ -171,8 +171,8 @@ describe('PrivacySettings', () => {
         ...defaultMockReturn,
         status: {
           ...defaultMockReturn.status,
-          status: 'partial'
-        }
+          status: 'partial',
+        },
       })
 
       // Act
@@ -192,9 +192,9 @@ describe('PrivacySettings', () => {
           ...defaultMockReturn.status,
           performance: {
             activationTime: 150,
-            firstRunTime: 750
-          }
-        }
+            firstRunTime: 750,
+          },
+        },
       })
 
       // Act
@@ -213,19 +213,19 @@ describe('PrivacySettings', () => {
           type: 'REDUCED_PRIVACY' as const,
           message: 'Privacy protection has been disabled',
           acknowledged: false,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         },
         {
           type: 'FINGERPRINTING_ENABLED' as const,
           message: 'Fingerprinting protection has been disabled',
           acknowledged: false,
-          timestamp: Date.now()
-        }
+          timestamp: Date.now(),
+        },
       ]
 
       mockUsePrivacySettings.mockReturnValue({
         ...defaultMockReturn,
-        warnings
+        warnings,
       })
 
       // Act
@@ -246,14 +246,14 @@ describe('PrivacySettings', () => {
           type: 'REDUCED_PRIVACY' as const,
           message: 'Privacy protection has been disabled',
           acknowledged: false,
-          timestamp: Date.now()
-        }
+          timestamp: Date.now(),
+        },
       ]
 
       mockUsePrivacySettings.mockReturnValue({
         ...defaultMockReturn,
         warnings,
-        acknowledgeWarning: mockAcknowledgeWarning
+        acknowledgeWarning: mockAcknowledgeWarning,
       })
 
       // Act
@@ -274,14 +274,14 @@ describe('PrivacySettings', () => {
           type: 'REDUCED_PRIVACY' as const,
           message: 'Privacy protection has been disabled',
           acknowledged: false,
-          timestamp: Date.now()
-        }
+          timestamp: Date.now(),
+        },
       ]
 
       mockUsePrivacySettings.mockReturnValue({
         ...defaultMockReturn,
         warnings,
-        clearWarnings: mockClearWarnings
+        clearWarnings: mockClearWarnings,
       })
 
       // Act
@@ -302,7 +302,7 @@ describe('PrivacySettings', () => {
 
       mockUsePrivacySettings.mockReturnValue({
         ...defaultMockReturn,
-        disableProtection: mockDisableProtection
+        disableProtection: mockDisableProtection,
       })
 
       // Act
@@ -321,17 +321,19 @@ describe('PrivacySettings', () => {
 
       mockUsePrivacySettings.mockReturnValue({
         ...defaultMockReturn,
-        updateSettings: mockUpdateSettings
+        updateSettings: mockUpdateSettings,
       })
 
       // Act
       render(<PrivacySettings />)
-      const fingerprintingToggle = screen.getByRole('button', { name: /fingerprinting protection/i })
+      const fingerprintingToggle = screen.getByRole('button', {
+        name: /fingerprinting protection/i,
+      })
       await user.click(fingerprintingToggle)
 
       // Assert
       expect(mockUpdateSettings).toHaveBeenCalledWith({
-        fingerprintingProtection: false
+        fingerprintingProtection: false,
       })
     })
 
@@ -342,7 +344,7 @@ describe('PrivacySettings', () => {
 
       mockUsePrivacySettings.mockReturnValue({
         ...defaultMockReturn,
-        updateSettings: mockUpdateSettings
+        updateSettings: mockUpdateSettings,
       })
 
       // Act
@@ -352,7 +354,7 @@ describe('PrivacySettings', () => {
 
       // Assert
       expect(mockUpdateSettings).toHaveBeenCalledWith({
-        trackerBlocking: false
+        trackerBlocking: false,
       })
     })
 
@@ -363,7 +365,7 @@ describe('PrivacySettings', () => {
 
       mockUsePrivacySettings.mockReturnValue({
         ...defaultMockReturn,
-        updateSettings: mockUpdateSettings
+        updateSettings: mockUpdateSettings,
       })
 
       // Act
@@ -373,7 +375,7 @@ describe('PrivacySettings', () => {
 
       // Assert
       expect(mockUpdateSettings).toHaveBeenCalledWith({
-        braveShieldsAggressive: false
+        braveShieldsAggressive: false,
       })
     })
 
@@ -383,14 +385,16 @@ describe('PrivacySettings', () => {
         ...defaultMockReturn,
         isProtectionEnabled: false,
         isFingerprintingEnabled: false,
-        isTrackerBlockingEnabled: false
+        isTrackerBlockingEnabled: false,
       })
 
       // Act
       render(<PrivacySettings />)
 
       // Assert
-      const fingerprintingToggle = screen.getByRole('button', { name: /fingerprinting protection/i })
+      const fingerprintingToggle = screen.getByRole('button', {
+        name: /fingerprinting protection/i,
+      })
       const trackerToggle = screen.getByRole('button', { name: /tracker blocking/i })
       const shieldsToggle = screen.getByRole('button', { name: /brave shields/i })
 
@@ -418,16 +422,16 @@ describe('PrivacySettings', () => {
               fontFingerprint: false,
               audioFingerprint: false,
               screenFingerprint: false,
-              timezoneFingerprint: false
+              timezoneFingerprint: false,
             },
-            timestamp: Date.now()
-          }
-        ]
+            timestamp: Date.now(),
+          },
+        ],
       })
 
       mockUsePrivacySettings.mockReturnValue({
         ...defaultMockReturn,
-        runFingerprintingTests: mockRunTests
+        runFingerprintingTests: mockRunTests,
       })
 
       // Act
@@ -454,9 +458,9 @@ describe('PrivacySettings', () => {
             fontFingerprint: false,
             audioFingerprint: false,
             screenFingerprint: false,
-            timezoneFingerprint: false
+            timezoneFingerprint: false,
           },
-          timestamp: Date.now()
+          timestamp: Date.now(),
         },
         {
           testName: 'WebGL Fingerprinting',
@@ -469,15 +473,15 @@ describe('PrivacySettings', () => {
             fontFingerprint: false,
             audioFingerprint: false,
             screenFingerprint: false,
-            timezoneFingerprint: false
+            timezoneFingerprint: false,
           },
-          timestamp: Date.now()
-        }
+          timestamp: Date.now(),
+        },
       ]
 
       // Mock the component state to include test results
       const { rerender } = render(<PrivacySettings />)
-      
+
       // Simulate test results being set
       const component = screen.getByText('Privacy Settings').closest('div')
       if (component) {
@@ -487,8 +491,8 @@ describe('PrivacySettings', () => {
           ...defaultMockReturn,
           runFingerprintingTests: vi.fn().mockResolvedValue({
             success: true,
-            data: testResults
-          })
+            data: testResults,
+          }),
         })
       }
 
@@ -515,8 +519,8 @@ describe('PrivacySettings', () => {
     it('should show loading state during tests', async () => {
       // Arrange
       const user = userEvent.setup()
-      let resolvePromise: (value: unknown) => void
-      const testPromise = new Promise(resolve => {
+      let resolvePromise: (value: unknown) => void = () => {}
+      const testPromise = new Promise((resolve) => {
         resolvePromise = resolve
       })
 
@@ -524,7 +528,7 @@ describe('PrivacySettings', () => {
 
       mockUsePrivacySettings.mockReturnValue({
         ...defaultMockReturn,
-        runFingerprintingTests: mockRunTests
+        runFingerprintingTests: mockRunTests,
       })
 
       // Act

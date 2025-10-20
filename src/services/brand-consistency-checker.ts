@@ -189,7 +189,8 @@ export class BrandConsistencyChecker {
     if (
       styles.fontWeight !== null &&
       styles.fontWeight !== undefined &&
-      !TYPOGRAPHY_STANDARDS.weights.includes(styles.fontWeight)
+      typeof styles.fontWeight === 'number' &&
+      !TYPOGRAPHY_STANDARDS.weights.includes(styles.fontWeight as 300 | 400 | 500 | 600 | 700)
     ) {
       this.violations.push({
         type: 'typography',
@@ -197,14 +198,18 @@ export class BrandConsistencyChecker {
         component: componentName,
         property: 'fontWeight',
         expected: TYPOGRAPHY_STANDARDS.weights.join(' | '),
-        actual: styles.fontWeight.toString(),
+        actual: String(styles.fontWeight),
         message: 'Font weight should be from approved weights',
         fix: `Use one of: ${TYPOGRAPHY_STANDARDS.weights.join(', ')}`,
       })
     }
 
     // Check font size
-    if (styles.fontSize !== null && styles.fontSize !== undefined) {
+    if (
+      styles.fontSize !== null &&
+      styles.fontSize !== undefined &&
+      typeof styles.fontSize === 'string'
+    ) {
       const fontSize = this.parseFontSize(styles.fontSize)
       if (fontSize !== null && fontSize !== undefined && !this.isValidFontSize(fontSize)) {
         this.violations.push({
@@ -259,7 +264,9 @@ export class BrandConsistencyChecker {
       styles.color !== null &&
       styles.color !== undefined &&
       styles.backgroundColor !== null &&
-      styles.backgroundColor !== undefined
+      styles.backgroundColor !== undefined &&
+      typeof styles.color === 'string' &&
+      typeof styles.backgroundColor === 'string'
     ) {
       const contrast = this.calculateColorContrast(styles.color, styles.backgroundColor)
 
@@ -278,7 +285,11 @@ export class BrandConsistencyChecker {
     }
 
     // Check minimum font size
-    if (styles.fontSize !== null && styles.fontSize !== undefined) {
+    if (
+      styles.fontSize !== null &&
+      styles.fontSize !== undefined &&
+      typeof styles.fontSize === 'string'
+    ) {
       const fontSize = this.parseFontSize(styles.fontSize)
       if (fontSize !== null && fontSize !== undefined && fontSize < 12) {
         this.violations.push({
@@ -387,8 +398,8 @@ export class BrandConsistencyChecker {
   private normalizeColor(color: string): string {
     // Convert various color formats to hex
     if (color.startsWith('#')) return color.toUpperCase()
-    if (color.startsWith('rgb')) return this.rgbToHex(color)
-    if (color.startsWith('hsl')) return this.hslToHex(color)
+    if (color.startsWith('rgb')) return this.rgbToHex()
+    if (color.startsWith('hsl')) return this.hslToHex()
     return color
   }
 
@@ -426,10 +437,8 @@ export class BrandConsistencyChecker {
   }
 
   private isValidSpacing(spacing: number): boolean {
-    return (
-      Object.values(SPACING_STANDARDS).includes(spacing as keyof typeof SPACING_STANDARDS) ||
-      spacing % 8 === 0
-    )
+    const validSpacings = Object.values(SPACING_STANDARDS)
+    return validSpacings.includes(spacing as 4 | 8 | 16 | 24 | 32 | 48) || spacing % 8 === 0
   }
 
   private hexToRgb(hex: string): { r: number; g: number; b: number } | null {

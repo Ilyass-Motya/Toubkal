@@ -1,6 +1,6 @@
 /**
  * Toubkal Router Component
- * 
+ *
  * Handles routing for toubkal:// URLs and provides
  * backward compatibility for chrome:// URLs.
  */
@@ -35,76 +35,78 @@ export const ToubkalRouter: React.FC<ToubkalRouterProps> = ({
     redirectUrl: null,
   })
 
-  const handleUrlChange = useCallback(async (url: string) => {
-    setRouterState(prev => ({ ...prev, isLoading: true, error: null }))
+  const handleUrlChange = useCallback(
+    async (url: string) => {
+      setRouterState((prev) => ({ ...prev, isLoading: true, error: null }))
 
-    try {
-      const result = await urlSchemeManager.processUrl(url)
-      
-      if (!result.success) {
-        setRouterState(prev => ({
+      try {
+        const result = await urlSchemeManager.processUrl(url)
+
+        if (!result.success) {
+          setRouterState((prev) => ({
+            ...prev,
+            isLoading: false,
+            error: result.error,
+          }))
+          return
+        }
+
+        const { data: validation } = result
+
+        // Handle redirects for backward compatibility
+        if (validation.isLegacy && validation.redirectUrl) {
+          setRouterState((prev) => ({
+            ...prev,
+            redirectUrl: validation.redirectUrl || '',
+            isLoading: false,
+          }))
+
+          // Auto-redirect after a brief delay to show the redirect
+          setTimeout(() => {
+            onNavigate(validation.redirectUrl || '')
+          }, 1000)
+          return
+        }
+
+        // Handle removed Brave URLs
+        if (validation.isRemoved) {
+          setRouterState((prev) => ({
+            ...prev,
+            isLoading: false,
+            error: 'This Brave URL is no longer supported. Please use the equivalent Toubkal page.',
+          }))
+          return
+        }
+
+        // Handle invalid URLs
+        if (!validation.isValid) {
+          setRouterState((prev) => ({
+            ...prev,
+            isLoading: false,
+            error: validation.error ?? 'Invalid URL',
+          }))
+          return
+        }
+
+        // Valid URL - update current page
+        setRouterState((prev) => ({
+          ...prev,
+          currentPage: url,
+          isLoading: false,
+          error: null,
+          redirectUrl: null,
+        }))
+      } catch (error) {
+        console.error('[ToubkalRouter.handleUrlChange] Failed:', error)
+        setRouterState((prev) => ({
           ...prev,
           isLoading: false,
-          error: result.error,
+          error: error instanceof Error ? error.message : 'Unknown error occurred',
         }))
-        return
       }
-
-      const { data: validation } = result
-
-      // Handle redirects for backward compatibility
-      if (validation.isLegacy && validation.redirectUrl) {
-        setRouterState(prev => ({
-          ...prev,
-          redirectUrl: validation.redirectUrl,
-          isLoading: false,
-        }))
-        
-        // Auto-redirect after a brief delay to show the redirect
-        setTimeout(() => {
-          onNavigate(validation.redirectUrl)
-        }, 1000)
-        return
-      }
-
-      // Handle removed Brave URLs
-      if (validation.isRemoved) {
-        setRouterState(prev => ({
-          ...prev,
-          isLoading: false,
-          error: 'This Brave URL is no longer supported. Please use the equivalent Toubkal page.',
-        }))
-        return
-      }
-
-      // Handle invalid URLs
-      if (!validation.isValid) {
-        setRouterState(prev => ({
-          ...prev,
-          isLoading: false,
-          error: validation.error ?? 'Invalid URL',
-        }))
-        return
-      }
-
-      // Valid URL - update current page
-      setRouterState(prev => ({
-        ...prev,
-        currentPage: url,
-        isLoading: false,
-        error: null,
-        redirectUrl: null,
-      }))
-
-    } catch (error) {
-      console.error('[ToubkalRouter.handleUrlChange] Failed:', error)
-      setRouterState(prev => ({
-        ...prev,
-        isLoading: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred',
-      }))
-    }
-  }, [onNavigate])
+    },
+    [onNavigate]
+  )
 
   // Handle URL changes
   useEffect(() => {
@@ -153,10 +155,8 @@ export const ToubkalRouter: React.FC<ToubkalRouterProps> = ({
             <h2 className="text-xl font-semibold text-red-900 dark:text-red-100 mb-4">
               Page Not Found
             </h2>
-            <p className="text-red-700 dark:text-red-300 mb-4">
-              {routerState.error}
-            </p>
-            
+            <p className="text-red-700 dark:text-red-300 mb-4">{routerState.error}</p>
+
             <div className="text-left bg-white dark:bg-gray-800 rounded p-4 mb-4">
               <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
                 Valid Toubkal URLs:

@@ -48,12 +48,21 @@ export function usePrivacySettings(): UsePrivacySettingsReturn {
   const privacyManagerRef = useRef<PrivacyManager | null>(null)
   const isInitializedRef = useRef(false)
 
-  // Initialize privacy manager
-  useEffect(() => {
-    if (!isInitializedRef.current) {
-      void initializePrivacyManager()
+  const handleSettingsChanged = useCallback(() => {
+    if (privacyManagerRef.current) {
+      const newSettings = privacyManagerRef.current.getSettings()
+      const newStatus = privacyManagerRef.current.getStatus()
+
+      setSettings(newSettings)
+      setStatus(newStatus)
     }
-  }, [initializePrivacyManager])
+  }, [])
+
+  const handleWarningShown = useCallback((event: { data?: { warning?: PrivacyWarning } }) => {
+    if (event.data?.warning != null) {
+      setWarnings((prev) => [...prev, event.data.warning])
+    }
+  }, [])
 
   const initializePrivacyManager = useCallback(async (): Promise<void> => {
     try {
@@ -90,21 +99,12 @@ export function usePrivacySettings(): UsePrivacySettingsReturn {
     }
   }, [handleSettingsChanged, handleWarningShown])
 
-  const handleSettingsChanged = useCallback(() => {
-    if (privacyManagerRef.current) {
-      const newSettings = privacyManagerRef.current.getSettings()
-      const newStatus = privacyManagerRef.current.getStatus()
-
-      setSettings(newSettings)
-      setStatus(newStatus)
+  // Initialize privacy manager
+  useEffect(() => {
+    if (!isInitializedRef.current) {
+      void initializePrivacyManager()
     }
-  }, [])
-
-  const handleWarningShown = useCallback((event: { data?: { warning?: PrivacyWarning } }) => {
-    if (event.data?.warning != null) {
-      setWarnings((prev) => [...prev, event.data.warning])
-    }
-  }, [])
+  }, [initializePrivacyManager])
 
   const updateSettings = useCallback(
     async (updates: Partial<PrivacySettings>): Promise<Result<PrivacySettings>> => {
@@ -226,7 +226,7 @@ export function usePrivacySettings(): UsePrivacySettingsReturn {
     setWarnings([])
   }, [])
 
-  const refresh = useCallback((): Promise<void> => {
+  const refresh = useCallback((): void => {
     if (!privacyManagerRef.current) {
       return
     }

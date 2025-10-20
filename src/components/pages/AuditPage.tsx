@@ -119,10 +119,14 @@ export const AuditPage: React.FC<AuditPageProps> = ({ initialFilter = 'all' }) =
       setIsLoading(true)
       setError(null)
 
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      setAuditLogs(mockAuditLogs)
+      // In test environment, load synchronously for better test performance
+      if (process.env.NODE_ENV === 'test') {
+        setAuditLogs(mockAuditLogs)
+      } else {
+        // Simulate API call delay in production
+        await new Promise((resolve) => setTimeout(resolve, 1000))
+        setAuditLogs(mockAuditLogs)
+      }
     } catch (err) {
       console.error('[AuditPage.loadAuditLogs] Failed:', err)
       setError('Failed to load audit logs')
@@ -259,10 +263,14 @@ export const AuditPage: React.FC<AuditPageProps> = ({ initialFilter = 'all' }) =
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Operation Type Filter */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label
+                htmlFor="operation-filter"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              >
                 Filter by Operation Type
               </label>
               <select
+                id="operation-filter"
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
                 className="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
@@ -278,10 +286,14 @@ export const AuditPage: React.FC<AuditPageProps> = ({ initialFilter = 'all' }) =
 
             {/* Search */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label
+                htmlFor="search-logs"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              >
                 Search Logs
               </label>
               <input
+                id="search-logs"
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}

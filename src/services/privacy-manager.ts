@@ -1,6 +1,6 @@
 /**
  * Privacy Manager Service
- * 
+ *
  * Manages privacy settings, fingerprinting protection, and tracker blocking
  * for Toubkal Browser. Implements Result<T> pattern for error handling.
  */
@@ -13,7 +13,7 @@ import {
   FingerprintingTestResult,
   PrivacyWarning,
   PrivacyManagerConfig,
-  PrivacyEvent
+  PrivacyEvent,
 } from '@/types/PrivacyTypes'
 import { Result } from '@/types/CommonTypes'
 import { getAuditLogger } from './audit-logger'
@@ -37,18 +37,18 @@ export class PrivacyManager {
         braveShieldsAggressive: true,
         protectionEnabled: true,
         lastModified: Date.now(),
-        userId: this.generateUserId()
+        userId: this.generateUserId(),
       },
       blocklistSources: [
         'https://easylist.to/easylist/easylist.txt',
         'https://easylist.to/easylist/easyprivacy.txt',
-        'https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/filters.txt'
+        'https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/filters.txt',
       ],
       thresholds: {
         maxActivationTime: 2000,
-        maxFirstRunTime: 10000
+        maxFirstRunTime: 10000,
       },
-      auditRetentionDays: 90
+      auditRetentionDays: 90,
     }
 
     // Merge with provided config
@@ -65,7 +65,7 @@ export class PrivacyManager {
    */
   async initialize(): Promise<Result<PrivacyStatus>> {
     const startTime = performance.now()
-    
+
     try {
       // Load settings from storage
       const settingsResult = await this.loadSettings()
@@ -91,13 +91,13 @@ export class PrivacyManager {
       // Log initialization
       await this.logEvent({
         type: 'PRIVACY_SETTINGS_CHANGED',
-        data: { 
+        data: {
           action: 'initialize',
           duration: totalTime,
-          settings: this.settings
+          settings: this.settings,
         },
         timestamp: Date.now(),
-        userId: this.settings.userId
+        userId: this.settings.userId,
       })
 
       const status: PrivacyStatus = {
@@ -105,13 +105,13 @@ export class PrivacyManager {
         features: {
           fingerprinting: this.settings.fingerprintingProtection,
           tracking: this.settings.trackerBlocking,
-          shields: this.settings.braveShieldsAggressive
+          shields: this.settings.braveShieldsAggressive,
         },
         performance: {
           activationTime: totalTime,
-          firstRunTime: totalTime
+          firstRunTime: totalTime,
         },
-        lastAuditId: 'audit_' + Date.now()
+        lastAuditId: 'audit_' + Date.now(),
       }
 
       return { success: true, data: status }
@@ -137,13 +137,13 @@ export class PrivacyManager {
       features: {
         fingerprinting: this.settings.fingerprintingProtection,
         tracking: this.settings.trackerBlocking,
-        shields: this.settings.braveShieldsAggressive
+        shields: this.settings.braveShieldsAggressive,
       },
       performance: {
         activationTime: 0, // Will be set during activation
-        firstRunTime: 0
+        firstRunTime: 0,
       },
-      lastAuditId: 'audit_' + Date.now()
+      lastAuditId: 'audit_' + Date.now(),
     }
   }
 
@@ -153,7 +153,7 @@ export class PrivacyManager {
   async updateSettings(updates: Partial<PrivacySettings>): Promise<Result<PrivacySettings>> {
     try {
       const oldSettings = { ...this.settings }
-      
+
       // Validate updates
       const validationResult = this.validateSettings(updates)
       if (!validationResult.success) {
@@ -174,13 +174,13 @@ export class PrivacyManager {
       // Log the change
       await this.logEvent({
         type: 'PRIVACY_SETTINGS_CHANGED',
-        data: { 
-          oldSettings, 
+        data: {
+          oldSettings,
           newSettings: this.settings,
-          changes: Object.keys(updates)
+          changes: Object.keys(updates),
         },
         timestamp: Date.now(),
-        userId: this.settings.userId
+        userId: this.settings.userId,
       })
 
       // Show warnings if privacy is reduced
@@ -213,15 +213,15 @@ export class PrivacyManager {
       type: 'REDUCED_PRIVACY',
       message: 'Disabling privacy protection will reduce your security and allow tracking.',
       acknowledged: false,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     }
-    
+
     this.warnings.push(warning)
     this.emitEvent({
       type: 'PRIVACY_WARNING_SHOWN',
       data: { warning },
       timestamp: Date.now(),
-      userId: this.settings.userId
+      userId: this.settings.userId,
     })
 
     const result = await this.updateSettings({ protectionEnabled: false })
@@ -335,8 +335,13 @@ export class PrivacyManager {
 
   private validateSettings(updates: Partial<PrivacySettings>): Result<boolean> {
     // Validate boolean values
-    const booleanFields = ['fingerprintingProtection', 'trackerBlocking', 'braveShieldsAggressive', 'protectionEnabled']
-    
+    const booleanFields = [
+      'fingerprintingProtection',
+      'trackerBlocking',
+      'braveShieldsAggressive',
+      'protectionEnabled',
+    ]
+
     for (const field of booleanFields) {
       if (field in updates && typeof updates[field as keyof PrivacySettings] !== 'boolean') {
         return { success: false, error: `Invalid value for ${field}: must be boolean` }
@@ -344,7 +349,11 @@ export class PrivacyManager {
     }
 
     // Validate userId if provided
-    if (updates.userId !== null && updates.userId !== undefined && typeof updates.userId !== 'string') {
+    if (
+      updates.userId !== null &&
+      updates.userId !== undefined &&
+      typeof updates.userId !== 'string'
+    ) {
       return { success: false, error: 'Invalid userId: must be string' }
     }
 
@@ -378,16 +387,19 @@ export class PrivacyManager {
   private activateFingerprintingProtection(): Promise<void> {
     // In a real implementation, this would configure Chromium's fingerprinting protection
     console.log('[PrivacyManager] Activating fingerprinting protection')
+    return Promise.resolve()
   }
 
   private activateTrackerBlocking(): Promise<void> {
     // In a real implementation, this would configure tracker blocking
     console.log('[PrivacyManager] Activating tracker blocking')
+    return Promise.resolve()
   }
 
   private activateBraveShields(): Promise<void> {
     // In a real implementation, this would configure Brave Shields
     console.log('[PrivacyManager] Activating Brave Shields (Aggressive mode)')
+    return Promise.resolve()
   }
 
   private updateBlocklists(): Promise<Result<boolean>> {
@@ -408,21 +420,21 @@ export class PrivacyManager {
         version: '1.0.0',
         ruleCount: 0,
         lastUpdated: Date.now(),
-        active: true
+        active: true,
       },
       {
         name: 'EasyPrivacy',
         version: '1.0.0',
         ruleCount: 0,
         lastUpdated: Date.now(),
-        active: true
-      }
+        active: true,
+      },
     ]
   }
 
   private testCanvasFingerprinting(): Promise<FingerprintingTestResult> {
     // Mock implementation - in real app would test actual canvas fingerprinting
-    return {
+    return Promise.resolve({
       testName: 'Canvas Fingerprinting',
       testUrl: 'https://panopticlick.eff.org/',
       score: this.settings.fingerprintingProtection ? 95 : 20,
@@ -433,10 +445,10 @@ export class PrivacyManager {
         fontFingerprint: false,
         audioFingerprint: false,
         screenFingerprint: false,
-        timezoneFingerprint: false
+        timezoneFingerprint: false,
       },
-      timestamp: Date.now()
-    }
+      timestamp: Date.now(),
+    })
   }
 
   private testWebGLFingerprinting(): Promise<FingerprintingTestResult> {
@@ -451,9 +463,9 @@ export class PrivacyManager {
         fontFingerprint: false,
         audioFingerprint: false,
         screenFingerprint: false,
-        timezoneFingerprint: false
+        timezoneFingerprint: false,
       },
-      timestamp: Date.now()
+      timestamp: Date.now(),
     }
   }
 
@@ -469,20 +481,23 @@ export class PrivacyManager {
         fontFingerprint: !this.settings.fingerprintingProtection,
         audioFingerprint: false,
         screenFingerprint: false,
-        timezoneFingerprint: false
+        timezoneFingerprint: false,
       },
-      timestamp: Date.now()
+      timestamp: Date.now(),
     }
   }
 
-  private checkPrivacyWarnings(oldSettings: PrivacySettings, newSettings: PrivacySettings): Promise<void> {
+  private checkPrivacyWarnings(
+    oldSettings: PrivacySettings,
+    newSettings: PrivacySettings
+  ): Promise<void> {
     // Check if privacy was reduced
     if (oldSettings.protectionEnabled && !newSettings.protectionEnabled) {
       const warning: PrivacyWarning = {
         type: 'REDUCED_PRIVACY',
         message: 'Privacy protection has been disabled. This may reduce your security.',
         acknowledged: false,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       }
       this.warnings.push(warning)
     }
@@ -492,7 +507,7 @@ export class PrivacyManager {
         type: 'FINGERPRINTING_ENABLED',
         message: 'Fingerprinting protection has been disabled. Websites may be able to track you.',
         acknowledged: false,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       }
       this.warnings.push(warning)
     }
@@ -502,7 +517,7 @@ export class PrivacyManager {
         type: 'TRACKING_ENABLED',
         message: 'Tracker blocking has been disabled. Advertisers may be able to track you.',
         acknowledged: false,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       }
       this.warnings.push(warning)
     }
@@ -514,11 +529,11 @@ export class PrivacyManager {
         event.type,
         {
           ...event.data,
-          userId: event.userId
+          userId: event.userId,
         },
         event.userId
       )
-      
+
       if (!result.success) {
         console.error('[PrivacyManager] Failed to log event:', result.error)
       }
@@ -527,14 +542,12 @@ export class PrivacyManager {
     }
   }
 
-
   private emitEvent(event: PrivacyEvent): void {
     const listener = this.eventListeners.get(event.type)
     if (listener) {
       listener(event)
     }
   }
-
 }
 
 // Singleton instance

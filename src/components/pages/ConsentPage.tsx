@@ -393,10 +393,14 @@ export const ConsentPage: React.FC<ConsentPageProps> = ({ initialFilter = 'all' 
             <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6 mb-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label
+                    htmlFor="action-filter"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >
                     Filter by Action
                   </label>
                   <select
+                    id="action-filter"
                     value={filter}
                     onChange={(e) => setFilter(e.target.value)}
                     className="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
@@ -409,10 +413,14 @@ export const ConsentPage: React.FC<ConsentPageProps> = ({ initialFilter = 'all' 
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label
+                    htmlFor="search-decisions"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >
                     Search Decisions
                   </label>
                   <input
+                    id="search-decisions"
                     type="text"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}

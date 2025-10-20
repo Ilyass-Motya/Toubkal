@@ -1,6 +1,6 @@
 /**
  * Toubkal Router Tests
- * 
+ *
  * Test suite for ToubkalRouter component covering URL processing,
  * redirects, and error handling as per AC6 and AC7.
  */
@@ -83,9 +83,11 @@ describe('ToubkalRouter', () => {
       await waitFor(() => {
         expect(screen.getByText('Redirecting...')).toBeInTheDocument()
       })
-      
+
       expect(screen.getByText(/chrome:\/\/ URL has been moved/)).toBeInTheDocument()
-      expect(screen.getByText(`${LEGACY_CHROME_URLS.SETTINGS} → ${INTERNAL_PAGES.SETTINGS}`)).toBeInTheDocument()
+      expect(
+        screen.getByText(`${LEGACY_CHROME_URLS.SETTINGS} → ${INTERNAL_PAGES.SETTINGS}`)
+      ).toBeInTheDocument()
     })
 
     it('should auto-redirect after showing notification', async () => {
@@ -114,9 +116,12 @@ describe('ToubkalRouter', () => {
       })
 
       // Assert auto-redirect happens after timeout
-      await waitFor(() => {
-        expect(mockOnNavigate).toHaveBeenCalledWith(INTERNAL_PAGES.SETTINGS)
-      }, { timeout: 2000 })
+      await waitFor(
+        () => {
+          expect(mockOnNavigate).toHaveBeenCalledWith(INTERNAL_PAGES.SETTINGS)
+        },
+        { timeout: 2000 }
+      )
     })
   })
 
@@ -143,7 +148,11 @@ describe('ToubkalRouter', () => {
 
       // Assert
       await waitFor(() => {
-        expect(screen.getByText('This Brave URL is no longer supported. Please use the equivalent Toubkal page.')).toBeInTheDocument()
+        expect(
+          screen.getByText(
+            'This Brave URL is no longer supported. Please use the equivalent Toubkal page.'
+          )
+        ).toBeInTheDocument()
       })
     })
   })
@@ -268,7 +277,7 @@ describe('ToubkalRouter', () => {
   describe('loading state', () => {
     it('should show loading state while processing URL', async () => {
       // Arrange
-      let resolveProcessUrl: (value: Result<UrlValidationResult>) => void
+      let resolveProcessUrl: (value: Result<UrlValidationResult>) => void = () => {}
       const processUrlPromise = new Promise<Result<UrlValidationResult>>((resolve) => {
         resolveProcessUrl = resolve
       })

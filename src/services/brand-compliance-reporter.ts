@@ -393,7 +393,7 @@ export class BrandComplianceReporter {
 </html>
     `
 
-    return html
+    return Promise.resolve(html)
   }
 
   /**
@@ -464,7 +464,7 @@ ${report.recommendations.map((rec) => `- ${rec}`).join('\n')}
 - **Environment:** ${report.metadata.environment}
 `
 
-    return markdown
+    return Promise.resolve(markdown)
   }
 
   /**
@@ -505,7 +505,7 @@ ${report.recommendations.map((rec) => `- ${rec}`).join('\n')}
       .map((row) => row.map((cell) => `"${cell}"`).join(','))
       .join('\n')
 
-    return csvContent
+    return Promise.resolve(csvContent)
   }
 
   /**

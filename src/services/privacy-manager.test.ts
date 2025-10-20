@@ -1,21 +1,21 @@
 /**
  * Privacy Manager Unit Tests
- * 
+ *
  * Comprehensive test suite for the PrivacyManager service
  * following AAA pattern and mocking external dependencies.
  */
 
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
 import { PrivacyManager } from './privacy-manager'
-import type { Result } from '@/types/Result'
+import type { Result } from '@/types'
 
 // Mock crypto.subtle for signature generation
 Object.defineProperty(global, 'crypto', {
   value: {
     subtle: {
-      digest: vi.fn().mockResolvedValue(new ArrayBuffer(32))
-    }
-  }
+      digest: vi.fn().mockResolvedValue(new ArrayBuffer(32)),
+    },
+  },
 })
 
 describe('PrivacyManager', () => {
@@ -53,8 +53,8 @@ describe('PrivacyManager', () => {
           braveShieldsAggressive: false,
           protectionEnabled: false,
           lastModified: Date.now(),
-          userId: 'custom_user'
-        }
+          userId: 'custom_user',
+        },
       }
 
       // Act
@@ -102,7 +102,7 @@ describe('PrivacyManager', () => {
       // Arrange
       const updates = {
         fingerprintingProtection: false,
-        trackerBlocking: false
+        trackerBlocking: false,
       }
 
       // Act
@@ -120,7 +120,7 @@ describe('PrivacyManager', () => {
     it('should validate settings before updating', async () => {
       // Arrange
       const invalidUpdates = {
-        fingerprintingProtection: 'invalid' as unknown as 'strict' | 'moderate' | 'minimal'
+        fingerprintingProtection: 'invalid' as unknown as boolean,
       }
 
       // Act
@@ -137,7 +137,7 @@ describe('PrivacyManager', () => {
       // Arrange
       const originalSettings = privacyManager.getSettings()
       const updates = {
-        fingerprintingProtection: false
+        fingerprintingProtection: false,
       }
 
       // Act
@@ -167,7 +167,7 @@ describe('PrivacyManager', () => {
       if (result.success) {
         expect(result.data).toBe(true)
       }
-      
+
       const settings = privacyManager.getSettings()
       expect(settings.protectionEnabled).toBe(true)
     })
@@ -184,7 +184,7 @@ describe('PrivacyManager', () => {
       if (result.success) {
         expect(result.data).toBe(true)
       }
-      
+
       const settings = privacyManager.getSettings()
       expect(settings.protectionEnabled).toBe(false)
     })
@@ -220,7 +220,7 @@ describe('PrivacyManager', () => {
       await privacyManager.updateSettings({
         protectionEnabled: true,
         fingerprintingProtection: false,
-        trackerBlocking: true
+        trackerBlocking: true,
       })
 
       // Act
@@ -243,7 +243,7 @@ describe('PrivacyManager', () => {
       if (result.success) {
         expect(Array.isArray(result.data)).toBe(true)
         expect(result.data.length).toBeGreaterThan(0)
-        
+
         for (const test of result.data) {
           expect(test.testName).toBeDefined()
           expect(test.score).toBeGreaterThanOrEqual(0)
@@ -266,11 +266,11 @@ describe('PrivacyManager', () => {
       // Assert
       expect(enabledResult.success).toBe(true)
       expect(disabledResult.success).toBe(true)
-      
+
       if (enabledResult.success && disabledResult.success) {
         const enabledScore = enabledResult.data[0]?.score || 0
         const disabledScore = disabledResult.data[0]?.score || 0
-        
+
         expect(enabledScore).toBeGreaterThan(disabledScore)
       }
     })
@@ -293,7 +293,7 @@ describe('PrivacyManager', () => {
       expect(newLogResult.success).toBe(true)
       if (newLogResult.success) {
         expect(newLogResult.data.length).toBeGreaterThan(initialLogCount)
-        
+
         const latestEntry = newLogResult.data[0]
         expect(latestEntry.eventType).toBe('PRIVACY_SETTINGS_CHANGED')
         expect(latestEntry.details.userId).toBeDefined()
@@ -370,10 +370,14 @@ describe('PrivacyManager', () => {
     it('should handle initialization errors gracefully', async () => {
       // Arrange
       const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
-      
+
       // Mock a failing operation by overriding the activateProtection method
-      const originalActivateProtection = (privacyManager as unknown as { activateProtection: () => Promise<void> }).activateProtection
-      ;(privacyManager as unknown as { activateProtection: () => Promise<void> }).activateProtection = vi.fn().mockRejectedValue(new Error('Test error'))
+      const originalActivateProtection = (
+        privacyManager as unknown as { activateProtection: () => Promise<void> }
+      ).activateProtection
+      ;(
+        privacyManager as unknown as { activateProtection: () => Promise<void> }
+      ).activateProtection = vi.fn().mockRejectedValue(new Error('Test error'))
 
       // Act
       const result = await privacyManager.initialize()
@@ -386,17 +390,23 @@ describe('PrivacyManager', () => {
       expect(mockConsoleError).toHaveBeenCalled()
 
       // Cleanup
-      ;(privacyManager as unknown as { activateProtection: () => Promise<void> }).activateProtection = originalActivateProtection
+      ;(
+        privacyManager as unknown as { activateProtection: () => Promise<void> }
+      ).activateProtection = originalActivateProtection
       mockConsoleError.mockRestore()
     })
 
     it('should handle settings update errors gracefully', async () => {
       // Arrange
       const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
-      
+
       // Mock a failing save operation
-      const originalSaveSettings = (privacyManager as unknown as { saveSettings: () => Promise<Result<boolean>> }).saveSettings
-      ;(privacyManager as unknown as { saveSettings: () => Promise<Result<boolean>> }).saveSettings = vi.fn().mockResolvedValue({ success: false, error: 'Save failed' })
+      const originalSaveSettings = (
+        privacyManager as unknown as { saveSettings: () => Promise<Result<boolean>> }
+      ).saveSettings
+      ;(
+        privacyManager as unknown as { saveSettings: () => Promise<Result<boolean>> }
+      ).saveSettings = vi.fn().mockResolvedValue({ success: false, error: 'Save failed' })
 
       // Act
       const result = await privacyManager.updateSettings({ fingerprintingProtection: false })
@@ -410,7 +420,9 @@ describe('PrivacyManager', () => {
       // expect(mockConsoleError).toHaveBeenCalled()
 
       // Cleanup
-      ;(privacyManager as unknown as { saveSettings: () => Promise<Result<boolean>> }).saveSettings = originalSaveSettings
+      ;(
+        privacyManager as unknown as { saveSettings: () => Promise<Result<boolean>> }
+      ).saveSettings = originalSaveSettings
       mockConsoleError.mockRestore()
     })
   })
@@ -426,7 +438,7 @@ describe('PrivacyManager', () => {
       // Assert
       const endTime = performance.now()
       const duration = endTime - startTime
-      
+
       expect(result.success).toBe(true)
       expect(duration).toBeLessThan(2000) // 2 seconds
     })
@@ -441,7 +453,7 @@ describe('PrivacyManager', () => {
       // Assert
       const endTime = performance.now()
       const duration = endTime - startTime
-      
+
       expect(result.success).toBe(true)
       expect(duration).toBeLessThan(10000) // 10 seconds
     })

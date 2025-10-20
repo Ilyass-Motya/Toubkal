@@ -1,6 +1,6 @@
 /**
  * Privacy Settings Component
- * 
+ *
  * Main UI component for managing privacy settings including
  * fingerprinting protection, tracker blocking, and Brave Shields.
  */
@@ -28,7 +28,7 @@ export function PrivacySettings({ className = '' }: PrivacySettingsProps): React
     clearWarnings,
     isProtectionEnabled,
     isFingerprintingEnabled,
-    isTrackerBlockingEnabled
+    isTrackerBlockingEnabled,
   } = usePrivacySettings()
 
   const [isRunningTests, setIsRunningTests] = useState(false)
@@ -46,7 +46,7 @@ export function PrivacySettings({ className = '' }: PrivacySettingsProps): React
     if (!settings) return
 
     await updateSettings({
-      fingerprintingProtection: !isFingerprintingEnabled
+      fingerprintingProtection: !isFingerprintingEnabled,
     })
   }
 
@@ -54,7 +54,7 @@ export function PrivacySettings({ className = '' }: PrivacySettingsProps): React
     if (!settings) return
 
     await updateSettings({
-      trackerBlocking: !isTrackerBlockingEnabled
+      trackerBlocking: !isTrackerBlockingEnabled,
     })
   }
 
@@ -62,7 +62,7 @@ export function PrivacySettings({ className = '' }: PrivacySettingsProps): React
     if (!settings) return
 
     await updateSettings({
-      braveShieldsAggressive: !settings.braveShieldsAggressive
+      braveShieldsAggressive: !settings.braveShieldsAggressive,
     })
   }
 
@@ -122,7 +122,11 @@ export function PrivacySettings({ className = '' }: PrivacySettingsProps): React
           <div className="flex">
             <div className="flex-shrink-0">
               <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                  clipRule="evenodd"
+                />
               </svg>
             </div>
             <div className="ml-3">
@@ -158,7 +162,9 @@ export function PrivacySettings({ className = '' }: PrivacySettingsProps): React
               </p>
             </div>
             <div className="text-right">
-              <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(status.status)}`}>
+              <span
+                className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(status.status)}`}
+              >
                 {getStatusText(status.status)}
               </span>
               {status.performance.activationTime > 0 && (
@@ -194,7 +200,7 @@ export function PrivacySettings({ className = '' }: PrivacySettingsProps): React
       {/* Main Settings */}
       <div className="space-y-4">
         <h3 className="text-lg font-medium text-gray-900">Privacy Features</h3>
-        
+
         {/* Overall Protection Toggle */}
         <div className="bg-white border border-gray-200 rounded-lg p-4">
           <div className="flex items-center justify-between">
@@ -236,14 +242,14 @@ export function PrivacySettings({ className = '' }: PrivacySettingsProps): React
                 disabled={!isProtectionEnabled}
                 aria-label="Toggle fingerprinting protection"
                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                  isFingerprintingEnabled && isProtectionEnabled
-                    ? 'bg-blue-600'
-                    : 'bg-gray-200'
+                  isFingerprintingEnabled && isProtectionEnabled ? 'bg-blue-600' : 'bg-gray-200'
                 } ${!isProtectionEnabled ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 <span
                   className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                    isFingerprintingEnabled && isProtectionEnabled ? 'translate-x-6' : 'translate-x-1'
+                    isFingerprintingEnabled && isProtectionEnabled
+                      ? 'translate-x-6'
+                      : 'translate-x-1'
                   }`}
                 />
               </button>
@@ -264,14 +270,14 @@ export function PrivacySettings({ className = '' }: PrivacySettingsProps): React
                 disabled={!isProtectionEnabled}
                 aria-label="Toggle tracker blocking"
                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                  isTrackerBlockingEnabled && isProtectionEnabled
-                    ? 'bg-blue-600'
-                    : 'bg-gray-200'
+                  isTrackerBlockingEnabled && isProtectionEnabled ? 'bg-blue-600' : 'bg-gray-200'
                 } ${!isProtectionEnabled ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 <span
                   className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                    isTrackerBlockingEnabled && isProtectionEnabled ? 'translate-x-6' : 'translate-x-1'
+                    isTrackerBlockingEnabled && isProtectionEnabled
+                      ? 'translate-x-6'
+                      : 'translate-x-1'
                   }`}
                 />
               </button>
@@ -283,7 +289,9 @@ export function PrivacySettings({ className = '' }: PrivacySettingsProps): React
             <div className="bg-white border border-gray-200 rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
-                  <h4 className="text-base font-medium text-gray-900">Brave Shields (Aggressive)</h4>
+                  <h4 className="text-base font-medium text-gray-900">
+                    Brave Shields (Aggressive)
+                  </h4>
                   <p className="text-sm text-gray-600">
                     Enhanced ad and tracker blocking with aggressive filtering.
                   </p>
@@ -300,7 +308,9 @@ export function PrivacySettings({ className = '' }: PrivacySettingsProps): React
                 >
                   <span
                     className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      settings.braveShieldsAggressive && isProtectionEnabled ? 'translate-x-6' : 'translate-x-1'
+                      settings.braveShieldsAggressive && isProtectionEnabled
+                        ? 'translate-x-6'
+                        : 'translate-x-1'
                     }`}
                   />
                 </button>
@@ -338,23 +348,29 @@ export function PrivacySettings({ className = '' }: PrivacySettingsProps): React
         {testResults.length > 0 && (
           <div className="space-y-3">
             <h4 className="text-base font-medium text-gray-900">Test Results</h4>
-            {testResults.map((result, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
-                <div>
-                  <p className="text-sm font-medium text-gray-900">{result.testName}</p>
-                  <p className="text-xs text-gray-600">Score: {result.score}/100</p>
-                </div>
-                <span
-                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                    result.passed === true
-                      ? 'bg-green-100 text-green-800'
-                      : 'bg-red-100 text-red-800'
-                  }`}
+            {testResults.map((result, index) => {
+              const testResult = result as { testName: string; score: number; passed: boolean }
+              return (
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-3 bg-gray-50 rounded-md"
                 >
-                  {result.passed === true ? 'Passed' : 'Failed'}
-                </span>
-              </div>
-            ))}
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">{testResult.testName}</p>
+                    <p className="text-xs text-gray-600">Score: {testResult.score}/100</p>
+                  </div>
+                  <span
+                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                      testResult.passed === true
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-red-100 text-red-800'
+                    }`}
+                  >
+                    {testResult.passed === true ? 'Passed' : 'Failed'}
+                  </span>
+                </div>
+              )
+            })}
           </div>
         )}
       </div>
@@ -373,19 +389,31 @@ function WarningBanner({ warning, onAcknowledge }: WarningBannerProps): React.JS
       case 'REDUCED_PRIVACY':
         return (
           <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+            <path
+              fillRule="evenodd"
+              d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+              clipRule="evenodd"
+            />
           </svg>
         )
       case 'TRACKING_ENABLED':
         return (
           <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+            <path
+              fillRule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+              clipRule="evenodd"
+            />
           </svg>
         )
       case 'FINGERPRINTING_ENABLED':
         return (
           <svg className="h-5 w-5 text-orange-400" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+            <path
+              fillRule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+              clipRule="evenodd"
+            />
           </svg>
         )
       default:
@@ -409,9 +437,7 @@ function WarningBanner({ warning, onAcknowledge }: WarningBannerProps): React.JS
   return (
     <div className={`border rounded-md p-4 ${getWarningColor(warning.type)}`}>
       <div className="flex">
-        <div className="flex-shrink-0">
-          {getWarningIcon(warning.type)}
-        </div>
+        <div className="flex-shrink-0">{getWarningIcon(warning.type)}</div>
         <div className="ml-3 flex-1">
           <p className="text-sm font-medium text-gray-900">{warning.message}</p>
           {!warning.acknowledged && (

@@ -1,6 +1,6 @@
 /**
  * Panopticlick Fingerprinting Test Validation
- * 
+ *
  * Tests for privacy verification using Panopticlick methodology
  * AC8: Passes Panopticlick fingerprinting tests
  * Following Toubkal coding rules: AAA pattern, privacy testing
@@ -27,12 +27,13 @@ const mockNavigator = {
   appCodeName: 'Mozilla',
   onLine: true,
   javaEnabled: () => false,
-  getBattery: () => Promise.resolve({
-    charging: false,
-    chargingTime: Infinity,
-    dischargingTime: Infinity,
-    level: 1
-  })
+  getBattery: () =>
+    Promise.resolve({
+      charging: false,
+      chargingTime: Infinity,
+      dischargingTime: Infinity,
+      level: 1,
+    }),
 }
 
 const mockScreen = {
@@ -41,28 +42,28 @@ const mockScreen = {
   availWidth: 1920,
   availHeight: 1040,
   colorDepth: 24,
-  pixelDepth: 24
+  pixelDepth: 24,
 }
 
 const mockDate = {
   getTimezoneOffset: () => 300, // EST
-  getTime: () => 1640995200000
+  getTime: () => 1640995200000,
 }
 
 // Mock global objects
 Object.defineProperty(global, 'navigator', {
   value: mockNavigator,
-  writable: true
+  writable: true,
 })
 
 Object.defineProperty(global, 'screen', {
   value: mockScreen,
-  writable: true
+  writable: true,
 })
 
 Object.defineProperty(global, 'Date', {
   value: mockDate,
-  writable: true
+  writable: true,
 })
 
 describe('Panopticlick Fingerprinting Validation', () => {
@@ -88,7 +89,7 @@ describe('Panopticlick Fingerprinting Validation', () => {
         maxTouchPoints: navigator.maxTouchPoints,
         vendor: navigator.vendor,
         appName: navigator.appName,
-        appVersion: navigator.appVersion
+        appVersion: navigator.appVersion,
       }
 
       // Assert
@@ -97,7 +98,7 @@ describe('Panopticlick Fingerprinting Validation', () => {
       expect(fingerprint.doNotTrack).toBe('1')
       expect(fingerprint.cookieEnabled).toBe(false)
       expect(fingerprint.vendor).toBe('Toubkal')
-      
+
       // These should be standardized to prevent fingerprinting
       expect(fingerprint.hardwareConcurrency).toBe(8) // Standardized
       expect(fingerprint.maxTouchPoints).toBe(0) // Standardized
@@ -114,7 +115,7 @@ describe('Panopticlick Fingerprinting Validation', () => {
         availWidth: screen.availWidth,
         availHeight: screen.availHeight,
         colorDepth: screen.colorDepth,
-        pixelDepth: screen.pixelDepth
+        pixelDepth: screen.pixelDepth,
       }
 
       // Assert
@@ -132,7 +133,7 @@ describe('Panopticlick Fingerprinting Validation', () => {
       // Act
       const timezoneInfo = {
         timezoneOffset: new Date().getTimezoneOffset(),
-        timestamp: new Date().getTime()
+        timestamp: new Date().getTime(),
       }
 
       // Assert
@@ -152,7 +153,7 @@ describe('Panopticlick Fingerprinting Validation', () => {
         doNotTrack: navigator.doNotTrack,
         cookieEnabled: navigator.cookieEnabled,
         javaEnabled: navigator.javaEnabled(),
-        onLine: navigator.onLine
+        onLine: navigator.onLine,
       }
 
       // Assert
@@ -167,14 +168,16 @@ describe('Panopticlick Fingerprinting Validation', () => {
       // (navigator.getBattery mocked above)
 
       // Act
-      const battery = await (navigator as unknown as { getBattery: () => Promise<unknown> }).getBattery()
+      const battery = await (
+        navigator as unknown as { getBattery: () => Promise<unknown> }
+      ).getBattery()
 
       // Assert
       // Battery info should be standardized to prevent fingerprinting
-      expect(battery.charging).toBe(false) // Standardized
-      expect(battery.chargingTime).toBe(Infinity) // Standardized
-      expect(battery.dischargingTime).toBe(Infinity) // Standardized
-      expect(battery.level).toBe(1) // Standardized
+      expect((battery as { charging: boolean }).charging).toBe(false) // Standardized
+      expect((battery as { chargingTime: number }).chargingTime).toBe(Infinity) // Standardized
+      expect((battery as { dischargingTime: number }).dischargingTime).toBe(Infinity) // Standardized
+      expect((battery as { level: number }).level).toBe(1) // Standardized
     })
   })
 
@@ -198,7 +201,7 @@ describe('Panopticlick Fingerprinting Validation', () => {
         'https://www.linkedin.com/li.lms',
         'https://snap.licdn.com/li.lms',
         'https://www.reddit.com/api/v1/events',
-        'https://pixel.reddit.com/rpan.gif'
+        'https://pixel.reddit.com/rpan.gif',
       ]
 
       // Act & Assert
@@ -216,7 +219,7 @@ describe('Panopticlick Fingerprinting Validation', () => {
       // Act
       await manager.logEvent({
         eventType: 'AI_QUERY_LOCAL',
-        details: { test: 'privacy' }
+        details: { test: 'privacy' },
       })
 
       await manager.requestConsent({
@@ -224,7 +227,7 @@ describe('Panopticlick Fingerprinting Validation', () => {
         userId: 'test-user',
         dataDisclosed: ['prompt'],
         purpose: 'AI processing',
-        retentionPeriod: 30
+        retentionPeriod: 30,
       })
 
       await manager.getPrivacyDashboardState()
@@ -242,8 +245,8 @@ describe('Panopticlick Fingerprinting Validation', () => {
         details: {
           prompt: 'This is a sensitive user query',
           pageContent: 'Sensitive page content',
-          userContext: 'Personal information'
-        }
+          userContext: 'Personal information',
+        },
       }
 
       // Act
@@ -253,16 +256,14 @@ describe('Panopticlick Fingerprinting Validation', () => {
       // Assert
       expect(auditResult.success).toBe(true)
       if (auditResult.success) {
-        const event = auditResult.data.find(
-          entry => entry.eventType === 'AI_QUERY_LOCAL'
-        )
+        const event = auditResult.data.find((entry) => entry.eventType === 'AI_QUERY_LOCAL')
         expect(event).toBeDefined()
-        
+
         // Sensitive data should be sanitized or not logged
         expect(event?.details).not.toHaveProperty('prompt')
         expect(event?.details).not.toHaveProperty('pageContent')
         expect(event?.details).not.toHaveProperty('userContext')
-        
+
         // Only metadata should be logged
         expect(event?.details).toHaveProperty('timestamp')
         expect(event?.details).toHaveProperty('eventType')
@@ -274,16 +275,16 @@ describe('Panopticlick Fingerprinting Validation', () => {
       const events = [
         {
           eventType: 'AI_QUERY_LOCAL' as const,
-          details: { test: 'data1' }
+          details: { test: 'data1' },
         },
         {
           eventType: 'CONSENT_DENIED' as const,
-          details: { actionType: 'TEST', reason: 'Disabled' }
+          details: { actionType: 'TEST', reason: 'Disabled' },
         },
         {
           eventType: 'NETWORK_REQUEST_BLOCKED' as const,
-          details: { url: 'https://test.com', reason: 'Blocked' }
-        }
+          details: { url: 'https://test.com', reason: 'Blocked' },
+        },
       ]
 
       // Act
@@ -302,7 +303,7 @@ describe('Panopticlick Fingerprinting Validation', () => {
           expect(entry.timestamp).toBeGreaterThan(0)
           expect(entry.signature).toBeTruthy()
           expect(entry.merkleProof).toBeInstanceOf(Array)
-          
+
           // But should not expose sensitive data
           expect(JSON.stringify(entry.details)).not.toContain('sensitive')
           expect(JSON.stringify(entry.details)).not.toContain('personal')
@@ -320,7 +321,7 @@ describe('Panopticlick Fingerprinting Validation', () => {
         userId: 'sensitive-user-id',
         dataDisclosed: ['sensitive prompt', 'personal data'],
         purpose: 'Processing sensitive information',
-        retentionPeriod: 30
+        retentionPeriod: 30,
       }
 
       // Act
@@ -330,15 +331,13 @@ describe('Panopticlick Fingerprinting Validation', () => {
       // Assert
       expect(auditResult.success).toBe(true)
       if (auditResult.success) {
-        const consentEvent = auditResult.data.find(
-          entry => entry.eventType === 'CONSENT_DENIED'
-        )
+        const consentEvent = auditResult.data.find((entry) => entry.eventType === 'CONSENT_DENIED')
         expect(consentEvent).toBeDefined()
-        
+
         // Sensitive data should be sanitized
         expect(consentEvent?.details).not.toHaveProperty('dataDisclosed')
         expect(consentEvent?.details).not.toHaveProperty('purpose')
-        
+
         // Only action type and reason should be logged
         expect(consentEvent?.details).toHaveProperty('actionType')
         expect(consentEvent?.details).toHaveProperty('reason')

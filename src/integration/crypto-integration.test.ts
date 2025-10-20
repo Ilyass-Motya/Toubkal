@@ -100,30 +100,30 @@ class MockAuditStorage {
   private keys = new Map<string, KeyStorageEntry>()
 
   Initialize(): Promise<Result<boolean>> {
-    return { success: true, data: true }
+    return Promise.resolve({ success: true, data: true })
   }
 
   StoreKey(entry: KeyStorageEntry): Promise<Result<boolean>> {
     if (this.keys.has(entry.key_id)) {
-      return { success: false, error: 'Key already exists' }
+      return Promise.resolve({ success: false, error: 'Key already exists' })
     }
     this.keys.set(entry.key_id, { ...entry })
-    return { success: true, data: true }
+    return Promise.resolve({ success: true, data: true })
   }
 
   LoadKey(keyId: string): Promise<Result<KeyStorageEntry>> {
     const key = this.keys.get(keyId)
     if (!key) {
-      return { success: false, error: 'Key not found' }
+      return Promise.resolve({ success: false, error: 'Key not found' })
     }
-    return { success: true, data: { ...key } }
+    return Promise.resolve({ success: true, data: { ...key } })
   }
 
   LoadAllKeys(): Promise<Result<KeyStorageEntry[]>> {
-    return {
+    return Promise.resolve({
       success: true,
       data: Array.from(this.keys.values()).map((key) => ({ ...key })),
-    }
+    })
   }
 
   SetActiveKey(keyId: string): Promise<Result<boolean>> {
@@ -135,20 +135,20 @@ class MockAuditStorage {
     // Activate the specified key
     const key = this.keys.get(keyId)
     if (!key) {
-      return { success: false, error: 'Key not found' }
+      return Promise.resolve({ success: false, error: 'Key not found' })
     }
 
     key.is_active = true
-    return { success: true, data: true }
+    return Promise.resolve({ success: true, data: true })
   }
 
   GetActiveKey(): Promise<Result<KeyStorageEntry>> {
     for (const [, key] of this.keys) {
       if (key.is_active) {
-        return { success: true, data: { ...key } }
+        return Promise.resolve({ success: true, data: { ...key } })
       }
     }
-    return { success: false, error: 'No active key found' }
+    return Promise.resolve({ success: false, error: 'No active key found' })
   }
 }
 
@@ -180,8 +180,8 @@ class MockKeyManagerIntegrated {
     const keyId = 'key_' + this.keyCounter + '_' + Date.now()
     const entry: KeyStorageEntry = {
       key_id: keyId,
-      public_key: keyResult.data.public_key,
-      private_key: keyResult.data.private_key,
+      public_key: (keyResult as { success: true; data: KeyPair }).data.public_key,
+      private_key: (keyResult as { success: true; data: KeyPair }).data.private_key,
       created_timestamp: Date.now(),
       last_used_timestamp: Date.now(),
       is_active: true,
@@ -212,7 +212,10 @@ class MockKeyManagerIntegrated {
       return { success: false, error: 'No active key' }
     }
 
-    return this.keyManager.SignData(data, activeKeyResult.data.private_key)
+    return this.keyManager.SignData(
+      data,
+      (activeKeyResult as { success: true; data: KeyStorageEntry }).data.private_key
+    )
   }
 
   async VerifySignature(data: string, signature: string): Promise<Result<boolean>> {
@@ -225,7 +228,11 @@ class MockKeyManagerIntegrated {
       return { success: false, error: 'No active key' }
     }
 
-    return this.keyManager.VerifySignature(data, signature, activeKeyResult.data.public_key)
+    return this.keyManager.VerifySignature(
+      data,
+      signature,
+      (activeKeyResult as { success: true; data: KeyStorageEntry }).data.public_key
+    )
   }
 
   GetAllKeys(): Promise<Result<KeyStorageEntry[]>> {
@@ -253,7 +260,7 @@ class MockKeyManagerIntegrated {
 
   CleanupExpiredKeys(): Promise<Result<boolean>> {
     // Mock implementation - in real implementation would check timestamps
-    return { success: true, data: true }
+    return Promise.resolve({ success: true, data: true })
   }
 }
 
@@ -279,10 +286,10 @@ describe('Crypto Integration Tests', () => {
 
       expect(result.success).toBe(true)
       if (result.success) {
-        expect(result.data.public_key).toBeDefined()
-        expect(result.data.private_key).toBeDefined()
-        expect(result.data.public_key.length).toBe(32) // Ed25519 public key size
-        expect(result.data.private_key.length).toBe(32) // Ed25519 private key size
+        expect((result as { success: true; data: KeyPair }).data.public_key).toBeDefined()
+        expect((result as { success: true; data: KeyPair }).data.private_key).toBeDefined()
+        expect((result as { success: true; data: KeyPair }).data.public_key.length).toBe(32) // Ed25519 public key size
+        expect((result as { success: true; data: KeyPair }).data.private_key.length).toBe(32) // Ed25519 private key size
       }
     })
 
@@ -293,8 +300,12 @@ describe('Crypto Integration Tests', () => {
       expect(result1.success).toBe(true)
       expect(result2.success).toBe(true)
       if (result1.success && result2.success) {
-        expect(result1.data.public_key).not.toBe(result2.data.public_key)
-        expect(result1.data.private_key).not.toBe(result2.data.private_key)
+        expect((result1 as { success: true; data: KeyPair }).data.public_key).not.toBe(
+          (result2 as { success: true; data: KeyPair }).data.public_key
+        )
+        expect((result1 as { success: true; data: KeyPair }).data.private_key).not.toBe(
+          (result2 as { success: true; data: KeyPair }).data.private_key
+        )
       }
     })
 
@@ -303,8 +314,14 @@ describe('Crypto Integration Tests', () => {
 
       expect(result.success).toBe(true)
       if (result.success) {
-        expect(keyManager.IsValidPublicKey(result.data.public_key)).toBe(true)
-        expect(keyManager.IsValidPrivateKey(result.data.private_key)).toBe(true)
+        expect(
+          keyManager.IsValidPublicKey((result as { success: true; data: KeyPair }).data.public_key)
+        ).toBe(true)
+        expect(
+          keyManager.IsValidPrivateKey(
+            (result as { success: true; data: KeyPair }).data.private_key
+          )
+        ).toBe(true)
       }
     })
   })
@@ -316,7 +333,7 @@ describe('Crypto Integration Tests', () => {
       const result = keyManager.GenerateKeyPair()
       expect(result.success).toBe(true)
       if (result.success) {
-        testKeys = result.data
+        testKeys = (result as { success: true; data: KeyPair }).data
       }
     })
 
@@ -327,18 +344,18 @@ describe('Crypto Integration Tests', () => {
       const signResult = keyManager.SignData(testData, testKeys.private_key)
       expect(signResult.success).toBe(true)
       if (signResult.success) {
-        expect(signResult.data).toBeDefined()
-        expect(signResult.data.length).toBe(64) // Ed25519 signature size
+        expect((signResult as { success: true; data: string }).data).toBeDefined()
+        expect((signResult as { success: true; data: string }).data.length).toBe(64) // Ed25519 signature size
 
         // Verify the signature
         const verifyResult = keyManager.VerifySignature(
           testData,
-          signResult.data,
+          (signResult as { success: true; data: string }).data,
           testKeys.public_key
         )
         expect(verifyResult.success).toBe(true)
         if (verifyResult.success) {
-          expect(verifyResult.data).toBe(true)
+          expect((verifyResult as { success: true; data: boolean }).data).toBe(true)
         }
       }
     })
@@ -353,7 +370,7 @@ describe('Crypto Integration Tests', () => {
       if (signResult.success) {
         const verifyResult = keyManager.VerifySignature(
           tamperedData,
-          signResult.data,
+          (signResult as { success: true; data: string }).data,
           testKeys.public_key
         )
         expect(verifyResult.success).toBe(true)
@@ -377,8 +394,8 @@ describe('Crypto Integration Tests', () => {
       if (signResult.success && otherResult.success) {
         const verifyResult = keyManager.VerifySignature(
           testData,
-          signResult.data,
-          otherResult.data.public_key
+          (signResult as { success: true; data: string }).data,
+          (otherResult as { success: true; data: KeyPair }).data.public_key
         )
         expect(verifyResult.success).toBe(true)
         if (verifyResult.success) {
@@ -410,8 +427,8 @@ describe('Crypto Integration Tests', () => {
         const keyId = 'test-integration-key'
         const entry = {
           key_id: keyId,
-          public_key: keyResult.data.public_key,
-          private_key: keyResult.data.private_key,
+          public_key: (keyResult as { success: true; data: KeyPair }).data.public_key,
+          private_key: (keyResult as { success: true; data: KeyPair }).data.private_key,
           created_timestamp: Date.now(),
           last_used_timestamp: Date.now(),
           is_active: true,
@@ -425,9 +442,13 @@ describe('Crypto Integration Tests', () => {
         const loadResult = await storage.LoadKey(keyId)
         expect(loadResult.success).toBe(true)
         if (loadResult.success) {
-          expect(loadResult.data.key_id).toBe(keyId)
-          expect(loadResult.data.public_key).toBe(keyResult.data.public_key)
-          expect(loadResult.data.private_key).toBe(keyResult.data.private_key)
+          expect((loadResult as { success: true; data: KeyStorageEntry }).data.key_id).toBe(keyId)
+          expect((loadResult as { success: true; data: KeyStorageEntry }).data.public_key).toBe(
+            (keyResult as { success: true; data: KeyPair }).data.public_key
+          )
+          expect((loadResult as { success: true; data: KeyStorageEntry }).data.private_key).toBe(
+            (keyResult as { success: true; data: KeyPair }).data.private_key
+          )
         }
       }
     })
@@ -442,8 +463,8 @@ describe('Crypto Integration Tests', () => {
       if (key1Result.success && key2Result.success) {
         const entry1 = {
           key_id: 'key-1',
-          public_key: key1Result.data.public_key,
-          private_key: key1Result.data.private_key,
+          public_key: (key1Result as { success: true; data: KeyPair }).data.public_key,
+          private_key: (key1Result as { success: true; data: KeyPair }).data.private_key,
           created_timestamp: Date.now(),
           last_used_timestamp: Date.now(),
           is_active: true,
@@ -451,8 +472,8 @@ describe('Crypto Integration Tests', () => {
 
         const entry2 = {
           key_id: 'key-2',
-          public_key: key2Result.data.public_key,
-          private_key: key2Result.data.private_key,
+          public_key: (key2Result as { success: true; data: KeyPair }).data.public_key,
+          private_key: (key2Result as { success: true; data: KeyPair }).data.private_key,
           created_timestamp: Date.now(),
           last_used_timestamp: Date.now(),
           is_active: false,
@@ -469,8 +490,12 @@ describe('Crypto Integration Tests', () => {
         const activeResult = await storage.GetActiveKey()
         expect(activeResult.success).toBe(true)
         if (activeResult.success) {
-          expect(activeResult.data.key_id).toBe('key-2')
-          expect(activeResult.data.is_active).toBe(true)
+          expect((activeResult as { success: true; data: KeyStorageEntry }).data.key_id).toBe(
+            'key-2'
+          )
+          expect((activeResult as { success: true; data: KeyStorageEntry }).data.is_active).toBe(
+            true
+          )
         }
       }
     })
@@ -505,9 +530,11 @@ describe('Crypto Integration Tests', () => {
         const listResult = await storage.LoadAllKeys()
         expect(listResult.success).toBe(true)
         if (listResult.success) {
-          expect(listResult.data.length).toBeGreaterThanOrEqual(2)
+          expect(
+            (listResult as { success: true; data: KeyStorageEntry[] }).data.length
+          ).toBeGreaterThanOrEqual(2)
 
-          const foundKeys = listResult.data.filter(
+          const foundKeys = (listResult as { success: true; data: KeyStorageEntry[] }).data.filter(
             (k) => k.key_id === 'list-test-1' || k.key_id === 'list-test-2'
           )
           expect(foundKeys.length).toBe(2)
@@ -532,7 +559,10 @@ describe('Crypto Integration Tests', () => {
         expect(signResult.success).toBe(true)
         if (signResult.success) {
           // Verify the signature
-          const verifyResult = await integratedManager.VerifySignature(testData, signResult.data)
+          const verifyResult = await integratedManager.VerifySignature(
+            testData,
+            (signResult as { success: true; data: string }).data
+          )
           expect(verifyResult.success).toBe(true)
           if (verifyResult.success) {
             expect(verifyResult.data).toBe(true)
@@ -543,7 +573,11 @@ describe('Crypto Integration Tests', () => {
         const keysResult = await integratedManager.GetAllKeys()
         expect(keysResult.success).toBe(true)
         if (keysResult.success) {
-          expect(keysResult.data.some((k) => k.key_id === keyId)).toBe(true)
+          expect(
+            (keysResult as { success: true; data: KeyStorageEntry[] }).data.some(
+              (k) => k.key_id === keyId
+            )
+          ).toBe(true)
         }
       }
     })
@@ -564,9 +598,13 @@ describe('Crypto Integration Tests', () => {
       const keysResult = await integratedManager.GetAllKeys()
       expect(keysResult.success).toBe(true)
       if (keysResult.success) {
-        expect(keysResult.data.length).toBeGreaterThanOrEqual(2)
+        expect(
+          (keysResult as { success: true; data: KeyStorageEntry[] }).data.length
+        ).toBeGreaterThanOrEqual(2)
 
-        const activeKeys = keysResult.data.filter((k) => k.is_active)
+        const activeKeys = (keysResult as { success: true; data: KeyStorageEntry[] }).data.filter(
+          (k) => k.is_active
+        )
         expect(activeKeys.length).toBe(1) // Should have exactly one active key
       }
     })
@@ -603,7 +641,7 @@ describe('Crypto Integration Tests', () => {
         const invalidSigResult = keyManager.VerifySignature(
           'test',
           'invalid-sig',
-          validKeyResult.data.public_key
+          (validKeyResult as { success: true; data: KeyPair }).data.public_key
         )
         expect(invalidSigResult.success).toBe(false)
       }
@@ -646,20 +684,32 @@ describe('Crypto Integration Tests', () => {
         const testData = 'Security validation test'
 
         // Sign multiple times and ensure signatures are unique when data changes
-        const sig1 = keyManager.SignData(testData, keyResult.data.private_key)
-        const sig2 = keyManager.SignData(testData + 'modified', keyResult.data.private_key)
+        const sig1 = keyManager.SignData(
+          testData,
+          (keyResult as { success: true; data: KeyPair }).data.private_key
+        )
+        const sig2 = keyManager.SignData(
+          testData + 'modified',
+          (keyResult as { success: true; data: KeyPair }).data.private_key
+        )
 
         expect(sig1.success).toBe(true)
         expect(sig2.success).toBe(true)
         if (sig1.success && sig2.success) {
-          expect(sig1.data).not.toBe(sig2.data)
+          expect((sig1 as { success: true; data: string }).data).not.toBe(
+            (sig2 as { success: true; data: string }).data
+          )
 
           // Verify both signatures
-          const verify1 = keyManager.VerifySignature(testData, sig1.data, keyResult.data.public_key)
+          const verify1 = keyManager.VerifySignature(
+            testData,
+            (sig1 as { success: true; data: string }).data,
+            (keyResult as { success: true; data: KeyPair }).data.public_key
+          )
           const verify2 = keyManager.VerifySignature(
             testData + 'modified',
-            sig2.data,
-            keyResult.data.public_key
+            (sig2 as { success: true; data: string }).data,
+            (keyResult as { success: true; data: KeyPair }).data.public_key
           )
 
           expect(verify1.success).toBe(true)
@@ -686,30 +736,33 @@ describe('Crypto Integration Tests', () => {
         const testData = 'Isolation test'
 
         // Sign with key 1
-        const sig1 = keyManager.SignData(testData, key1Result.data.private_key)
+        const sig1 = keyManager.SignData(
+          testData,
+          (key1Result as { success: true; data: KeyPair }).data.private_key
+        )
         expect(sig1.success).toBe(true)
 
         if (sig1.success) {
           // Verify with key 2 should fail
           const verifyCross = keyManager.VerifySignature(
             testData,
-            sig1.data,
-            key2Result.data.public_key
+            (sig1 as { success: true; data: string }).data,
+            (key2Result as { success: true; data: KeyPair }).data.public_key
           )
           expect(verifyCross.success).toBe(true)
           if (verifyCross.success && verifyCross.data !== undefined) {
-            expect(verifyCross.data).toBe(false)
+            expect((verifyCross as { success: true; data: boolean }).data).toBe(false)
           }
 
           // Verify with correct key should succeed
           const verifyCorrect = keyManager.VerifySignature(
             testData,
-            sig1.data,
-            key1Result.data.public_key
+            (sig1 as { success: true; data: string }).data,
+            (key1Result as { success: true; data: KeyPair }).data.public_key
           )
           expect(verifyCorrect.success).toBe(true)
           if (verifyCorrect.success && verifyCorrect.data !== undefined) {
-            expect(verifyCorrect.data).toBe(true)
+            expect((verifyCorrect as { success: true; data: boolean }).data).toBe(true)
           }
         }
       }

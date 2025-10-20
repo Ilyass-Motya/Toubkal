@@ -1,6 +1,6 @@
 /**
  * Privacy Manager Integration Tests
- * 
+ *
  * Integration tests for the privacy system including
  * audit logging, fingerprinting tests, and end-to-end workflows.
  */
@@ -41,7 +41,7 @@ describe('PrivacyManager Integration', () => {
       // Act
       await privacyManager.updateSettings({
         trackerBlocking: false,
-        braveShieldsAggressive: false
+        braveShieldsAggressive: false,
       })
 
       // Assert
@@ -73,7 +73,7 @@ describe('PrivacyManager Integration', () => {
 
       // Act
       await privacyManager.updateSettings({
-        fingerprintingProtection: false
+        fingerprintingProtection: false,
       })
 
       // Assert
@@ -122,7 +122,7 @@ describe('PrivacyManager Integration', () => {
 
       // Assert
       expect(result.success).toBe(true)
-      
+
       const settings = privacyManager.getSettings()
       expect(settings.protectionEnabled).toBe(false)
     })
@@ -134,7 +134,7 @@ describe('PrivacyManager Integration', () => {
       // Act
       await privacyManager.updateSettings({
         fingerprintingProtection: false,
-        trackerBlocking: false
+        trackerBlocking: false,
       })
 
       // Assert
@@ -152,7 +152,7 @@ describe('PrivacyManager Integration', () => {
       await privacyManager.updateSettings({
         fingerprintingProtection: false,
         trackerBlocking: false,
-        braveShieldsAggressive: false
+        braveShieldsAggressive: false,
       })
 
       // Assert
@@ -173,7 +173,7 @@ describe('PrivacyManager Integration', () => {
 
       // Act
       await privacyManager.updateSettings({
-        fingerprintingProtection: false
+        fingerprintingProtection: false,
       })
 
       // Assert
@@ -241,7 +241,7 @@ describe('PrivacyManager Integration', () => {
 
       expect(result.success).toBe(true)
       expect(duration).toBeLessThan(10000) // 10 seconds
-      
+
       if (result.success) {
         expect(result.data.performance.firstRunTime).toBeLessThan(10000)
       }
@@ -262,7 +262,7 @@ describe('PrivacyManager Integration', () => {
 
       expect(result.success).toBe(true)
       expect(duration).toBeLessThan(2000) // 2 seconds
-      
+
       if (result.success) {
         expect(result.data.performance.activationTime).toBeLessThan(2000)
       }
@@ -281,13 +281,13 @@ describe('PrivacyManager Integration', () => {
       expect(result.success).toBe(true)
       if (result.success) {
         expect(result.data.length).toBeGreaterThan(0)
-        
+
         // All tests should pass when protection is enabled
-        const allPassed = result.data.every(test => test.passed)
+        const allPassed = result.data.every((test) => test.passed)
         expect(allPassed).toBe(true)
-        
+
         // Scores should be high (>= 80)
-        const allHighScores = result.data.every(test => test.score >= 80)
+        const allHighScores = result.data.every((test) => test.score >= 80)
         expect(allHighScores).toBe(true)
       }
     })
@@ -296,7 +296,7 @@ describe('PrivacyManager Integration', () => {
       // Arrange
       await privacyManager.initialize()
       await privacyManager.updateSettings({
-        fingerprintingProtection: false
+        fingerprintingProtection: false,
       })
 
       // Act
@@ -306,13 +306,13 @@ describe('PrivacyManager Integration', () => {
       expect(result.success).toBe(true)
       if (result.success) {
         expect(result.data.length).toBeGreaterThan(0)
-        
+
         // Tests should fail when protection is disabled
-        const allFailed = result.data.every(test => !test.passed)
+        const allFailed = result.data.every((test) => !test.passed)
         expect(allFailed).toBe(true)
-        
+
         // Scores should be low (< 80)
-        const allLowScores = result.data.every(test => test.score < 80)
+        const allLowScores = result.data.every((test) => test.score < 80)
         expect(allLowScores).toBe(true)
       }
     })
@@ -338,7 +338,7 @@ describe('PrivacyManager Integration', () => {
 
       // 4. Disable some protection
       await privacyManager.updateSettings({
-        fingerprintingProtection: false
+        fingerprintingProtection: false,
       })
 
       // 5. Run tests again
@@ -347,7 +347,7 @@ describe('PrivacyManager Integration', () => {
 
       // 6. Re-enable protection
       await privacyManager.updateSettings({
-        fingerprintingProtection: true
+        fingerprintingProtection: true,
       })
 
       // 7. Run final tests
@@ -382,7 +382,7 @@ describe('PrivacyManager Integration', () => {
         () => privacyManager.enableProtection(),
         () => privacyManager.updateSettings({ fingerprintingProtection: true }),
         () => privacyManager.updateSettings({ trackerBlocking: true }),
-        () => privacyManager.updateSettings({ braveShieldsAggressive: true })
+        () => privacyManager.updateSettings({ braveShieldsAggressive: true }),
       ]
 
       for (const operation of operations) {
@@ -414,12 +414,12 @@ describe('PrivacyManager Integration', () => {
 
       // Act - Attempt invalid operation
       const result = await privacyManager.updateSettings({
-        fingerprintingProtection: 'invalid' as unknown as 'strict' | 'moderate' | 'minimal'
+        fingerprintingProtection: 'invalid' as unknown as boolean,
       })
 
       // Assert
       expect(result.success).toBe(false)
-      
+
       // Settings should remain unchanged
       const currentSettings = privacyManager.getSettings()
       expect(currentSettings).toEqual(initialSettings)
@@ -431,17 +431,17 @@ describe('PrivacyManager Integration', () => {
 
       // Act - Attempt invalid operation followed by valid operation
       const invalidResult = await privacyManager.updateSettings({
-        fingerprintingProtection: 'invalid' as unknown as 'strict' | 'moderate' | 'minimal'
+        fingerprintingProtection: 'invalid' as unknown as boolean,
       })
-      
+
       const validResult = await privacyManager.updateSettings({
-        fingerprintingProtection: false
+        fingerprintingProtection: false,
       })
 
       // Assert
       expect(invalidResult.success).toBe(false)
       expect(validResult.success).toBe(true)
-      
+
       const settings = privacyManager.getSettings()
       expect(settings.fingerprintingProtection).toBe(false)
     })

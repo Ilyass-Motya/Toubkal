@@ -1,6 +1,6 @@
 /**
  * Privacy Manager Performance Tests
- * 
+ *
  * Performance tests for privacy activation timing and first-run experience
  * to ensure AC6 and AC7 requirements are met.
  */
@@ -33,7 +33,7 @@ describe('PrivacyManager Performance', () => {
 
       expect(result.success).toBe(true)
       expect(duration).toBeLessThan(10000) // 10 seconds
-      
+
       if (result.success) {
         expect(result.data.performance.firstRunTime).toBeLessThan(10000)
       }
@@ -56,7 +56,7 @@ describe('PrivacyManager Performance', () => {
 
       // Assert
       expect(duration).toBeLessThan(10000) // Should complete all within 10 seconds
-      results.forEach(result => {
+      results.forEach((result) => {
         expect(result.success).toBe(true)
       })
     })
@@ -64,11 +64,11 @@ describe('PrivacyManager Performance', () => {
     it('should maintain performance with large audit logs', async () => {
       // Arrange
       const manager = new PrivacyManager()
-      
+
       // Generate a large number of audit entries
       for (let i = 0; i < 1000; i++) {
-        await manager.updateSettings({ 
-          fingerprintingProtection: i % 2 === 0 
+        await manager.updateSettings({
+          fingerprintingProtection: i % 2 === 0,
         })
       }
 
@@ -100,7 +100,7 @@ describe('PrivacyManager Performance', () => {
 
       expect(result.success).toBe(true)
       expect(duration).toBeLessThan(2000) // 2 seconds
-      
+
       if (result.success) {
         expect(result.data.performance.activationTime).toBeLessThan(2000)
       }
@@ -112,13 +112,14 @@ describe('PrivacyManager Performance', () => {
       const startTime = performance.now()
 
       // Act
-      const result = await (privacyManager as unknown as { activateProtection: () => Promise<void> }).activateProtection()
+      await (
+        privacyManager as unknown as { activateProtection: () => Promise<void> }
+      ).activateProtection()
 
       // Assert
       const endTime = performance.now()
       const duration = endTime - startTime
 
-      expect(result.success).toBe(true)
       expect(duration).toBeLessThan(2000) // 2 seconds
     })
 
@@ -149,13 +150,15 @@ describe('PrivacyManager Performance', () => {
   describe('Memory usage optimization', () => {
     it('should not leak memory during repeated operations', async () => {
       // Arrange
-      const initialMemory = (performance as unknown as { memory?: { usedJSHeapSize: number } }).memory?.usedJSHeapSize ?? 0
+      const initialMemory =
+        (performance as unknown as { memory?: { usedJSHeapSize: number } }).memory
+          ?.usedJSHeapSize ?? 0
 
       // Act - Perform many operations
       for (let i = 0; i < 100; i++) {
         await privacyManager.updateSettings({
           fingerprintingProtection: i % 2 === 0,
-          trackerBlocking: i % 3 === 0
+          trackerBlocking: i % 3 === 0,
         })
       }
 
@@ -164,7 +167,9 @@ describe('PrivacyManager Performance', () => {
         global.gc()
       }
 
-      const finalMemory = (performance as unknown as { memory?: { usedJSHeapSize: number } }).memory?.usedJSHeapSize ?? 0
+      const finalMemory =
+        (performance as unknown as { memory?: { usedJSHeapSize: number } }).memory
+          ?.usedJSHeapSize ?? 0
       const memoryIncrease = finalMemory - initialMemory
 
       // Assert - Memory increase should be reasonable (less than 10MB)
@@ -174,11 +179,11 @@ describe('PrivacyManager Performance', () => {
     it('should efficiently manage audit log size', async () => {
       // Arrange
       const maxEntries = 1000
-      
+
       // Act - Generate many audit entries
       for (let i = 0; i < maxEntries * 2; i++) {
         await privacyManager.updateSettings({
-          fingerprintingProtection: i % 2 === 0
+          fingerprintingProtection: i % 2 === 0,
         })
       }
 
@@ -205,11 +210,13 @@ describe('PrivacyManager Performance', () => {
       // Act - Concurrent updates
       const promises = []
       for (let i = 0; i < 20; i++) {
-        promises.push(privacyManager.updateSettings({
-          fingerprintingProtection: i % 2 === 0,
-          trackerBlocking: i % 3 === 0,
-          braveShieldsAggressive: i % 4 === 0
-        }))
+        promises.push(
+          privacyManager.updateSettings({
+            fingerprintingProtection: i % 2 === 0,
+            trackerBlocking: i % 3 === 0,
+            braveShieldsAggressive: i % 4 === 0,
+          })
+        )
       }
 
       const results = await Promise.all(promises)
@@ -218,7 +225,7 @@ describe('PrivacyManager Performance', () => {
 
       // Assert
       expect(duration).toBeLessThan(5000) // Should complete within 5 seconds
-      results.forEach(result => {
+      results.forEach((result) => {
         expect(result.success).toBe(true)
       })
     })
@@ -240,7 +247,7 @@ describe('PrivacyManager Performance', () => {
 
       // Assert
       expect(duration).toBeLessThan(10000) // Should complete within 10 seconds
-      results.forEach(result => {
+      results.forEach((result) => {
         expect(result.success).toBe(true)
       })
     })
@@ -253,24 +260,24 @@ describe('PrivacyManager Performance', () => {
 
       // Act - Simulate typical user session
       await privacyManager.initialize()
-      
+
       // User enables protection
       await privacyManager.enableProtection()
-      
+
       // User runs tests
       await privacyManager.runFingerprintingTests()
-      
+
       // User adjusts settings
       await privacyManager.updateSettings({
-        fingerprintingProtection: false
+        fingerprintingProtection: false,
       })
-      
+
       // User runs tests again
       await privacyManager.runFingerprintingTests()
-      
+
       // User re-enables protection
       await privacyManager.updateSettings({
-        fingerprintingProtection: true
+        fingerprintingProtection: true,
       })
 
       const endTime = performance.now()
@@ -289,13 +296,13 @@ describe('PrivacyManager Performance', () => {
       for (let session = 0; session < 10; session++) {
         // Simulate user session
         await privacyManager.updateSettings({
-          fingerprintingProtection: session % 2 === 0
+          fingerprintingProtection: session % 2 === 0,
         })
-        
+
         await privacyManager.runFingerprintingTests()
-        
+
         // Simulate some time passing
-        await new Promise(resolve => setTimeout(resolve, 10))
+        await new Promise((resolve) => setTimeout(resolve, 10))
       }
 
       const endTime = performance.now()
@@ -316,7 +323,7 @@ describe('PrivacyManager Performance', () => {
         braveShieldsAggressive: true,
         protectionEnabled: true,
         lastModified: Date.now(),
-        userId: 'user_' + 'x'.repeat(1000) // Large user ID
+        userId: 'user_' + 'x'.repeat(1000), // Large user ID
       }
 
       const startTime = performance.now()

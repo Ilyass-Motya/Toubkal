@@ -1,6 +1,6 @@
 /**
  * Main App Component
- * 
+ *
  * Root component that handles URL scheme routing and navigation.
  * Integrates ToubkalRouter with InternalPageRouter for complete
  * toubkal:// URL handling as per AC1, AC2, AC6, and AC7.
@@ -29,63 +29,62 @@ export const App: React.FC = () => {
   // Handle navigation to new URLs
   const handleNavigate = (url: string) => {
     void (async () => {
-    setAppState(prev => ({ ...prev, isLoading: true, error: null }))
+      setAppState((prev) => ({ ...prev, isLoading: true, error: null }))
 
-    try {
-      // Process the URL through the URL scheme manager
-      const result = await urlSchemeManager.processUrl(url)
-      
-      if (!result.success) {
-        setAppState(prev => ({
+      try {
+        // Process the URL through the URL scheme manager
+        const result = await urlSchemeManager.processUrl(url)
+
+        if (!result.success) {
+          setAppState((prev) => ({
+            ...prev,
+            isLoading: false,
+            error: result.error,
+          }))
+          return
+        }
+
+        const { data: validation } = result
+
+        // Handle redirects for backward compatibility (AC6)
+        if (validation.isLegacy && validation.redirectUrl) {
+          setAppState((prev) => ({
+            ...prev,
+            currentUrl: validation.redirectUrl || '',
+            isInternalPage: true,
+            isLoading: false,
+          }))
+          return
+        }
+
+        // Handle removed Brave URLs (AC3)
+        if (validation.isRemoved) {
+          setAppState((prev) => ({
+            ...prev,
+            currentUrl: 'toubkal://error',
+            isInternalPage: true,
+            isLoading: false,
+            error: 'This Brave URL is no longer supported',
+          }))
+          return
+        }
+
+        // Update state based on URL type
+        setAppState((prev) => ({
+          ...prev,
+          currentUrl: url,
+          isInternalPage: validation.isInternal,
+          isLoading: false,
+          error: validation.isValid ? null : (validation.error ?? 'Invalid URL'),
+        }))
+      } catch (error) {
+        console.error('[App.handleNavigate] Failed:', error)
+        setAppState((prev) => ({
           ...prev,
           isLoading: false,
-          error: result.error,
+          error: error instanceof Error ? error.message : 'Navigation failed',
         }))
-        return
       }
-
-      const { data: validation } = result
-
-      // Handle redirects for backward compatibility (AC6)
-      if (validation.isLegacy && validation.redirectUrl) {
-        setAppState(prev => ({
-          ...prev,
-          currentUrl: validation.redirectUrl,
-          isInternalPage: true,
-          isLoading: false,
-        }))
-        return
-      }
-
-      // Handle removed Brave URLs (AC3)
-      if (validation.isRemoved) {
-        setAppState(prev => ({
-          ...prev,
-          currentUrl: 'toubkal://error',
-          isInternalPage: true,
-          isLoading: false,
-          error: 'This Brave URL is no longer supported',
-        }))
-        return
-      }
-
-      // Update state based on URL type
-      setAppState(prev => ({
-        ...prev,
-        currentUrl: url,
-        isInternalPage: validation.isInternal,
-        isLoading: false,
-        error: validation.isValid ? null : (validation.error ?? 'Invalid URL'),
-      }))
-
-    } catch (error) {
-      console.error('[App.handleNavigate] Failed:', error)
-      setAppState(prev => ({
-        ...prev,
-        isLoading: false,
-        error: error instanceof Error ? error.message : 'Navigation failed',
-      }))
-    }
     })()
   }
 
@@ -127,9 +126,7 @@ export const App: React.FC = () => {
             <h2 className="text-xl font-semibold text-red-900 dark:text-red-100 mb-4">
               Navigation Error
             </h2>
-            <p className="text-red-700 dark:text-red-300 mb-4">
-              {appState.error}
-            </p>
+            <p className="text-red-700 dark:text-red-300 mb-4">{appState.error}</p>
             <button
               onClick={() => void handleNavigate('toubkal://newtab')}
               className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors"
@@ -145,14 +142,8 @@ export const App: React.FC = () => {
   // Render internal pages with routing
   if (appState.isInternalPage) {
     return (
-      <ToubkalRouter
-        currentUrl={appState.currentUrl}
-        onNavigate={handleNavigate}
-      >
-        <InternalPageRouter
-          currentUrl={appState.currentUrl}
-          onNavigate={handleNavigate}
-        />
+      <ToubkalRouter currentUrl={appState.currentUrl} onNavigate={handleNavigate}>
+        <InternalPageRouter currentUrl={appState.currentUrl} onNavigate={handleNavigate} />
       </ToubkalRouter>
     )
   }
@@ -161,9 +152,7 @@ export const App: React.FC = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="text-center">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-          Unexpected State
-        </h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Unexpected State</h1>
         <p className="text-gray-600 dark:text-gray-400 mb-4">
           The application is in an unexpected state.
         </p>

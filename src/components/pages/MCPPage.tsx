@@ -330,10 +330,14 @@ export const MCPPage: React.FC<MCPPageProps> = ({ initialFilter = 'all' }) => {
             <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6 mb-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label
+                    htmlFor="status-filter"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >
                     Filter by Status
                   </label>
                   <select
+                    id="status-filter"
                     value={filter}
                     onChange={(e) => setFilter(e.target.value)}
                     className="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
@@ -347,10 +351,14 @@ export const MCPPage: React.FC<MCPPageProps> = ({ initialFilter = 'all' }) => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label
+                    htmlFor="search-servers"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >
                     Search Servers
                   </label>
                   <input
+                    id="search-servers"
                     type="text"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
