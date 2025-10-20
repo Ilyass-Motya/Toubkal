@@ -1,12 +1,12 @@
 /**
  * MCP Page Component (MCP Overview)
- * 
+ *
  * Main MCP page accessible via toubkal://mcp
  * Provides MCP server management interface with privacy labels and real-time logs.
  */
 
-import React, { useState, useEffect, useRef } from 'react'
-import { INTERNAL_PAGES } from '../../constants/url-schemes'
+import React, { useState, useEffect, useRef, useMemo } from 'react'
+// import { INTERNAL_PAGES } from '../../constants/url-schemes'
 
 interface MCPServer {
   id: string
@@ -35,9 +35,7 @@ interface MCPPageProps {
   initialFilter?: string
 }
 
-export const MCPPage: React.FC<MCPPageProps> = ({ 
-  initialFilter = 'all' 
-}) => {
+export const MCPPage: React.FC<MCPPageProps> = ({ initialFilter = 'all' }) => {
   const [servers, setServers] = useState<MCPServer[]>([])
   const [filteredServers, setFilteredServers] = useState<MCPServer[]>([])
   const [filter, setFilter] = useState(initialFilter)
@@ -48,112 +46,115 @@ export const MCPPage: React.FC<MCPPageProps> = ({
   const logsEndRef = useRef<HTMLDivElement>(null)
 
   // Mock data for demonstration
-  const mockServers: MCPServer[] = [
-    {
-      id: 'file-reader',
-      name: 'File Reader',
-      description: 'Reads and processes local files securely',
-      version: '1.2.0',
-      status: 'running',
-      privacyLevel: 'local',
-      capabilities: ['file_read', 'file_metadata', 'file_search'],
-      port: 3001,
-      pid: 12345,
-      memoryUsage: 45.2,
-      lastActivity: new Date('2025-01-18T10:30:00Z'),
-      logs: [
-        {
-          id: '1',
-          timestamp: new Date('2025-01-18T10:30:00Z'),
-          level: 'info',
-          source: 'stdout',
-          message: 'File Reader server started on port 3001'
-        },
-        {
-          id: '2',
-          timestamp: new Date('2025-01-18T10:29:45Z'),
-          level: 'info',
-          source: 'stdout',
-          message: 'Initialized file system watcher'
-        }
-      ]
-    },
-    {
-      id: 'web-search',
-      name: 'Web Search',
-      description: 'Performs web searches with privacy protection',
-      version: '2.1.0',
-      status: 'running',
-      privacyLevel: 'network',
-      capabilities: ['web_search', 'url_analysis', 'content_extraction'],
-      port: 3002,
-      pid: 12346,
-      memoryUsage: 78.5,
-      lastActivity: new Date('2025-01-18T10:28:00Z'),
-      logs: [
-        {
-          id: '3',
-          timestamp: new Date('2025-01-18T10:28:00Z'),
-          level: 'info',
-          source: 'stdout',
-          message: 'Web Search server connected to DuckDuckGo API'
-        },
-        {
-          id: '4',
-          timestamp: new Date('2025-01-18T10:27:30Z'),
-          level: 'warn',
-          source: 'stderr',
-          message: 'Rate limit approaching for search API'
-        }
-      ]
-    },
-    {
-      id: 'ai-assistant',
-      name: 'AI Assistant',
-      description: 'Local AI model integration for natural language processing',
-      version: '3.0.1',
-      status: 'stopped',
-      privacyLevel: 'local',
-      capabilities: ['text_generation', 'text_analysis', 'conversation'],
-      port: 3003,
-      memoryUsage: 0,
-      logs: [
-        {
-          id: '5',
-          timestamp: new Date('2025-01-18T10:25:00Z'),
-          level: 'error',
-          source: 'stderr',
-          message: 'Failed to load AI model: insufficient memory'
-        }
-      ]
-    },
-    {
-      id: 'weather-api',
-      name: 'Weather API',
-      description: 'Fetches weather data from external APIs',
-      version: '1.0.5',
-      status: 'error',
-      privacyLevel: 'remote_api',
-      capabilities: ['weather_data', 'location_services'],
-      port: 3004,
-      memoryUsage: 12.3,
-      lastActivity: new Date('2025-01-18T10:20:00Z'),
-      logs: [
-        {
-          id: '6',
-          timestamp: new Date('2025-01-18T10:20:00Z'),
-          level: 'error',
-          source: 'stderr',
-          message: 'API key expired, please update configuration'
-        }
-      ]
-    }
-  ]
+  const mockServers: MCPServer[] = useMemo(
+    () => [
+      {
+        id: 'file-reader',
+        name: 'File Reader',
+        description: 'Reads and processes local files securely',
+        version: '1.2.0',
+        status: 'running',
+        privacyLevel: 'local',
+        capabilities: ['file_read', 'file_metadata', 'file_search'],
+        port: 3001,
+        pid: 12345,
+        memoryUsage: 45.2,
+        lastActivity: new Date('2025-01-18T10:30:00Z'),
+        logs: [
+          {
+            id: '1',
+            timestamp: new Date('2025-01-18T10:30:00Z'),
+            level: 'info',
+            source: 'stdout',
+            message: 'File Reader server started on port 3001',
+          },
+          {
+            id: '2',
+            timestamp: new Date('2025-01-18T10:29:45Z'),
+            level: 'info',
+            source: 'stdout',
+            message: 'Initialized file system watcher',
+          },
+        ],
+      },
+      {
+        id: 'web-search',
+        name: 'Web Search',
+        description: 'Performs web searches with privacy protection',
+        version: '2.1.0',
+        status: 'running',
+        privacyLevel: 'network',
+        capabilities: ['web_search', 'url_analysis', 'content_extraction'],
+        port: 3002,
+        pid: 12346,
+        memoryUsage: 78.5,
+        lastActivity: new Date('2025-01-18T10:28:00Z'),
+        logs: [
+          {
+            id: '3',
+            timestamp: new Date('2025-01-18T10:28:00Z'),
+            level: 'info',
+            source: 'stdout',
+            message: 'Web Search server connected to DuckDuckGo API',
+          },
+          {
+            id: '4',
+            timestamp: new Date('2025-01-18T10:27:30Z'),
+            level: 'warn',
+            source: 'stderr',
+            message: 'Rate limit approaching for search API',
+          },
+        ],
+      },
+      {
+        id: 'ai-assistant',
+        name: 'AI Assistant',
+        description: 'Local AI model integration for natural language processing',
+        version: '3.0.1',
+        status: 'stopped',
+        privacyLevel: 'local',
+        capabilities: ['text_generation', 'text_analysis', 'conversation'],
+        port: 3003,
+        memoryUsage: 0,
+        logs: [
+          {
+            id: '5',
+            timestamp: new Date('2025-01-18T10:25:00Z'),
+            level: 'error',
+            source: 'stderr',
+            message: 'Failed to load AI model: insufficient memory',
+          },
+        ],
+      },
+      {
+        id: 'weather-api',
+        name: 'Weather API',
+        description: 'Fetches weather data from external APIs',
+        version: '1.0.5',
+        status: 'error',
+        privacyLevel: 'remote_api',
+        capabilities: ['weather_data', 'location_services'],
+        port: 3004,
+        memoryUsage: 12.3,
+        lastActivity: new Date('2025-01-18T10:20:00Z'),
+        logs: [
+          {
+            id: '6',
+            timestamp: new Date('2025-01-18T10:20:00Z'),
+            level: 'error',
+            source: 'stderr',
+            message: 'API key expired, please update configuration',
+          },
+        ],
+      },
+    ],
+    []
+  )
 
   // Load servers on component mount
   useEffect(() => {
     setServers(mockServers)
-  }, [])
+  }, [mockServers])
 
   // Filter servers
   useEffect(() => {
@@ -161,16 +162,17 @@ export const MCPPage: React.FC<MCPPageProps> = ({
 
     // Apply status filter
     if (filter !== 'all') {
-      filtered = filtered.filter(server => server.status === filter)
+      filtered = filtered.filter((server) => server.status === filter)
     }
 
     // Apply search term
     if (searchTerm) {
       const term = searchTerm.toLowerCase()
-      filtered = filtered.filter(server => 
-        server.name.toLowerCase().includes(term) ||
-        server.description.toLowerCase().includes(term) ||
-        server.capabilities.some(cap => cap.toLowerCase().includes(term))
+      filtered = filtered.filter(
+        (server) =>
+          server.name.toLowerCase().includes(term) ||
+          server.description.toLowerCase().includes(term) ||
+          server.capabilities.some((cap) => cap.toLowerCase().includes(term))
       )
     }
 
@@ -184,39 +186,57 @@ export const MCPPage: React.FC<MCPPageProps> = ({
 
   const getPrivacyLevelColor = (level: string) => {
     switch (level) {
-      case 'local': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
-      case 'network': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
-      case 'remote_api': return 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300'
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
+      case 'local':
+        return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+      case 'network':
+        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
+      case 'remote_api':
+        return 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300'
+      default:
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
     }
   }
 
   const getPrivacyLevelIcon = (level: string) => {
     switch (level) {
-      case 'local': return '🟢'
-      case 'network': return '🟡'
-      case 'remote_api': return '🟠'
-      default: return '⚪'
+      case 'local':
+        return '🟢'
+      case 'network':
+        return '🟡'
+      case 'remote_api':
+        return '🟠'
+      default:
+        return '⚪'
     }
   }
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'running': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
-      case 'stopped': return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
-      case 'error': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
-      case 'installing': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
+      case 'running':
+        return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+      case 'stopped':
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
+      case 'error':
+        return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
+      case 'installing':
+        return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
+      default:
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
     }
   }
 
   const getLogLevelColor = (level: string) => {
     switch (level) {
-      case 'info': return 'text-blue-600 dark:text-blue-400'
-      case 'warn': return 'text-yellow-600 dark:text-yellow-400'
-      case 'error': return 'text-red-600 dark:text-red-400'
-      case 'debug': return 'text-gray-600 dark:text-gray-400'
-      default: return 'text-gray-600 dark:text-gray-400'
+      case 'info':
+        return 'text-blue-600 dark:text-blue-400'
+      case 'warn':
+        return 'text-yellow-600 dark:text-yellow-400'
+      case 'error':
+        return 'text-red-600 dark:text-red-400'
+      case 'debug':
+        return 'text-gray-600 dark:text-gray-400'
+      default:
+        return 'text-gray-600 dark:text-gray-400'
     }
   }
 
@@ -225,24 +245,26 @@ export const MCPPage: React.FC<MCPPageProps> = ({
       hour: '2-digit',
       minute: '2-digit',
       second: '2-digit',
-      fractionalSecondDigits: 3
+      fractionalSecondDigits: 3,
     }).format(timestamp)
   }
 
-  const handleStartServer = async (serverId: string) => {
-    setServers(prev => prev.map(server => 
-      server.id === serverId 
-        ? { ...server, status: 'running' as const, lastActivity: new Date() }
-        : server
-    ))
+  const handleStartServer = (serverId: string) => {
+    setServers((prev) =>
+      prev.map((server) =>
+        server.id === serverId
+          ? { ...server, status: 'running' as const, lastActivity: new Date() }
+          : server
+      )
+    )
   }
 
-  const handleStopServer = async (serverId: string) => {
-    setServers(prev => prev.map(server => 
-      server.id === serverId 
-        ? { ...server, status: 'stopped' as const }
-        : server
-    ))
+  const handleStopServer = (serverId: string) => {
+    setServers((prev) =>
+      prev.map((server) =>
+        server.id === serverId ? { ...server, status: 'stopped' as const } : server
+      )
+    )
   }
 
   const handleInstallServer = async (serverId: string) => {
@@ -251,8 +273,8 @@ export const MCPPage: React.FC<MCPPageProps> = ({
 
     try {
       // Simulate installation
-      await new Promise(resolve => setTimeout(resolve, 3000))
-      
+      await new Promise((resolve) => setTimeout(resolve, 3000))
+
       const newServer: MCPServer = {
         id: serverId,
         name: 'New Server',
@@ -271,12 +293,12 @@ export const MCPPage: React.FC<MCPPageProps> = ({
             timestamp: new Date(),
             level: 'info',
             source: 'stdout',
-            message: 'Server installed and started successfully'
-          }
-        ]
+            message: 'Server installed and started successfully',
+          },
+        ],
       }
 
-      setServers(prev => [...prev, newServer])
+      setServers((prev) => [...prev, newServer])
     } catch (err) {
       console.error('[MCPPage.handleInstallServer] Failed:', err)
       setError('Failed to install server')
@@ -285,7 +307,8 @@ export const MCPPage: React.FC<MCPPageProps> = ({
     }
   }
 
-  const selectedServerData = selectedServer ? servers.find(s => s.id === selectedServer) : null
+  const selectedServerData =
+    selectedServer != null ? servers.find((s) => s.id === selectedServer) : null
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -356,18 +379,20 @@ export const MCPPage: React.FC<MCPPageProps> = ({
                         <h3 className="text-lg font-medium text-gray-900 dark:text-white">
                           {server.name}
                         </h3>
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(server.status)}`}>
+                        <span
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(server.status)}`}
+                        >
                           {server.status}
                         </span>
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPrivacyLevelColor(server.privacyLevel)}`}>
+                        <span
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPrivacyLevelColor(server.privacyLevel)}`}
+                        >
                           <span className="mr-1">{getPrivacyLevelIcon(server.privacyLevel)}</span>
                           {server.privacyLevel.replace('_', ' ')}
                         </span>
                       </div>
-                      
-                      <p className="text-gray-600 dark:text-gray-400 mb-3">
-                        {server.description}
-                      </p>
+
+                      <p className="text-gray-600 dark:text-gray-400 mb-3">{server.description}</p>
 
                       <div className="flex flex-wrap gap-2 mb-3">
                         {server.capabilities.map((capability) => (
@@ -382,8 +407,10 @@ export const MCPPage: React.FC<MCPPageProps> = ({
 
                       <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
                         <span>v{server.version}</span>
-                        {server.port && <span>Port: {server.port}</span>}
-                        {server.memoryUsage && <span>Memory: {server.memoryUsage.toFixed(1)}MB</span>}
+                        {server.port != null && <span>Port: {server.port}</span>}
+                        {server.memoryUsage != null && (
+                          <span>Memory: {server.memoryUsage.toFixed(1)}MB</span>
+                        )}
                         {server.lastActivity && (
                           <span>Last activity: {formatTimestamp(server.lastActivity)}</span>
                         )}
@@ -434,7 +461,9 @@ export const MCPPage: React.FC<MCPPageProps> = ({
                     No servers found
                   </h3>
                   <p className="text-gray-600 dark:text-gray-400 mb-4">
-                    {searchTerm ? 'Try adjusting your search terms' : 'No servers match the current filter'}
+                    {searchTerm
+                      ? 'Try adjusting your search terms'
+                      : 'No servers match the current filter'}
                   </p>
                 </div>
               )}
@@ -452,11 +481,13 @@ export const MCPPage: React.FC<MCPPageProps> = ({
                   className="flex-1 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
                 />
                 <button
-                  onClick={() => handleInstallServer('new-server')}
+                  onClick={() => {
+                    void handleInstallServer('new-server')
+                  }}
                   disabled={isInstalling !== null}
                   className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isInstalling ? 'Installing...' : 'Install'}
+                  {isInstalling != null ? 'Installing...' : 'Install'}
                 </button>
               </div>
             </div>
@@ -481,7 +512,9 @@ export const MCPPage: React.FC<MCPPageProps> = ({
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span className="text-gray-500 dark:text-gray-400">Status:</span>
-                      <span className={`font-medium ${getStatusColor(selectedServerData.status).split(' ')[1]}`}>
+                      <span
+                        className={`font-medium ${getStatusColor(selectedServerData.status).split(' ')[1]}`}
+                      >
                         {selectedServerData.status}
                       </span>
                     </div>
@@ -491,20 +524,25 @@ export const MCPPage: React.FC<MCPPageProps> = ({
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-500 dark:text-gray-400">Privacy:</span>
-                      <span className={`font-medium ${getPrivacyLevelColor(selectedServerData.privacyLevel).split(' ')[1]}`}>
-                        {getPrivacyLevelIcon(selectedServerData.privacyLevel)} {selectedServerData.privacyLevel.replace('_', ' ')}
+                      <span
+                        className={`font-medium ${getPrivacyLevelColor(selectedServerData.privacyLevel).split(' ')[1]}`}
+                      >
+                        {getPrivacyLevelIcon(selectedServerData.privacyLevel)}{' '}
+                        {selectedServerData.privacyLevel.replace('_', ' ')}
                       </span>
                     </div>
-                    {selectedServerData.port && (
+                    {selectedServerData.port != null && (
                       <div className="flex justify-between">
                         <span className="text-gray-500 dark:text-gray-400">Port:</span>
                         <span className="font-medium">{selectedServerData.port}</span>
                       </div>
                     )}
-                    {selectedServerData.memoryUsage && (
+                    {selectedServerData.memoryUsage != null && (
                       <div className="flex justify-between">
                         <span className="text-gray-500 dark:text-gray-400">Memory:</span>
-                        <span className="font-medium">{selectedServerData.memoryUsage.toFixed(1)}MB</span>
+                        <span className="font-medium">
+                          {selectedServerData.memoryUsage.toFixed(1)}MB
+                        </span>
                       </div>
                     )}
                   </div>
@@ -517,7 +555,7 @@ export const MCPPage: React.FC<MCPPageProps> = ({
                       Real-time Logs
                     </h4>
                   </div>
-                  
+
                   <div className="flex-1 overflow-y-auto p-6 bg-gray-50 dark:bg-gray-900">
                     <div className="space-y-2">
                       {selectedServerData.logs.map((log) => (
@@ -526,9 +564,13 @@ export const MCPPage: React.FC<MCPPageProps> = ({
                             <span className="text-gray-500 dark:text-gray-400 flex-shrink-0">
                               {formatTimestamp(log.timestamp)}
                             </span>
-                            <span className={`flex-shrink-0 ${
-                              log.source === 'stderr' ? 'text-red-500' : 'text-gray-500 dark:text-gray-400'
-                            }`}>
+                            <span
+                              className={`flex-shrink-0 ${
+                                log.source === 'stderr'
+                                  ? 'text-red-500'
+                                  : 'text-gray-500 dark:text-gray-400'
+                              }`}
+                            >
                               [{log.source}]
                             </span>
                             <span className={`flex-shrink-0 ${getLogLevelColor(log.level)}`}>
@@ -557,7 +599,7 @@ export const MCPPage: React.FC<MCPPageProps> = ({
           </div>
         </div>
 
-        {error && (
+        {error != null && error.length > 0 && (
           <div className="mt-6 p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-md">
             <p className="text-sm text-red-800 dark:text-red-300">{error}</p>
           </div>

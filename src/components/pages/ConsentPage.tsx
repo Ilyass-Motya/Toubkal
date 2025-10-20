@@ -1,17 +1,25 @@
 /**
  * Consent Page Component (Consent History)
- * 
+ *
  * Main consent page accessible via toubkal://consent
  * Provides consent decision history with Ed25519 signature verification and export functionality.
  */
 
-import React, { useState, useEffect } from 'react'
-import { INTERNAL_PAGES } from '@/constants/url-schemes'
+import React, { useState, useEffect, useMemo } from 'react'
+// import { INTERNAL_PAGES } from '@/constants/url-schemes'
 
 interface ConsentDecision {
   id: string
   timestamp: Date
-  consentType: 'analytics' | 'cookies' | 'location' | 'camera' | 'microphone' | 'notifications' | 'ai_processing' | 'data_collection'
+  consentType:
+    | 'analytics'
+    | 'cookies'
+    | 'location'
+    | 'camera'
+    | 'microphone'
+    | 'notifications'
+    | 'ai_processing'
+    | 'data_collection'
   action: 'granted' | 'denied' | 'revoked'
   reason?: string
   signature: string
@@ -37,9 +45,7 @@ interface ConsentPageProps {
   initialFilter?: string
 }
 
-export const ConsentPage: React.FC<ConsentPageProps> = ({ 
-  initialFilter = 'all' 
-}) => {
+export const ConsentPage: React.FC<ConsentPageProps> = ({ initialFilter = 'all' }) => {
   const [decisions, setDecisions] = useState<ConsentDecision[]>([])
   const [snapshots, setSnapshots] = useState<ConsentSnapshot[]>([])
   const [filteredDecisions, setFilteredDecisions] = useState<ConsentDecision[]>([])
@@ -51,99 +57,113 @@ export const ConsentPage: React.FC<ConsentPageProps> = ({
   const [error, setError] = useState<string | null>(null)
 
   // Mock data for demonstration
-  const mockDecisions: ConsentDecision[] = [
-    {
-      id: '1',
-      timestamp: new Date('2025-01-18T10:30:00Z'),
-      consentType: 'analytics',
-      action: 'granted',
-      reason: 'User wants to help improve the browser',
-      signature: 'ed25519:abc123def456ghi789jkl012mno345pqr678stu901vwx234yz567890abcdef1234567890',
-      verified: true,
-      dataRetention: 365,
-      thirdParties: ['Google Analytics', 'Mixpanel']
-    },
-    {
-      id: '2',
-      timestamp: new Date('2025-01-18T10:25:00Z'),
-      consentType: 'cookies',
-      action: 'denied',
-      reason: 'User prefers privacy-first browsing',
-      signature: 'ed25519:def456ghi789jkl012mno345pqr678stu901vwx234yz567890abcdef1234567890abc123',
-      verified: true,
-      dataRetention: 0
-    },
-    {
-      id: '3',
-      timestamp: new Date('2025-01-18T10:20:00Z'),
-      consentType: 'ai_processing',
-      action: 'granted',
-      reason: 'User wants AI assistance features',
-      signature: 'ed25519:ghi789jkl012mno345pqr678stu901vwx234yz567890abcdef1234567890abc123def456',
-      verified: true,
-      dataRetention: 30,
-      thirdParties: ['Ollama (Local)']
-    },
-    {
-      id: '4',
-      timestamp: new Date('2025-01-18T10:15:00Z'),
-      consentType: 'location',
-      action: 'denied',
-      reason: 'User does not want location tracking',
-      signature: 'ed25519:jkl012mno345pqr678stu901vwx234yz567890abcdef1234567890abc123def456ghi789',
-      verified: true,
-      dataRetention: 0
-    },
-    {
-      id: '5',
-      timestamp: new Date('2025-01-18T10:10:00Z'),
-      consentType: 'notifications',
-      action: 'granted',
-      reason: 'User wants to receive important updates',
-      signature: 'ed25519:mno345pqr678stu901vwx234yz567890abcdef1234567890abc123def456ghi789jkl012',
-      verified: true,
-      dataRetention: 90
-    },
-    {
-      id: '6',
-      timestamp: new Date('2025-01-18T09:45:00Z'),
-      consentType: 'analytics',
-      action: 'revoked',
-      reason: 'User changed their mind about analytics',
-      signature: 'ed25519:pqr678stu901vwx234yz567890abcdef1234567890abc123def456ghi789jkl012mno345',
-      verified: true,
-      dataRetention: 0,
-      previousDecision: {
+  const mockDecisions: ConsentDecision[] = useMemo(
+    () => [
+      {
+        id: '1',
+        timestamp: new Date('2025-01-18T10:30:00Z'),
+        consentType: 'analytics',
         action: 'granted',
-        timestamp: new Date('2025-01-15T14:30:00Z')
-      }
-    }
-  ]
+        reason: 'User wants to help improve the browser',
+        signature:
+          'ed25519:abc123def456ghi789jkl012mno345pqr678stu901vwx234yz567890abcdef1234567890',
+        verified: true,
+        dataRetention: 365,
+        thirdParties: ['Google Analytics', 'Mixpanel'],
+      },
+      {
+        id: '2',
+        timestamp: new Date('2025-01-18T10:25:00Z'),
+        consentType: 'cookies',
+        action: 'denied',
+        reason: 'User prefers privacy-first browsing',
+        signature:
+          'ed25519:def456ghi789jkl012mno345pqr678stu901vwx234yz567890abcdef1234567890abc123',
+        verified: true,
+        dataRetention: 0,
+      },
+      {
+        id: '3',
+        timestamp: new Date('2025-01-18T10:20:00Z'),
+        consentType: 'ai_processing',
+        action: 'granted',
+        reason: 'User wants AI assistance features',
+        signature:
+          'ed25519:ghi789jkl012mno345pqr678stu901vwx234yz567890abcdef1234567890abc123def456',
+        verified: true,
+        dataRetention: 30,
+        thirdParties: ['Ollama (Local)'],
+      },
+      {
+        id: '4',
+        timestamp: new Date('2025-01-18T10:15:00Z'),
+        consentType: 'location',
+        action: 'denied',
+        reason: 'User does not want location tracking',
+        signature:
+          'ed25519:jkl012mno345pqr678stu901vwx234yz567890abcdef1234567890abc123def456ghi789',
+        verified: true,
+        dataRetention: 0,
+      },
+      {
+        id: '5',
+        timestamp: new Date('2025-01-18T10:10:00Z'),
+        consentType: 'notifications',
+        action: 'granted',
+        reason: 'User wants to receive important updates',
+        signature:
+          'ed25519:mno345pqr678stu901vwx234yz567890abcdef1234567890abc123def456ghi789jkl012',
+        verified: true,
+        dataRetention: 90,
+      },
+      {
+        id: '6',
+        timestamp: new Date('2025-01-18T09:45:00Z'),
+        consentType: 'analytics',
+        action: 'revoked',
+        reason: 'User changed their mind about analytics',
+        signature:
+          'ed25519:pqr678stu901vwx234yz567890abcdef1234567890abc123def456ghi789jkl012mno345',
+        verified: true,
+        dataRetention: 0,
+        previousDecision: {
+          action: 'granted',
+          timestamp: new Date('2025-01-15T14:30:00Z'),
+        },
+      },
+    ],
+    []
+  )
 
-  const mockSnapshots: ConsentSnapshot[] = [
-    {
-      id: 'snapshot-1',
-      timestamp: new Date('2025-01-18T10:30:00Z'),
-      decisions: mockDecisions.slice(0, 5),
-      signature: 'ed25519:snapshot1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
-      verified: true,
-      description: 'Current consent state as of January 18, 2025'
-    },
-    {
-      id: 'snapshot-2',
-      timestamp: new Date('2025-01-15T14:30:00Z'),
-      decisions: mockDecisions.slice(0, 4),
-      signature: 'ed25519:snapshot2345678901bcdef1234567890abcdef1234567890abcdef1234567890abcdef12',
-      verified: true,
-      description: 'Consent state before analytics revocation'
-    }
-  ]
+  const mockSnapshots: ConsentSnapshot[] = useMemo(
+    () => [
+      {
+        id: 'snapshot-1',
+        timestamp: new Date('2025-01-18T10:30:00Z'),
+        decisions: mockDecisions.slice(0, 5),
+        signature:
+          'ed25519:snapshot1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
+        verified: true,
+        description: 'Current consent state as of January 18, 2025',
+      },
+      {
+        id: 'snapshot-2',
+        timestamp: new Date('2025-01-15T14:30:00Z'),
+        decisions: mockDecisions.slice(0, 4),
+        signature:
+          'ed25519:snapshot2345678901bcdef1234567890abcdef1234567890abcdef1234567890abcdef12',
+        verified: true,
+        description: 'Consent state before analytics revocation',
+      },
+    ],
+    [mockDecisions]
+  )
 
   // Load data on component mount
   useEffect(() => {
     setDecisions(mockDecisions)
     setSnapshots(mockSnapshots)
-  }, [])
+  }, [mockDecisions, mockSnapshots])
 
   // Filter decisions
   useEffect(() => {
@@ -151,16 +171,17 @@ export const ConsentPage: React.FC<ConsentPageProps> = ({
 
     // Apply action filter
     if (filter !== 'all') {
-      filtered = filtered.filter(decision => decision.action === filter)
+      filtered = filtered.filter((decision) => decision.action === filter)
     }
 
     // Apply search term
     if (searchTerm) {
       const term = searchTerm.toLowerCase()
-      filtered = filtered.filter(decision => 
-        decision.consentType.toLowerCase().includes(term) ||
-        decision.reason?.toLowerCase().includes(term) ||
-        decision.action.toLowerCase().includes(term)
+      filtered = filtered.filter(
+        (decision) =>
+          decision.consentType.toLowerCase().includes(term) ||
+          (decision.reason != null && decision.reason.toLowerCase().includes(term)) ||
+          decision.action.toLowerCase().includes(term)
       )
     }
 
@@ -169,47 +190,73 @@ export const ConsentPage: React.FC<ConsentPageProps> = ({
 
   const getConsentTypeColor = (type: string) => {
     switch (type) {
-      case 'analytics': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
-      case 'cookies': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
-      case 'location': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300'
-      case 'camera': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
-      case 'microphone': return 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300'
-      case 'notifications': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
-      case 'ai_processing': return 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-300'
-      case 'data_collection': return 'bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-300'
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
+      case 'analytics':
+        return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
+      case 'cookies':
+        return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+      case 'location':
+        return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300'
+      case 'camera':
+        return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
+      case 'microphone':
+        return 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300'
+      case 'notifications':
+        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
+      case 'ai_processing':
+        return 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-300'
+      case 'data_collection':
+        return 'bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-300'
+      default:
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
     }
   }
 
   const getConsentTypeIcon = (type: string) => {
     switch (type) {
-      case 'analytics': return '📊'
-      case 'cookies': return '🍪'
-      case 'location': return '📍'
-      case 'camera': return '📷'
-      case 'microphone': return '🎤'
-      case 'notifications': return '🔔'
-      case 'ai_processing': return '🤖'
-      case 'data_collection': return '📋'
-      default: return '📝'
+      case 'analytics':
+        return '📊'
+      case 'cookies':
+        return '🍪'
+      case 'location':
+        return '📍'
+      case 'camera':
+        return '📷'
+      case 'microphone':
+        return '🎤'
+      case 'notifications':
+        return '🔔'
+      case 'ai_processing':
+        return '🤖'
+      case 'data_collection':
+        return '📋'
+      default:
+        return '📝'
     }
   }
 
   const getActionColor = (action: string) => {
     switch (action) {
-      case 'granted': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
-      case 'denied': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
-      case 'revoked': return 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300'
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
+      case 'granted':
+        return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+      case 'denied':
+        return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
+      case 'revoked':
+        return 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300'
+      default:
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
     }
   }
 
   const getActionIcon = (action: string) => {
     switch (action) {
-      case 'granted': return '✅'
-      case 'denied': return '❌'
-      case 'revoked': return '🔄'
-      default: return '❓'
+      case 'granted':
+        return '✅'
+      case 'denied':
+        return '❌'
+      case 'revoked':
+        return '🔄'
+      default:
+        return '❓'
     }
   }
 
@@ -221,7 +268,7 @@ export const ConsentPage: React.FC<ConsentPageProps> = ({
       hour: '2-digit',
       minute: '2-digit',
       second: '2-digit',
-      timeZoneName: 'short'
+      timeZoneName: 'short',
     }).format(timestamp)
   }
 
@@ -235,27 +282,29 @@ export const ConsentPage: React.FC<ConsentPageProps> = ({
 
     try {
       // Simulate export delay
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      await new Promise((resolve) => setTimeout(resolve, 2000))
 
       const exportData = {
         exportedAt: new Date().toISOString(),
         totalDecisions: decisions.length,
-        decisions: decisions.map(decision => ({
+        decisions: decisions.map((decision) => ({
           ...decision,
           timestamp: decision.timestamp.toISOString(),
-          previousDecision: decision.previousDecision ? {
-            ...decision.previousDecision,
-            timestamp: decision.previousDecision.timestamp.toISOString()
-          } : undefined
+          previousDecision: decision.previousDecision
+            ? {
+                ...decision.previousDecision,
+                timestamp: decision.previousDecision.timestamp.toISOString(),
+              }
+            : undefined,
         })),
-        snapshots: snapshots.map(snapshot => ({
+        snapshots: snapshots.map((snapshot) => ({
           ...snapshot,
           timestamp: snapshot.timestamp.toISOString(),
-          decisions: snapshot.decisions.map(decision => ({
+          decisions: snapshot.decisions.map((decision) => ({
             ...decision,
-            timestamp: decision.timestamp.toISOString()
-          }))
-        }))
+            timestamp: decision.timestamp.toISOString(),
+          })),
+        })),
       }
 
       if (exportFormat === 'json') {
@@ -269,17 +318,21 @@ export const ConsentPage: React.FC<ConsentPageProps> = ({
       } else if (exportFormat === 'csv') {
         const csvContent = [
           'ID,Timestamp,Consent Type,Action,Reason,Data Retention (Days),Third Parties,Signature,Verified',
-          ...decisions.map(decision => [
-            decision.id,
-            decision.timestamp.toISOString(),
-            decision.consentType,
-            decision.action,
-            decision.reason || '',
-            decision.dataRetention || 0,
-            decision.thirdParties?.join(';') || '',
-            decision.signature,
-            decision.verified
-          ].map(field => `"${field}"`).join(','))
+          ...decisions.map((decision) =>
+            [
+              decision.id,
+              decision.timestamp.toISOString(),
+              decision.consentType,
+              decision.action,
+              decision.reason ?? '',
+              decision.dataRetention ?? 0,
+              decision.thirdParties?.join(';') ?? '',
+              decision.signature,
+              decision.verified,
+            ]
+              .map((field) => `"${field}"`)
+              .join(',')
+          ),
         ].join('\n')
 
         const blob = new Blob([csvContent], { type: 'text/csv' })
@@ -301,7 +354,7 @@ export const ConsentPage: React.FC<ConsentPageProps> = ({
     }
   }
 
-  const handleCreateSnapshot = async () => {
+  const handleCreateSnapshot = () => {
     try {
       const newSnapshot: ConsentSnapshot = {
         id: `snapshot-${Date.now()}`,
@@ -309,26 +362,25 @@ export const ConsentPage: React.FC<ConsentPageProps> = ({
         decisions: [...decisions],
         signature: `ed25519:snapshot${Date.now()}${Math.random().toString(36).substring(2)}`,
         verified: true,
-        description: `Manual snapshot created on ${new Date().toLocaleDateString()}`
+        description: `Manual snapshot created on ${new Date().toLocaleDateString()}`,
       }
 
-      setSnapshots(prev => [newSnapshot, ...prev])
+      setSnapshots((prev) => [newSnapshot, ...prev])
     } catch (err) {
       console.error('[ConsentPage.handleCreateSnapshot] Failed:', err)
       setError('Failed to create snapshot')
     }
   }
 
-  const selectedSnapshotData = selectedSnapshot ? snapshots.find(s => s.id === selectedSnapshot) : null
+  const selectedSnapshotData =
+    selectedSnapshot != null ? snapshots.find((s) => s.id === selectedSnapshot) : null
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            Consent History
-          </h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Consent History</h1>
           <p className="mt-2 text-gray-600 dark:text-gray-400">
             Track and manage your privacy consent decisions with cryptographic verification
           </p>
@@ -373,10 +425,10 @@ export const ConsentPage: React.FC<ConsentPageProps> = ({
               {/* Stats */}
               <div className="mt-4 flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400">
                 <span>Total Decisions: {decisions.length}</span>
-                <span>Granted: {decisions.filter(d => d.action === 'granted').length}</span>
-                <span>Denied: {decisions.filter(d => d.action === 'denied').length}</span>
-                <span>Revoked: {decisions.filter(d => d.action === 'revoked').length}</span>
-                <span>Verified: {decisions.filter(d => d.verified).length}</span>
+                <span>Granted: {decisions.filter((d) => d.action === 'granted').length}</span>
+                <span>Denied: {decisions.filter((d) => d.action === 'denied').length}</span>
+                <span>Revoked: {decisions.filter((d) => d.action === 'revoked').length}</span>
+                <span>Verified: {decisions.filter((d) => d.verified).length}</span>
               </div>
             </div>
 
@@ -396,16 +448,20 @@ export const ConsentPage: React.FC<ConsentPageProps> = ({
                             {formatTimestamp(decision.timestamp)}
                           </p>
                         </div>
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getActionColor(decision.action)}`}>
+                        <span
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getActionColor(decision.action)}`}
+                        >
                           <span className="mr-1">{getActionIcon(decision.action)}</span>
                           {decision.action}
                         </span>
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getConsentTypeColor(decision.consentType)}`}>
+                        <span
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getConsentTypeColor(decision.consentType)}`}
+                        >
                           {decision.consentType.replace('_', ' ')}
                         </span>
                       </div>
 
-                      {decision.reason && (
+                      {decision.reason != null && decision.reason.length > 0 && (
                         <p className="text-gray-700 dark:text-gray-300 mb-3">
                           <strong>Reason:</strong> {decision.reason}
                         </p>
@@ -415,10 +471,12 @@ export const ConsentPage: React.FC<ConsentPageProps> = ({
                         <div>
                           <span className="text-gray-500 dark:text-gray-400">Data Retention:</span>
                           <span className="ml-2 font-medium">
-                            {decision.dataRetention ? `${decision.dataRetention} days` : 'No retention'}
+                            {decision.dataRetention != null && decision.dataRetention > 0
+                              ? `${decision.dataRetention} days`
+                              : 'No retention'}
                           </span>
                         </div>
-                        {decision.thirdParties && decision.thirdParties.length > 0 && (
+                        {decision.thirdParties != null && decision.thirdParties.length > 0 && (
                           <div>
                             <span className="text-gray-500 dark:text-gray-400">Third Parties:</span>
                             <span className="ml-2 font-medium">
@@ -431,19 +489,21 @@ export const ConsentPage: React.FC<ConsentPageProps> = ({
                       {decision.previousDecision && (
                         <div className="mt-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-md">
                           <p className="text-sm text-gray-600 dark:text-gray-400">
-                            <strong>Previous Decision:</strong> {decision.previousDecision.action} on{' '}
-                            {formatTimestamp(decision.previousDecision.timestamp)}
+                            <strong>Previous Decision:</strong> {decision.previousDecision.action}{' '}
+                            on {formatTimestamp(decision.previousDecision.timestamp)}
                           </p>
                         </div>
                       )}
 
                       <div className="mt-4 flex items-center justify-between">
                         <div className="flex items-center space-x-2">
-                          <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                            decision.verified 
-                              ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
-                              : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
-                          }`}>
+                          <span
+                            className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                              decision.verified
+                                ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                                : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
+                            }`}
+                          >
                             {decision.verified ? '✓ Verified' : '✗ Invalid'}
                           </span>
                           <span className="text-xs text-gray-500 dark:text-gray-400 font-mono">
@@ -463,7 +523,9 @@ export const ConsentPage: React.FC<ConsentPageProps> = ({
                     No consent decisions found
                   </h3>
                   <p className="text-gray-600 dark:text-gray-400">
-                    {searchTerm ? 'Try adjusting your search terms' : 'No decisions match the current filter'}
+                    {searchTerm
+                      ? 'Try adjusting your search terms'
+                      : 'No decisions match the current filter'}
                   </p>
                 </div>
               )}
@@ -493,7 +555,9 @@ export const ConsentPage: React.FC<ConsentPageProps> = ({
                   </select>
                 </div>
                 <button
-                  onClick={handleExport}
+                  onClick={() => {
+                    void handleExport()
+                  }}
                   disabled={isExporting}
                   className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
@@ -505,9 +569,7 @@ export const ConsentPage: React.FC<ConsentPageProps> = ({
             {/* Snapshots */}
             <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-                  Snapshots
-                </h3>
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white">Snapshots</h3>
                 <button
                   onClick={handleCreateSnapshot}
                   className="px-3 py-1 text-sm text-blue-600 hover:text-blue-800 border border-blue-300 rounded-md hover:bg-blue-50"
@@ -515,7 +577,7 @@ export const ConsentPage: React.FC<ConsentPageProps> = ({
                   Create Snapshot
                 </button>
               </div>
-              
+
               <div className="space-y-3">
                 {snapshots.map((snapshot) => (
                   <div
@@ -531,11 +593,13 @@ export const ConsentPage: React.FC<ConsentPageProps> = ({
                       <span className="text-sm font-medium text-gray-900 dark:text-white">
                         {formatTimestamp(snapshot.timestamp)}
                       </span>
-                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                        snapshot.verified 
-                          ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
-                          : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
-                      }`}>
+                      <span
+                        className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                          snapshot.verified
+                            ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                            : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
+                        }`}
+                      >
                         {snapshot.verified ? '✓' : '✗'}
                       </span>
                     </div>
@@ -559,7 +623,9 @@ export const ConsentPage: React.FC<ConsentPageProps> = ({
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-gray-500 dark:text-gray-400">Created:</span>
-                    <span className="font-medium">{formatTimestamp(selectedSnapshotData.timestamp)}</span>
+                    <span className="font-medium">
+                      {formatTimestamp(selectedSnapshotData.timestamp)}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-500 dark:text-gray-400">Decisions:</span>
@@ -567,7 +633,9 @@ export const ConsentPage: React.FC<ConsentPageProps> = ({
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-500 dark:text-gray-400">Verified:</span>
-                    <span className={`font-medium ${selectedSnapshotData.verified ? 'text-green-600' : 'text-red-600'}`}>
+                    <span
+                      className={`font-medium ${selectedSnapshotData.verified ? 'text-green-600' : 'text-red-600'}`}
+                    >
                       {selectedSnapshotData.verified ? 'Yes' : 'No'}
                     </span>
                   </div>
@@ -583,7 +651,7 @@ export const ConsentPage: React.FC<ConsentPageProps> = ({
           </div>
         </div>
 
-        {error && (
+        {error != null && error.length > 0 && (
           <div className="mt-6 p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-md">
             <p className="text-sm text-red-800 dark:text-red-300">{error}</p>
           </div>

@@ -1,19 +1,19 @@
 /**
  * Privacy Settings Hook
- * 
+ *
  * React hook for managing privacy settings state and operations.
  * Provides reactive state management for privacy features.
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { PrivacyManager, getPrivacyManager } from '@/services/privacy-manager'
-import { 
-  PrivacySettings, 
-  PrivacyStatus, 
-  PrivacyWarning, 
+import {
+  PrivacySettings,
+  PrivacyStatus,
+  PrivacyWarning,
   FingerprintingTestResult,
-  Result 
 } from '@/types/PrivacyTypes'
+import { Result } from '@/types/CommonTypes'
 
 interface UsePrivacySettingsReturn {
   // State
@@ -22,7 +22,7 @@ interface UsePrivacySettingsReturn {
   warnings: PrivacyWarning[]
   isLoading: boolean
   error: string | null
-  
+
   // Actions
   updateSettings: (updates: Partial<PrivacySettings>) => Promise<Result<PrivacySettings>>
   enableProtection: () => Promise<Result<boolean>>
@@ -30,7 +30,7 @@ interface UsePrivacySettingsReturn {
   runFingerprintingTests: () => Promise<Result<FingerprintingTestResult[]>>
   acknowledgeWarning: (warningIndex: number) => void
   clearWarnings: () => void
-  
+
   // Utilities
   refresh: () => Promise<void>
   isProtectionEnabled: boolean
@@ -44,18 +44,18 @@ export function usePrivacySettings(): UsePrivacySettingsReturn {
   const [warnings, setWarnings] = useState<PrivacyWarning[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  
+
   const privacyManagerRef = useRef<PrivacyManager | null>(null)
   const isInitializedRef = useRef(false)
 
   // Initialize privacy manager
   useEffect(() => {
     if (!isInitializedRef.current) {
-      initializePrivacyManager()
+      void initializePrivacyManager()
     }
-  }, [])
+  }, [initializePrivacyManager])
 
-  const initializePrivacyManager = async (): Promise<void> => {
+  const initializePrivacyManager = useCallback(async (): Promise<void> => {
     try {
       setIsLoading(true)
       setError(null)
@@ -88,48 +88,51 @@ export function usePrivacySettings(): UsePrivacySettingsReturn {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [handleSettingsChanged, handleWarningShown])
 
-  const handleSettingsChanged = useCallback((event: any) => {
+  const handleSettingsChanged = useCallback(() => {
     if (privacyManagerRef.current) {
       const newSettings = privacyManagerRef.current.getSettings()
       const newStatus = privacyManagerRef.current.getStatus()
-      
+
       setSettings(newSettings)
       setStatus(newStatus)
     }
   }, [])
 
-  const handleWarningShown = useCallback((event: any) => {
-    if (event.data?.warning) {
-      setWarnings(prev => [...prev, event.data.warning])
+  const handleWarningShown = useCallback((event: { data?: { warning?: PrivacyWarning } }) => {
+    if (event.data?.warning != null) {
+      setWarnings((prev) => [...prev, event.data.warning])
     }
   }, [])
 
-  const updateSettings = useCallback(async (updates: Partial<PrivacySettings>): Promise<Result<PrivacySettings>> => {
-    if (!privacyManagerRef.current) {
-      return { success: false, error: 'Privacy manager not initialized' }
-    }
-
-    try {
-      setError(null)
-      const result = await privacyManagerRef.current.updateSettings(updates)
-      
-      if (result.success) {
-        setSettings(result.data)
-        const newStatus = privacyManagerRef.current.getStatus()
-        setStatus(newStatus)
-      } else {
-        setError(result.error)
+  const updateSettings = useCallback(
+    async (updates: Partial<PrivacySettings>): Promise<Result<PrivacySettings>> => {
+      if (!privacyManagerRef.current) {
+        return { success: false, error: 'Privacy manager not initialized' }
       }
 
-      return result
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to update settings'
-      setError(errorMessage)
-      return { success: false, error: errorMessage }
-    }
-  }, [])
+      try {
+        setError(null)
+        const result = await privacyManagerRef.current.updateSettings(updates)
+
+        if (result.success) {
+          setSettings(result.data)
+          const newStatus = privacyManagerRef.current.getStatus()
+          setStatus(newStatus)
+        } else {
+          setError(result.error)
+        }
+
+        return result
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to update settings'
+        setError(errorMessage)
+        return { success: false, error: errorMessage }
+      }
+    },
+    []
+  )
 
   const enableProtection = useCallback(async (): Promise<Result<boolean>> => {
     if (!privacyManagerRef.current) {
@@ -139,7 +142,7 @@ export function usePrivacySettings(): UsePrivacySettingsReturn {
     try {
       setError(null)
       const result = await privacyManagerRef.current.enableProtection()
-      
+
       if (result.success) {
         const newSettings = privacyManagerRef.current.getSettings()
         const newStatus = privacyManagerRef.current.getStatus()
@@ -165,7 +168,7 @@ export function usePrivacySettings(): UsePrivacySettingsReturn {
     try {
       setError(null)
       const result = await privacyManagerRef.current.disableProtection()
-      
+
       if (result.success) {
         const newSettings = privacyManagerRef.current.getSettings()
         const newStatus = privacyManagerRef.current.getStatus()
@@ -183,7 +186,9 @@ export function usePrivacySettings(): UsePrivacySettingsReturn {
     }
   }, [])
 
-  const runFingerprintingTests = useCallback(async (): Promise<Result<FingerprintingTestResult[]>> => {
+  const runFingerprintingTests = useCallback(async (): Promise<
+    Result<FingerprintingTestResult[]>
+  > => {
     if (!privacyManagerRef.current) {
       return { success: false, error: 'Privacy manager not initialized' }
     }
@@ -191,7 +196,7 @@ export function usePrivacySettings(): UsePrivacySettingsReturn {
     try {
       setError(null)
       const result = await privacyManagerRef.current.runFingerprintingTests()
-      
+
       if (!result.success) {
         setError(result.error)
       }
@@ -205,12 +210,12 @@ export function usePrivacySettings(): UsePrivacySettingsReturn {
   }, [])
 
   const acknowledgeWarning = useCallback((warningIndex: number) => {
-    setWarnings(prev => {
+    setWarnings((prev) => {
       const newWarnings = [...prev]
-      if (newWarnings[warningIndex]) {
+      if (newWarnings[warningIndex] != null) {
         newWarnings[warningIndex] = {
           ...newWarnings[warningIndex],
-          acknowledged: true
+          acknowledged: true,
         }
       }
       return newWarnings
@@ -221,7 +226,7 @@ export function usePrivacySettings(): UsePrivacySettingsReturn {
     setWarnings([])
   }, [])
 
-  const refresh = useCallback(async (): Promise<void> => {
+  const refresh = useCallback((): Promise<void> => {
     if (!privacyManagerRef.current) {
       return
     }
@@ -265,7 +270,7 @@ export function usePrivacySettings(): UsePrivacySettingsReturn {
     warnings,
     isLoading,
     error,
-    
+
     // Actions
     updateSettings,
     enableProtection,
@@ -273,11 +278,11 @@ export function usePrivacySettings(): UsePrivacySettingsReturn {
     runFingerprintingTests,
     acknowledgeWarning,
     clearWarnings,
-    
+
     // Utilities
     refresh,
     isProtectionEnabled,
     isFingerprintingEnabled,
-    isTrackerBlockingEnabled
+    isTrackerBlockingEnabled,
   }
 }

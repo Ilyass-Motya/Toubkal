@@ -1,17 +1,22 @@
 /**
  * Audit Page Component (Transparency Dashboard)
- * 
+ *
  * Main audit page accessible via toubkal://audit
  * Provides real-time audit log viewer with filtering and search capabilities.
  */
 
-import React, { useState, useEffect, useCallback } from 'react'
-import { INTERNAL_PAGES } from '@/constants/url-schemes'
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
+// import { INTERNAL_PAGES } from '@/constants/url-schemes'
 
 interface AuditLogEntry {
   id: string
   timestamp: Date
-  operationType: 'ai_query' | 'network_call' | 'plugin_action' | 'consent_decision' | 'privacy_action'
+  operationType:
+    | 'ai_query'
+    | 'network_call'
+    | 'plugin_action'
+    | 'consent_decision'
+    | 'privacy_action'
   description: string
   details: Record<string, unknown>
   signature: string
@@ -22,9 +27,7 @@ interface AuditPageProps {
   initialFilter?: string
 }
 
-export const AuditPage: React.FC<AuditPageProps> = ({ 
-  initialFilter = 'all' 
-}) => {
+export const AuditPage: React.FC<AuditPageProps> = ({ initialFilter = 'all' }) => {
   const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>([])
   const [filteredLogs, setFilteredLogs] = useState<AuditLogEntry[]>([])
   const [filter, setFilter] = useState(initialFilter)
@@ -36,86 +39,89 @@ export const AuditPage: React.FC<AuditPageProps> = ({
   const logsPerPage = 50
 
   // Mock data for demonstration - in real implementation, this would come from Mojo IPC
-  const mockAuditLogs: AuditLogEntry[] = [
-    {
-      id: '1',
-      timestamp: new Date('2025-01-18T10:30:00Z'),
-      operationType: 'ai_query',
-      description: 'AI query processed using Ollama Llama 3.2',
-      details: {
-        model: 'llama3.2:latest',
-        tokens: 150,
-        latency: 1200,
-        local: true
+  const mockAuditLogs: AuditLogEntry[] = useMemo(
+    () => [
+      {
+        id: '1',
+        timestamp: new Date('2025-01-18T10:30:00Z'),
+        operationType: 'ai_query',
+        description: 'AI query processed using Ollama Llama 3.2',
+        details: {
+          model: 'llama3.2:latest',
+          tokens: 150,
+          latency: 1200,
+          local: true,
+        },
+        signature: 'ed25519:abc123...',
+        verified: true,
       },
-      signature: 'ed25519:abc123...',
-      verified: true
-    },
-    {
-      id: '2',
-      timestamp: new Date('2025-01-18T10:25:00Z'),
-      operationType: 'consent_decision',
-      description: 'User granted consent for data collection',
-      details: {
-        consentType: 'analytics',
-        granted: true,
-        timestamp: '2025-01-18T10:25:00Z'
+      {
+        id: '2',
+        timestamp: new Date('2025-01-18T10:25:00Z'),
+        operationType: 'consent_decision',
+        description: 'User granted consent for data collection',
+        details: {
+          consentType: 'analytics',
+          granted: true,
+          timestamp: '2025-01-18T10:25:00Z',
+        },
+        signature: 'ed25519:def456...',
+        verified: true,
       },
-      signature: 'ed25519:def456...',
-      verified: true
-    },
-    {
-      id: '3',
-      timestamp: new Date('2025-01-18T10:20:00Z'),
-      operationType: 'network_call',
-      description: 'HTTPS request to api.example.com',
-      details: {
-        url: 'https://api.example.com/data',
-        method: 'GET',
-        status: 200,
-        encrypted: true
+      {
+        id: '3',
+        timestamp: new Date('2025-01-18T10:20:00Z'),
+        operationType: 'network_call',
+        description: 'HTTPS request to api.example.com',
+        details: {
+          url: 'https://api.example.com/data',
+          method: 'GET',
+          status: 200,
+          encrypted: true,
+        },
+        signature: 'ed25519:ghi789...',
+        verified: true,
       },
-      signature: 'ed25519:ghi789...',
-      verified: true
-    },
-    {
-      id: '4',
-      timestamp: new Date('2025-01-18T10:15:00Z'),
-      operationType: 'plugin_action',
-      description: 'MCP server executed: file-reader',
-      details: {
-        server: 'file-reader',
-        action: 'read_file',
-        file: '/path/to/document.pdf',
-        local: true
+      {
+        id: '4',
+        timestamp: new Date('2025-01-18T10:15:00Z'),
+        operationType: 'plugin_action',
+        description: 'MCP server executed: file-reader',
+        details: {
+          server: 'file-reader',
+          action: 'read_file',
+          file: '/path/to/document.pdf',
+          local: true,
+        },
+        signature: 'ed25519:jkl012...',
+        verified: true,
       },
-      signature: 'ed25519:jkl012...',
-      verified: true
-    },
-    {
-      id: '5',
-      timestamp: new Date('2025-01-18T10:10:00Z'),
-      operationType: 'privacy_action',
-      description: 'Privacy settings updated',
-      details: {
-        setting: 'tracking_protection',
-        value: 'strict',
-        previousValue: 'standard'
+      {
+        id: '5',
+        timestamp: new Date('2025-01-18T10:10:00Z'),
+        operationType: 'privacy_action',
+        description: 'Privacy settings updated',
+        details: {
+          setting: 'tracking_protection',
+          value: 'strict',
+          previousValue: 'standard',
+        },
+        signature: 'ed25519:mno345...',
+        verified: true,
       },
-      signature: 'ed25519:mno345...',
-      verified: true
-    }
-  ]
+    ],
+    []
+  )
 
   // Load audit logs (mock implementation)
   const loadAuditLogs = useCallback(async () => {
     try {
       setIsLoading(true)
       setError(null)
-      
+
       // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+
       setAuditLogs(mockAuditLogs)
     } catch (err) {
       console.error('[AuditPage.loadAuditLogs] Failed:', err)
@@ -123,7 +129,7 @@ export const AuditPage: React.FC<AuditPageProps> = ({
     } finally {
       setIsLoading(false)
     }
-  }, [])
+  }, [mockAuditLogs])
 
   // Filter and search logs
   useEffect(() => {
@@ -131,15 +137,16 @@ export const AuditPage: React.FC<AuditPageProps> = ({
 
     // Apply operation type filter
     if (filter !== 'all') {
-      filtered = filtered.filter(log => log.operationType === filter)
+      filtered = filtered.filter((log) => log.operationType === filter)
     }
 
     // Apply search term
     if (searchTerm) {
       const term = searchTerm.toLowerCase()
-      filtered = filtered.filter(log => 
-        log.description.toLowerCase().includes(term) ||
-        log.operationType.toLowerCase().includes(term)
+      filtered = filtered.filter(
+        (log) =>
+          log.description.toLowerCase().includes(term) ||
+          log.operationType.toLowerCase().includes(term)
       )
     }
 
@@ -149,28 +156,40 @@ export const AuditPage: React.FC<AuditPageProps> = ({
 
   // Load logs on component mount
   useEffect(() => {
-    loadAuditLogs()
+    void loadAuditLogs()
   }, [loadAuditLogs])
 
   const getOperationTypeColor = (type: string) => {
     switch (type) {
-      case 'ai_query': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300'
-      case 'network_call': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
-      case 'plugin_action': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
-      case 'consent_decision': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
-      case 'privacy_action': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
+      case 'ai_query':
+        return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300'
+      case 'network_call':
+        return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
+      case 'plugin_action':
+        return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+      case 'consent_decision':
+        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
+      case 'privacy_action':
+        return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
+      default:
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
     }
   }
 
   const getOperationTypeIcon = (type: string) => {
     switch (type) {
-      case 'ai_query': return '🤖'
-      case 'network_call': return '🌐'
-      case 'plugin_action': return '🔌'
-      case 'consent_decision': return '✅'
-      case 'privacy_action': return '🔒'
-      default: return '📝'
+      case 'ai_query':
+        return '🤖'
+      case 'network_call':
+        return '🌐'
+      case 'plugin_action':
+        return '🔌'
+      case 'consent_decision':
+        return '✅'
+      case 'privacy_action':
+        return '🔒'
+      default:
+        return '📝'
     }
   }
 
@@ -182,7 +201,7 @@ export const AuditPage: React.FC<AuditPageProps> = ({
       hour: '2-digit',
       minute: '2-digit',
       second: '2-digit',
-      timeZoneName: 'short'
+      timeZoneName: 'short',
     }).format(timestamp)
   }
 
@@ -202,15 +221,17 @@ export const AuditPage: React.FC<AuditPageProps> = ({
     )
   }
 
-  if (error) {
+  if (error != null && error.length > 0) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
           <div className="text-red-500 text-6xl mb-4">⚠️</div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Error Loading Audit Logs</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+            Error Loading Audit Logs
+          </h2>
           <p className="text-gray-600 dark:text-gray-400 mb-4">{error}</p>
           <button
-            onClick={loadAuditLogs}
+            onClick={() => void loadAuditLogs()}
             className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
           >
             Retry
@@ -274,7 +295,7 @@ export const AuditPage: React.FC<AuditPageProps> = ({
           <div className="mt-4 flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400">
             <span>Total Logs: {auditLogs.length}</span>
             <span>Filtered: {filteredLogs.length}</span>
-            <span>Verified: {filteredLogs.filter(log => log.verified).length}</span>
+            <span>Verified: {filteredLogs.filter((log) => log.verified).length}</span>
           </div>
         </div>
 
@@ -308,7 +329,9 @@ export const AuditPage: React.FC<AuditPageProps> = ({
                       {formatTimestamp(log.timestamp)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getOperationTypeColor(log.operationType)}`}>
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getOperationTypeColor(log.operationType)}`}
+                      >
                         <span className="mr-1">{getOperationTypeIcon(log.operationType)}</span>
                         {log.operationType.replace('_', ' ')}
                       </span>
@@ -328,11 +351,13 @@ export const AuditPage: React.FC<AuditPageProps> = ({
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <div className="flex items-center">
-                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                          log.verified 
-                            ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
-                            : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
-                        }`}>
+                        <span
+                          className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                            log.verified
+                              ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                              : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
+                          }`}
+                        >
                           {log.verified ? '✓ Verified' : '✗ Invalid'}
                         </span>
                         <span className="ml-2 text-gray-500 dark:text-gray-400 font-mono text-xs">
@@ -369,8 +394,8 @@ export const AuditPage: React.FC<AuditPageProps> = ({
                 <div>
                   <p className="text-sm text-gray-700 dark:text-gray-300">
                     Showing <span className="font-medium">{startIndex + 1}</span> to{' '}
-                    <span className="font-medium">{Math.min(endIndex, filteredLogs.length)}</span> of{' '}
-                    <span className="font-medium">{filteredLogs.length}</span> results
+                    <span className="font-medium">{Math.min(endIndex, filteredLogs.length)}</span>{' '}
+                    of <span className="font-medium">{filteredLogs.length}</span> results
                   </p>
                 </div>
                 <div>
@@ -382,7 +407,7 @@ export const AuditPage: React.FC<AuditPageProps> = ({
                     >
                       Previous
                     </button>
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    {Array.from({ length: totalPages }, (unused, i) => i + 1).map((page) => (
                       <button
                         key={page}
                         onClick={() => setCurrentPage(page)}

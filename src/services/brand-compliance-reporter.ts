@@ -1,13 +1,11 @@
 /**
  * Brand Compliance Reporter Service
- * 
+ *
  * Generates automated reports for brand consistency violations.
  * Integrates with CI/CD pipeline for brand validation.
  */
 
-export type Result<T> =
-  | { success: true; data: T }
-  | { success: false; error: string }
+import { Result } from '@/types/CommonTypes'
 
 export interface ComplianceReport {
   timestamp: string
@@ -73,7 +71,7 @@ export class BrandComplianceReporter {
   private constructor() {}
 
   static getInstance(): BrandComplianceReporter {
-    if (!BrandComplianceReporter.instance) {
+    if (BrandComplianceReporter.instance == null) {
       BrandComplianceReporter.instance = new BrandComplianceReporter()
     }
     return BrandComplianceReporter.instance
@@ -89,7 +87,7 @@ export class BrandComplianceReporter {
       format: 'json',
       includeDetails: true,
       includeRecommendations: true,
-      threshold: 80
+      threshold: 80,
     }
   ): Promise<Result<ComplianceReport>> {
     try {
@@ -104,13 +102,13 @@ export class BrandComplianceReporter {
         components,
         summary,
         recommendations,
-        metadata
+        metadata,
       }
 
       this.reports.push(report)
 
       // Generate output file if path specified
-      if (options.outputPath) {
+      if (options.outputPath != null && options.outputPath.length > 0) {
         await this.writeReport(report, options)
       }
 
@@ -119,7 +117,7 @@ export class BrandComplianceReporter {
       console.error('[BrandComplianceReporter.generateReport] Failed:', error)
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Report generation failed'
+        error: error instanceof Error ? error.message : 'Report generation failed',
       }
     }
   }
@@ -127,7 +125,7 @@ export class BrandComplianceReporter {
   /**
    * Generates HTML report
    */
-  async generateHtmlReport(report: ComplianceReport): Promise<string> {
+  generateHtmlReport(report: ComplianceReport): Promise<string> {
     const html = `
 <!DOCTYPE html>
 <html lang="en">
@@ -331,14 +329,18 @@ export class BrandComplianceReporter {
 
             <div class="components">
                 <h2>Component Details</h2>
-                ${report.components.map(component => `
+                ${report.components
+                  .map(
+                    (component) => `
                     <div class="component">
                         <div class="component-header">
                             <div class="component-name">${component.name}</div>
                             <div class="component-score score-${component.status}">${component.score}%</div>
                         </div>
                         <div class="violations">
-                            ${component.violations.map(violation => `
+                            ${component.violations
+                              .map(
+                                (violation) => `
                                 <div class="violation">
                                     <div class="violation-icon violation-${violation.severity}">
                                         ${violation.severity === 'error' ? '✗' : violation.severity === 'warning' ? '⚠' : 'ℹ'}
@@ -352,20 +354,28 @@ export class BrandComplianceReporter {
                                         </div>
                                     </div>
                                 </div>
-                            `).join('')}
+                            `
+                              )
+                              .join('')}
                         </div>
                     </div>
-                `).join('')}
+                `
+                  )
+                  .join('')}
             </div>
 
-            ${report.recommendations.length > 0 ? `
+            ${
+              report.recommendations.length > 0
+                ? `
                 <div class="recommendations">
                     <h3>Recommendations</h3>
                     <ul>
-                        ${report.recommendations.map(rec => `<li>${rec}</li>`).join('')}
+                        ${report.recommendations.map((rec) => `<li>${rec}</li>`).join('')}
                     </ul>
                 </div>
-            ` : ''}
+            `
+                : ''
+            }
         </div>
 
         <div class="metadata">
@@ -389,7 +399,7 @@ export class BrandComplianceReporter {
   /**
    * Generates Markdown report
    */
-  async generateMarkdownReport(report: ComplianceReport): Promise<string> {
+  generateMarkdownReport(report: ComplianceReport): Promise<string> {
     const markdown = `# Brand Compliance Report
 
 **Generated:** ${new Date(report.timestamp).toLocaleString()}  
@@ -411,27 +421,39 @@ export class BrandComplianceReporter {
 
 ## Component Details
 
-${report.components.map(component => `
+${report.components
+  .map(
+    (component) => `
 ### ${component.name} (${component.score}%)
 
 **Status:** ${component.status.toUpperCase()}
 
-${component.violations.length > 0 ? `
+${
+  component.violations.length > 0
+    ? `
 #### Violations
 
-${component.violations.map(violation => `
+${component.violations
+  .map(
+    (violation) => `
 - **${violation.severity.toUpperCase()}** - ${violation.property}
   - Expected: ${violation.expected}
   - Actual: ${violation.actual}
   - ${violation.message}
-  ${violation.fix ? `  - Fix: ${violation.fix}` : ''}
-`).join('')}
-` : 'No violations found.'}
-`).join('')}
+  ${violation.fix !== null && violation.fix !== undefined ? `  - Fix: ${violation.fix}` : ''}
+`
+  )
+  .join('')}
+`
+    : 'No violations found.'
+}
+`
+  )
+  .join('')}
 
 ## Recommendations
 
-${report.recommendations.map(rec => `- ${rec}`).join('\n')}
+${report.recommendations.map((rec) => `- ${rec}`).join('\n')}
 
 ## Metadata
 
@@ -448,7 +470,7 @@ ${report.recommendations.map(rec => `- ${rec}`).join('\n')}
   /**
    * Generates CSV report
    */
-  async generateCsvReport(report: ComplianceReport): Promise<string> {
+  generateCsvReport(report: ComplianceReport): Promise<string> {
     const headers = [
       'Component',
       'Score',
@@ -459,12 +481,12 @@ ${report.recommendations.map(rec => `- ${rec}`).join('\n')}
       'Expected',
       'Actual',
       'Message',
-      'Fix'
+      'Fix',
     ]
 
-    const rows = report.components.flatMap(component =>
+    const rows = report.components.flatMap((component) =>
       component.violations.length > 0
-        ? component.violations.map(violation => [
+        ? component.violations.map((violation) => [
             component.name,
             component.score,
             component.status,
@@ -474,13 +496,13 @@ ${report.recommendations.map(rec => `- ${rec}`).join('\n')}
             violation.expected,
             violation.actual,
             violation.message,
-            violation.fix || ''
+            violation.fix ?? '',
           ])
         : [[component.name, component.score, component.status, '', '', '', '', '', '', '']]
     )
 
     const csvContent = [headers, ...rows]
-      .map(row => row.map(cell => `"${cell}"`).join(','))
+      .map((row) => row.map((cell) => `"${cell}"`).join(','))
       .join('\n')
 
     return csvContent
@@ -492,7 +514,10 @@ ${report.recommendations.map(rec => `- ${rec}`).join('\n')}
   private async writeReport(report: ComplianceReport, options: ReportOptions): Promise<void> {
     const timestamp = new Date().toISOString().split('T')[0]
     const filename = `brand-compliance-report-${timestamp}.${options.format}`
-    const filepath = options.outputPath ? `${options.outputPath}/${filename}` : filename
+    const filepath =
+      options.outputPath !== null && options.outputPath !== undefined
+        ? `${options.outputPath}/${filename}`
+        : filename
 
     let content: string
 
@@ -520,15 +545,15 @@ ${report.recommendations.map(rec => `- ${rec}`).join('\n')}
    */
   private calculateSummary(components: ComponentReport[]): ReportSummary {
     const totalComponents = components.length
-    const passedComponents = components.filter(c => c.status === 'pass').length
-    const warningComponents = components.filter(c => c.status === 'warning').length
-    const failedComponents = components.filter(c => c.status === 'fail').length
+    const passedComponents = components.filter((c) => c.status === 'pass').length
+    const warningComponents = components.filter((c) => c.status === 'warning').length
+    const failedComponents = components.filter((c) => c.status === 'fail').length
 
-    const allViolations = components.flatMap(c => c.violations)
+    const allViolations = components.flatMap((c) => c.violations)
     const totalViolations = allViolations.length
-    const errorViolations = allViolations.filter(v => v.severity === 'error').length
-    const warningViolations = allViolations.filter(v => v.severity === 'warning').length
-    const infoViolations = allViolations.filter(v => v.severity === 'info').length
+    const errorViolations = allViolations.filter((v) => v.severity === 'error').length
+    const warningViolations = allViolations.filter((v) => v.severity === 'warning').length
+    const infoViolations = allViolations.filter((v) => v.severity === 'info').length
 
     return {
       totalComponents,
@@ -538,7 +563,7 @@ ${report.recommendations.map(rec => `- ${rec}`).join('\n')}
       totalViolations,
       errorViolations,
       warningViolations,
-      infoViolations
+      infoViolations,
     }
   }
 
@@ -559,30 +584,42 @@ ${report.recommendations.map(rec => `- ${rec}`).join('\n')}
     const recommendations: string[] = []
 
     if (overallScore < 80) {
-      recommendations.push('Overall brand compliance is below threshold. Review and fix violations.')
+      recommendations.push(
+        'Overall brand compliance is below threshold. Review and fix violations.'
+      )
     }
 
-    const errorComponents = components.filter(c => c.status === 'fail')
+    const errorComponents = components.filter((c) => c.status === 'fail')
     if (errorComponents.length > 0) {
-      recommendations.push(`${errorComponents.length} components have critical violations that must be fixed.`)
+      recommendations.push(
+        `${errorComponents.length} components have critical violations that must be fixed.`
+      )
     }
 
-    const warningComponents = components.filter(c => c.status === 'warning')
+    const warningComponents = components.filter((c) => c.status === 'warning')
     if (warningComponents.length > 0) {
-      recommendations.push(`${warningComponents.length} components have warnings that should be addressed.`)
+      recommendations.push(
+        `${warningComponents.length} components have warnings that should be addressed.`
+      )
     }
 
-    const colorViolations = components.flatMap(c => c.violations).filter(v => v.type === 'color')
+    const colorViolations = components
+      .flatMap((c) => c.violations)
+      .filter((v) => v.type === 'color')
     if (colorViolations.length > 0) {
       recommendations.push('Review color usage and ensure all colors are from the brand palette.')
     }
 
-    const typographyViolations = components.flatMap(c => c.violations).filter(v => v.type === 'typography')
+    const typographyViolations = components
+      .flatMap((c) => c.violations)
+      .filter((v) => v.type === 'typography')
     if (typographyViolations.length > 0) {
       recommendations.push('Update typography to use Inter font family and approved weights.')
     }
 
-    const accessibilityViolations = components.flatMap(c => c.violations).filter(v => v.type === 'accessibility')
+    const accessibilityViolations = components
+      .flatMap((c) => c.violations)
+      .filter((v) => v.type === 'accessibility')
     if (accessibilityViolations.length > 0) {
       recommendations.push('Improve accessibility by increasing color contrast and font sizes.')
     }
