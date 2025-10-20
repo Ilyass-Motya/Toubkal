@@ -17,9 +17,9 @@
       - Load {project-root}/CODING-RULES.md (TypeScript strict mode, error handling, no any types)
       - Load {project-root}/docs/contributing/testing-strategy.md (80% coverage, test structure requirements)
       - Load {project-root}/PRIVACY-ETHICS-POLICY.md (zero-telemetry-by-default, consent model)
-      - Store key facts: Current phase = Week 0 (Pre-Phase 1), Phase 1 = Foundation & Privacy (Weeks 1-8)
-      - Store architecture facts: Electron app (main process = C++/Node, renderer process = React/TypeScript)
-      - Store project paths: Project=C:\ToubkalBrowser, DepotTools=C:\depot_tools, Chromium=C:\chromium, GitHub=https://github.com/Ilyass-Motya/Toubkal.git
+      - Store key facts: Current phase = Phase 1 (Foundation & Privacy - 67% complete, Stories 1.0-1.5 DONE)
+      - Store architecture facts: CHROMIUM FORK (C++ browser at C:\chromium\src\toubkal, React UI for internal pages toubkal://)
+      - Store project paths: Project=C:\ToubkalBrowser, Chromium=C:\chromium\src, ChromiumToubkal=C:\chromium\src\toubkal, GitHub=https://github.com/Ilyass-Motya/Toubkal.git
       - 🔴 CRITICAL: Testing Framework = VITEST (NOT Jest) - Use vi.fn() not jest.fn() - See QUICK-START.md
       - VERIFY: If context files not loaded, WARN user and proceed with generic BMAD mode</step>
   <step n="3">Remember: user's name is {user_name}</step>
@@ -65,38 +65,47 @@
       3. Privacy Compliance: "Does this respect PRIVACY-ETHICS-POLICY.md?" (zero-telemetry-by-default, explicit consent)
       4. Phase Discipline: "Is this within Phase 1 scope?" (Foundation & Privacy only, Weeks 1-8)
       5. Architecture Compliance: "Does this align with ADRs and architecture docs?" (MCP sandbox, audit trail, etc.)
-      6. Process Boundary: "Is this main process (C++/Node) or renderer process (React/TS)?" (Electron architecture awareness)
+      6. Code Location: "Is this C++ browser code (C:\chromium\src\toubkal) or TypeScript UI (C:\ToubkalBrowser\src)?" (Chromium fork architecture awareness)
     </toubkal-validation>
 
-    <toubkal-electron-architecture>
-      Toubkal Browser is an Electron application with strict process separation:
+    <toubkal-chromium-fork-architecture>
+      Toubkal Browser is a CHROMIUM FORK (like Brave, Edge, Vivaldi) with custom privacy features:
 
-      MAIN PROCESS (C++/Node.js):
-      - Location: src/main/ or native/
-      - Languages: C++, Node.js
-      - Responsibilities: System APIs, file access, Chromium integration, IPC coordination
-      - Security: Direct system access, must sanitize all renderer inputs
-      - Testing: C++ unit tests (Google Test), Node integration tests
+      CHROMIUM C++ CODE (Browser Engine):
+      - Location: C:\chromium\src\toubkal\
+      - Languages: C++ (Chromium codebase)
+      - Components:
+        * C:\chromium\src\toubkal\components\privacy\ (fingerprinting, shields, audit)
+        * C:\chromium\src\toubkal\components\ai_platform\ (AI inference gateway)
+        * C:\chromium\src\toubkal\components\mcp_integration\ (MCP protocol)
+        * C:\chromium\src\toubkal\browser\ (browser-level UI customization)
+      - Build System: GN + Ninja (Chromium build tools)
+      - Testing: Google Test (C++ unit tests), Chromium test infrastructure
+      - Security: Browser-level enforcement, network stack modification, Blink integration
 
-      RENDERER PROCESS (React/TypeScript):
-      - Location: src/renderer/ or src/components/
+      REACT/TYPESCRIPT UI (Internal Pages Only):
+      - Location: C:\ToubkalBrowser\src\ (linked to C:\chromium\src\toubkal\app\)
       - Languages: TypeScript, React
-      - Responsibilities: UI rendering, user interactions, browser chrome
-      - Security: Sandboxed, cannot access system APIs directly
-      - Testing: Vitest unit tests, React Testing Library, Playwright E2E
+      - Scope: ONLY internal browser pages (toubkal://settings, toubkal://audit, toubkal://version)
+      - Build: Vite/React bundled into Chromium WebUI framework
+      - Testing: Vitest unit tests, Playwright E2E
+      - Security: CSP-protected WebUI pages (ADR-007)
 
-      IPC COMMUNICATION:
-      - Main → Renderer: expose APIs via contextBridge (preload.ts)
-      - Renderer → Main: invoke IPC channels (validated, sanitized)
-      - NEVER: Direct access across process boundaries
-      - Reference: ADR-003 (IPC Security Model)
+      IPC COMMUNICATION (Mojo):
+      - Browser ↔ WebUI: Mojo IPC (.mojom interfaces)
+      - C++ → TypeScript: Define .mojom files, generate TypeScript bindings
+      - TypeScript → C++: Call Mojo methods from React components
+      - NOT Electron IPC: Uses Chromium's Mojo system, not Node.js contextBridge
+      - Reference: ADR-003 (Mojo IPC Security Model)
 
       IMPLEMENTATION RULES:
-      - Main process features require C++ knowledge (flag if missing)
-      - Renderer features use React/TypeScript only
-      - IPC channels must be explicitly defined and validated
-      - Security: Renderer is untrusted, main process validates all inputs
-    </toubkal-electron-architecture>
+      - Browser features (privacy, shields, AI) = C++ in C:\chromium\src\toubkal\components\
+      - Internal pages (settings, audit) = React/TypeScript in C:\ToubkalBrowser\src\
+      - Build C++ with: ninja -C out/Toubkal toubkal/components/privacy:privacy
+      - Build React with: npm run build (bundled into WebUI)
+      - NOT Electron: No main/renderer process separation, use Chromium's browser/renderer architecture
+      - Security: Browser process is privileged, renderer processes are sandboxed (Chromium model)
+    </toubkal-chromium-fork-architecture>
 
     <toubkal-forbidden-implementations>
       Dev Agent MUST NOT implement:

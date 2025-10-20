@@ -1,6 +1,6 @@
 # Toubkal Browser Development Landscape
 
-**Date:** 2025-10-18
+**Date:** 2025-10-20 (Updated with Stories 1.7-1.9)
 **Status:** Ready for Development Kickoff
 
 ---
@@ -12,10 +12,10 @@
 - **15 Stories** | **~50 days effort** | **Ready for immediate development**
 - **Deliverables:** Architectural foundation, Ed25519-signed audit logs, LevelDB persistence, ad blocking MVP
 
-### **Phase 1: Privacy Foundation** *(Weeks 5-8)*
+### **Phase 1: Privacy Foundation** *(Weeks 5-8+)*
 **Goal:** Establish cryptographically verifiable privacy baseline with Toubkal brand identity
-- **7 Stories** | **~25 days effort** | **Partial parallel development possible**
-- **Deliverables:** Consent fabric, transparency dashboard, GN/Siso build system
+- **10 Stories** | **~45 days effort** | **Partial parallel development possible**
+- **Deliverables:** Consent fabric, transparency dashboard, feature-first structure, diagnostics infrastructure, GN/Siso build system
 
 ---
 
@@ -46,11 +46,14 @@
 |-------|-------|--------|----------|--------|-------|--------------|
 | **1.0** | Repository Setup & Build System | ✅ Completed | P0 | 5 days | DevOps Engineer | None |
 | **1.1** | Zero Telemetry Enforcement | ✅ Completed | P0 | 3 days | Privacy Engineer | None |
-| **1.2** | Chromium Fork Setup Documentation | Ready | P0 | 5 days | DevOps/Writer | None |
-| **1.3** | URL Scheme Rebrand (chrome:// → toubkal://) | Ready | P1 | 3 days | Frontend Engineer | Phase 0.5 crypto |
+| **1.2** | Chromium Fork Setup Documentation | ✅ Completed | P0 | 5 days | DevOps/Writer | None |
+| **1.3** | URL Scheme Rebrand (chrome:// → toubkal://) | ✅ Completed | P1 | 3 days | Frontend Engineer | Phase 0.5 crypto |
 | **1.4** | Privacy Defaults (Fingerprinting + Tracker Blocking) | Ready | P0 | 4 days | Privacy Engineer | Phase 0.5 ad blocking |
 | **1.5** | Brand Identity Implementation | Ready | P1 | 5 days | UI/UX Engineer | 1.3 |
-| **1.6** | Basic Transparency Dashboard | Ready | P0 | 5 days | Frontend Engineer | Phase 0.5 crypto + audit |
+| **1.6** | Chromium Fork Setup Test Suite | Ready | P0 | 5 days | QA Engineer | 1.2 |
+| **1.7** | Project Structure Migration (Feature-First) | Draft | P1 | 4 days | Tech Lead | 1.5, 1.6 |
+| **1.8** | Diagnostics & Scalability Infrastructure | Draft | P0 | 7 days | Backend Engineer | 1.7 |
+| **1.9** | Basic Transparency Dashboard | Draft | P0 | 5 days | Frontend Engineer | Phase 0.5 crypto + audit, 1.7, 1.8 |
 
 ---
 
@@ -178,7 +181,7 @@
 4. **Create Story Branch Strategy** - feature/0.5.X branches for each story
 
 ### **Week 1 Deliverables:**
-- Story 0.5.1 completed and merged
+- Story 0.5.1 completed, merged, and QA tested ✅
 - Story 0.5.7 completed and merged
 - Story 0.5.10 completed and merged
 - Story 1.2 documentation in progress

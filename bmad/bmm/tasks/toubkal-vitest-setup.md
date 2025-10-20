@@ -156,13 +156,22 @@ afterEach(() => {
   cleanup();
 });
 
-// Mock Electron IPC (renderer process tests)
+// Mock Mojo IPC (Chromium WebUI → C++ browser communication)
+// Toubkal uses Chromium's Mojo system, NOT Electron IPC
 global.window = global.window || {};
-(global.window as any).electron = {
-  ipcRenderer: {
-    send: vi.fn(),
-    on: vi.fn(),
-    invoke: vi.fn(),
+(global.window as any).chrome = {
+  // Mock chrome.send for legacy WebUI IPC
+  send: vi.fn(),
+  // Mock Mojo bindings (generated from .mojom files)
+  mojom: {
+    PrivacySettings: {
+      getSettings: vi.fn(),
+      updateSettings: vi.fn(),
+    },
+    AuditLogger: {
+      getRecentLogs: vi.fn(),
+      exportLogs: vi.fn(),
+    },
   },
 };
 
@@ -185,16 +194,14 @@ export const mockTelemetryConsent = (consented: boolean) => {
   });
 };
 
-// IPC testing utilities
-export const mockIpcInvoke = (channel: string, response: any) => {
-  (global.window as any).electron.ipcRenderer.invoke.mockImplementation(
-    (ch: string) => {
-      if (ch === channel) {
-        return Promise.resolve(response);
-      }
-      return Promise.reject(new Error(`Unhandled IPC channel: ${ch}`));
-    }
-  );
+// Mojo IPC testing utilities (Chromium fork)
+export const mockMojoCall = (service: string, method: string, response: any) => {
+  const mojoMock = (global.window as any).chrome.mojom[service];
+  if (mojoMock && mojoMock[method]) {
+    mojoMock[method].mockResolvedValue(response);
+  } else {
+    throw new Error(`Mojo service/method not mocked: ${service}.${method}`);
+  }
 };
 ```
 

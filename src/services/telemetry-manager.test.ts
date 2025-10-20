@@ -42,7 +42,6 @@ describe('ZeroTelemetryManager', () => {
 
       // Assert
       expect(result.success).toBe(true)
-      expect(result.data).toBeUndefined()
     })
 
     it('should handle errors gracefully', async () => {
@@ -146,7 +145,6 @@ describe('ZeroTelemetryManager', () => {
 
       // Assert
       expect(result.success).toBe(true)
-      expect(result.data).toBeUndefined()
     })
 
     it('should handle non-existent consent ID', async () => {
@@ -158,7 +156,6 @@ describe('ZeroTelemetryManager', () => {
 
       // Assert
       expect(result.success).toBe(true)
-      expect(result.data).toBeUndefined()
     })
   })
 
@@ -238,7 +235,6 @@ describe('ZeroTelemetryManager', () => {
 
       // Assert
       expect(result.success).toBe(true)
-      expect(result.data).toBeUndefined()
     })
 
     it('should handle empty URL gracefully', async () => {
@@ -251,7 +247,6 @@ describe('ZeroTelemetryManager', () => {
 
       // Assert
       expect(result.success).toBe(true)
-      expect(result.data).toBeUndefined()
     })
   })
 

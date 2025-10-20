@@ -39,7 +39,8 @@ const noJestUsage = {
             node.source.value === 'jest' ||
             node.source.value.includes('jest')) {
           // Allow @testing-library/jest-dom (it works with Vitest)
-          if (node.source.value === '@testing-library/jest-dom') {
+          if (node.source.value === '@testing-library/jest-dom' ||
+              node.source.value === '@testing-library/jest-dom/matchers') {
             return;
           }
           context.report({
@@ -74,12 +75,25 @@ export default [
         window: 'readonly',
         document: 'readonly',
         console: 'readonly',
+        navigator: 'readonly',
+        screen: 'readonly',
+        performance: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
+        confirm: 'readonly',
+        alert: 'readonly',
+        btoa: 'readonly',
+        atob: 'readonly',
+        getComputedStyle: 'readonly',
         // Node.js globals
         global: 'readonly',
         process: 'readonly',
         Buffer: 'readonly',
         __dirname: 'readonly',
         __filename: 'readonly',
+        module: 'readonly',
         // Test globals
         describe: 'readonly',
         it: 'readonly',
@@ -137,7 +151,11 @@ export default [
         },
         {
           selector: 'variable',
-          format: ['camelCase', 'UPPER_CASE']
+          format: ['camelCase', 'UPPER_CASE', 'PascalCase']
+        },
+        {
+          selector: 'function',
+          format: ['camelCase', 'PascalCase']
         },
         {
           selector: 'typeLike',
@@ -146,6 +164,14 @@ export default [
         {
           selector: 'enumMember',
           format: ['PascalCase']
+        },
+        {
+          selector: 'import',
+          format: ['camelCase', 'PascalCase']
+        },
+        {
+          selector: 'objectLiteralProperty',
+          format: ['camelCase', 'UPPER_CASE']
         }
       ]
     },

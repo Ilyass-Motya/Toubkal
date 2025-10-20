@@ -1,4 +1,5 @@
-/* eslint-disable unicorn/prefer-module, unicorn/prefer-node-protocol */
+/* eslint-disable no-undef */
+/* eslint-env node */
 /**
  * {{MODULE_NAME}} Module Installer
  * Custom installation logic for complex module setup
