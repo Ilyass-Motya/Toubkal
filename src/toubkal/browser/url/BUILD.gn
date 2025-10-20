@@ -1,21 +1,52 @@
-# BUILD.gn for Toubkal Browser URL Scheme Implementation
-
 import("//build/config/compiler/compiler.gni")
 
-source_set("url_scheme") {
+source_set("url_scheme_registration") {
   sources = [
     "url_scheme_registration.cc",
+    "url_scheme_registration.h",
     "url_redirect_handler.cc",
+    "url_redirect_handler.h",
+  ]
+
+  deps = [
+    "//url",
+    "//base",
   ]
 
   public_deps = [
-    "//base",
     "//url",
   ]
 
-  public = [
-    "url_scheme_registration.h",
-    "url_redirect_handler.h",
+  # Enable C++17 features
+  cflags_cc = [ "-std=c++17" ]
+}
+
+# Unit tests for URL scheme registration
+test("url_scheme_registration_test") {
+  sources = [
+    "url_scheme_registration_test.cc",
+  ]
+
+  deps = [
+    ":url_scheme_registration",
+    "//testing/gtest",
+    "//url",
+  ]
+
+  # Enable C++17 features
+  cflags_cc = [ "-std=c++17" ]
+}
+
+# Unit tests for URL redirect handler
+test("url_redirect_handler_test") {
+  sources = [
+    "url_redirect_handler_test.cc",
+  ]
+
+  deps = [
+    ":url_scheme_registration",
+    "//testing/gtest",
+    "//url",
   ]
 
   # Enable C++17 features

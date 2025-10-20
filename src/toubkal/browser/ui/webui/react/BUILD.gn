@@ -1,0 +1,106 @@
+import("//build/config/compiler/compiler.gni")
+
+# React WebUI build configuration for transparency dashboards
+# This builds React 19 + TypeScript components for toubkal://audit and toubkal://consent
+
+# Vite build configuration for React apps
+action("build_react_webui") {
+  script = "//build/scripts/build_react_webui.py"
+  
+  inputs = [
+    "audit/package.json",
+    "audit/vite.config.ts",
+    "audit/tsconfig.json",
+    "audit/src/App.tsx",
+    "audit/src/main.tsx",
+    "audit/src/App.test.tsx",
+    "consent/package.json", 
+    "consent/vite.config.ts",
+    "consent/tsconfig.json",
+    "consent/src/App.tsx",
+    "consent/src/main.tsx",
+    "consent/src/App.test.tsx",
+    "settings/package.json",
+    "settings/vite.config.ts", 
+    "settings/tsconfig.json",
+    "settings/src/App.tsx",
+    "settings/src/main.tsx",
+    "settings/src/App.test.tsx",
+  ]
+  
+  outputs = [
+    "$target_gen_dir/react_webui/audit/index.html",
+    "$target_gen_dir/react_webui/audit/assets/app.js",
+    "$target_gen_dir/react_webui/audit/assets/app.css",
+    "$target_gen_dir/react_webui/consent/index.html",
+    "$target_gen_dir/react_webui/consent/assets/app.js", 
+    "$target_gen_dir/react_webui/consent/assets/app.css",
+    "$target_gen_dir/react_webui/settings/index.html",
+    "$target_gen_dir/react_webui/settings/assets/app.js",
+    "$target_gen_dir/react_webui/settings/assets/app.css",
+  ]
+  
+  args = [
+    "--output-dir",
+    "$target_gen_dir/react_webui",
+    "--audit-dir",
+    "audit",
+    "--consent-dir", 
+    "consent",
+    "--settings-dir",
+    "settings",
+  ]
+  
+  deps = [
+    "//build/scripts:build_react_webui_script",
+  ]
+}
+
+# Data source for React WebUI pages
+source_set("react_webui_data") {
+  sources = [
+    "react_webui_data_source.cc",
+    "react_webui_data_source.h",
+  ]
+  
+  deps = [
+    "//content/public/browser",
+    ":build_react_webui",
+  ]
+  
+  public_deps = [
+    "//content/public/browser",
+  ]
+  
+  # Enable C++17 features
+  cflags_cc = [ "-std=c++17" ]
+}
+
+# WebUI controllers for React pages
+source_set("react_webui_controllers") {
+  sources = [
+    "audit/audit_react_ui.cc",
+    "audit/audit_react_ui.h",
+    "consent/consent_react_ui.cc", 
+    "consent/consent_react_ui.h",
+    "settings/settings_react_ui.cc",
+    "settings/settings_react_ui.h",
+    "toubkal_ui_impl.cc",
+    "toubkal_ui_impl.h",
+  ]
+  
+  deps = [
+    "//content/public/browser",
+    "//mojo/public/cpp/bindings",
+    "//toubkal/mojo/ui",
+    "//toubkal/browser/branding",
+    ":react_webui_data",
+  ]
+  
+  public_deps = [
+    "//content/public/browser",
+  ]
+  
+  # Enable C++17 features
+  cflags_cc = [ "-std=c++17" ]
+}

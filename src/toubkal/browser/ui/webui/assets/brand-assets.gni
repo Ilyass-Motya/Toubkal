@@ -1,0 +1,27 @@
+# Toubkal Browser Brand Assets
+# This file defines all brand-related assets for the Toubkal browser
+
+# Brand CSS Files
+toubkal_brand_css = [
+  "toubkal-brand.css",
+  "tailwind.config.js",
+]
+
+# Brand SVG Assets
+toubkal_brand_svgs = [
+  "toubkal-logo.svg",
+  "toubkal-icon.svg",
+]
+
+# Brand Image Assets (when available)
+toubkal_brand_images = [
+  # Add PNG/JPG assets here when created
+]
+
+# Brand Fonts (when available)
+toubkal_brand_fonts = [
+  # Add custom font files here when available
+]
+
+# All Brand Assets
+toubkal_brand_assets = toubkal_brand_css + toubkal_brand_svgs + toubkal_brand_images + toubkal_brand_fonts

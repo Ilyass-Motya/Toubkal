@@ -1,0 +1,25 @@
+import("//build/config/compiler/compiler.gni")
+
+# Integration tests for Toubkal WebUI components
+
+source_set("toubkal_webui_integration_tests") {
+  testonly = true
+  
+  sources = [
+    "brand_identity_integration_test.cc",
+  ]
+
+  deps = [
+    "//content/public/test:test_support",
+    "//testing/gtest",
+    "//url",
+    "//toubkal/browser/ui/webui/settings",
+    "//toubkal/browser/ui/webui/about", 
+    "//toubkal/browser/ui/webui/version",
+    "//toubkal/browser/ui/webui/flags",
+    "//toubkal/browser/security",
+  ]
+
+  # Enable C++17 features
+  cflags_cc = [ "-std=c++17" ]
+}

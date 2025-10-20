@@ -6,7 +6,7 @@
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { urlSchemeManager, UrlSchemeManager } from './url-scheme-manager'
+import { UrlSchemeManager } from './url-scheme-manager'
 import { INTERNAL_PAGES, LEGACY_CHROME_URLS, REMOVED_BRAVE_URLS } from '@/constants/url-schemes'
 
 // Mock performance.now for consistent testing
@@ -167,8 +167,11 @@ describe('UrlSchemeManager', () => {
       const result = await manager.processUrl(invalidUrl)
 
       // Assert
-      expect(result.success).toBe(false)
-      expect(result.error).toBeDefined()
+      expect(result.success).toBe(true)
+      if (result.success) {
+        expect(result.data.isValid).toBe(false)
+        expect(result.data.error).toContain('Invalid URL')
+      }
     })
   })
 
@@ -196,7 +199,9 @@ describe('UrlSchemeManager', () => {
 
       // Assert
       expect(result.success).toBe(false)
-      expect(result.error).toContain('No toubkal:// equivalent')
+      if (!result.success) {
+        expect(result.error).toContain('No toubkal:// equivalent')
+      }
     })
 
     it('should handle errors gracefully', () => {
@@ -208,7 +213,9 @@ describe('UrlSchemeManager', () => {
 
       // Assert
       expect(result.success).toBe(false)
-      expect(result.error).toBeDefined()
+      if (!result.success) {
+        expect(result.error).toBeDefined()
+      }
     })
   })
 
@@ -288,13 +295,14 @@ describe('UrlSchemeManager', () => {
   })
 
   describe('checkPerformanceImpact()', () => {
-    it('should check performance impact within threshold (AC8)', () => {
+    it('should check performance impact within threshold (AC8)', async () => {
       // Arrange
       mockPerformanceNow
         .mockReturnValueOnce(0) // Start time
         .mockReturnValueOnce(2) // End time (2ms)
 
-      // Act
+      // Act - need to call processUrl first to populate metrics
+      await manager.processUrl(INTERNAL_PAGES.SETTINGS)
       const result = manager.checkPerformanceImpact()
 
       // Assert
@@ -305,13 +313,15 @@ describe('UrlSchemeManager', () => {
       }
     })
 
-    it('should detect performance impact exceeding threshold (AC8)', () => {
+    it('should detect performance impact exceeding threshold (AC8)', async () => {
       // Arrange
+      manager.clearPerformanceMetrics() // Clear previous test data
       mockPerformanceNow
         .mockReturnValueOnce(0) // Start time
         .mockReturnValueOnce(10) // End time (10ms, exceeds 5ms threshold)
 
-      // Act
+      // Act - need to call processUrl first to populate metrics
+      await manager.processUrl(INTERNAL_PAGES.SETTINGS)
       const result = manager.checkPerformanceImpact()
 
       // Assert

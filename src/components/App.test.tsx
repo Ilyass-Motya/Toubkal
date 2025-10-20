@@ -8,10 +8,12 @@
 import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { Result } from '@/types/CommonTypes'
+import { UrlValidationResult } from '@/services/url-scheme-manager'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import App from './App'
 import { urlSchemeManager } from '@/services/url-scheme-manager'
-import { INTERNAL_PAGES, LEGACY_CHROME_URLS } from '@/constants/url-schemes'
+import { INTERNAL_PAGES } from '@/constants/url-schemes'
 
 // Mock the URL scheme manager
 vi.mock('@/services/url-scheme-manager', () => ({
@@ -212,8 +214,8 @@ describe('App', () => {
   describe('loading states', () => {
     it('should show loading state during URL processing', async () => {
       // Arrange
-      let resolveProcessUrl: (value: any) => void
-      const processUrlPromise = new Promise((resolve) => {
+      let resolveProcessUrl: (value: Result<UrlValidationResult>) => void
+      const processUrlPromise = new Promise<Result<UrlValidationResult>>((resolve) => {
         resolveProcessUrl = resolve
       })
       mockUrlSchemeManager.processUrl.mockReturnValue(processUrlPromise)
@@ -225,7 +227,7 @@ describe('App', () => {
       expect(screen.getByText('Loading...')).toBeInTheDocument()
 
       // Resolve the promise
-      resolveProcessUrl!({
+      resolveProcessUrl({
         success: true,
         data: {
           isValid: true,

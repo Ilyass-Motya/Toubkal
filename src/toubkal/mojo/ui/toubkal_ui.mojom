@@ -1,0 +1,39 @@
+module toubkal.ui;
+
+// Audit log entry for transparency dashboard
+struct AuditLog {
+  string id;
+  time timestamp;
+  string event_type;
+  string description;
+  string user_id;
+  string signature;
+  bool verified;
+};
+
+// Consent entry for consent history
+struct ConsentEntry {
+  string id;
+  time timestamp;
+  string consent_type;
+  string action;
+  string reason;
+  string user_id;
+  string signature;
+  bool verified;
+};
+
+// Main Toubkal UI interface for internal pages
+interface ToubkalUI {
+  // Get audit logs for transparency dashboard
+  GetAuditLogs() => (array<AuditLog> logs);
+
+  // Get consent history for consent page
+  GetConsentHistory() => (array<ConsentEntry> history);
+
+  // Get current settings
+  GetCurrentSettings() => (string settings);
+
+  // Update settings
+  UpdateSettings(string settings_json) => (bool success, string error_message);
+};

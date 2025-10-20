@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE translationbundle>
+<translationbundle lang="en-US">
+  <!-- Product Information -->
+  <translation id="IDS_PRODUCT_NAME">Toubkal Browser</translation>
+  <translation id="IDS_PRODUCT_SHORT_NAME">Toubkal</translation>
+  <translation id="IDS_PRODUCT_VERSION">1.0.0</translation>
+  <translation id="IDS_PRODUCT_DESCRIPTION">The intelligent browser that protects your mind</translation>
+
+  <!-- Window Titles -->
+  <translation id="IDS_BROWSER_WINDOW_TITLE">Toubkal Browser</translation>
+  <translation id="IDS_BROWSER_WINDOW_TITLE_WITH_PAGE">{1} - Toubkal Browser</translation>
+  <translation id="IDS_BROWSER_WINDOW_TITLE_NEW_TAB">New Tab - Toubkal Browser</translation>
+
+  <!-- About Dialog -->
+  <translation id="IDS_ABOUT_DIALOG_TITLE">About Toubkal Browser</translation>
+  <translation id="IDS_ABOUT_DIALOG_DESCRIPTION">Toubkal Browser is a privacy-first, AI-augmented browser built on Chromium. It provides intelligent assistance while protecting your privacy with cryptographic verification and zero telemetry.</translation>
+  <translation id="IDS_ABOUT_DIALOG_VERSION">Version {1}</translation>
+  <translation id="IDS_ABOUT_DIALOG_COPYRIGHT">Copyright 2025 Toubkal Browser. All rights reserved.</translation>
+
+  <!-- Internal Pages -->
+  <translation id="IDS_SETTINGS_TITLE">Toubkal Settings</translation>
+  <translation id="IDS_ABOUT_TITLE">About Toubkal Browser</translation>
+  <translation id="IDS_VERSION_TITLE">Toubkal Version</translation>
+  <translation id="IDS_FLAGS_TITLE">Toubkal Flags</translation>
+  <translation id="IDS_EXTENSIONS_TITLE">Toubkal Extensions</translation>
+  <translation id="IDS_HELP_TITLE">Toubkal Help</translation>
+  <translation id="IDS_AUDIT_TITLE">Transparency Dashboard</translation>
+  <translation id="IDS_CONSENT_TITLE">Consent History</translation>
+  <translation id="IDS_PRIVACY_TITLE">Privacy Settings</translation>
+  <translation id="IDS_SECURITY_TITLE">Security Settings</translation>
+
+  <!-- Menu Items -->
+  <translation id="IDS_MENU_TOUBKAL_BROWSER">Toubkal Browser</translation>
+  <translation id="IDS_MENU_ABOUT_TOUBKAL_BROWSER">About Toubkal Browser</translation>
+  <translation id="IDS_MENU_TOUBKAL_SETTINGS">Toubkal Settings</translation>
+  <translation id="IDS_MENU_TOUBKAL_HELP">Toubkal Help</translation>
+
+  <!-- Status Messages -->
+  <translation id="IDS_STATUS_TOUBKAL_LOADING">Toubkal Browser is loading...</translation>
+  <translation id="IDS_STATUS_TOUBKAL_READY">Toubkal Browser is ready</translation>
+  <translation id="IDS_STATUS_TOUBKAL_ERROR">Toubkal Browser encountered an error</translation>
+
+  <!-- Error Messages -->
+  <translation id="IDS_ERROR_TOUBKAL_INITIALIZATION_FAILED">Failed to initialize Toubkal Browser</translation>
+  <translation id="IDS_ERROR_TOUBKAL_BRANDING_FAILED">Failed to apply Toubkal branding</translation>
+  <translation id="IDS_ERROR_TOUBKAL_URL_SCHEME_FAILED">Failed to register Toubkal URL scheme</translation>
+
+  <!-- Tooltips -->
+  <translation id="IDS_TOOLTIP_TOUBKAL_LOGO">Toubkal Browser - Privacy-First AI Browser</translation>
+  <translation id="IDS_TOOLTIP_TOUBKAL_SETTINGS">Open Toubkal Settings</translation>
+  <translation id="IDS_TOOLTIP_TOUBKAL_HELP">Open Toubkal Help</translation>
+  <translation id="IDS_TOOLTIP_TOUBKAL_ABOUT">About Toubkal Browser</translation>
+
+  <!-- Accessibility -->
+  <translation id="IDS_ACCESSIBILITY_TOUBKAL_BROWSER">Toubkal Browser, privacy-first AI browser</translation>
+  <translation id="IDS_ACCESSIBILITY_TOUBKAL_LOGO">Toubkal Browser logo</translation>
+  <translation id="IDS_ACCESSIBILITY_TOUBKAL_SETTINGS">Toubkal Settings button</translation>
+  <translation id="IDS_ACCESSIBILITY_TOUBKAL_HELP">Toubkal Help button</translation>
+</translationbundle>

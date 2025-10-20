@@ -6,7 +6,8 @@
  */
 
 import React, { useEffect, useState, useCallback } from 'react'
-import { urlSchemeManager, Result } from '@/services/url-scheme-manager'
+import { urlSchemeManager } from '@/services/url-scheme-manager'
+// import { Result } from '@/types/CommonTypes'
 import { INTERNAL_PAGES, ERROR_EXAMPLES } from '@/constants/url-schemes'
 
 interface ToubkalRouterProps {
@@ -55,13 +56,13 @@ export const ToubkalRouter: React.FC<ToubkalRouterProps> = ({
       if (validation.isLegacy && validation.redirectUrl) {
         setRouterState(prev => ({
           ...prev,
-          redirectUrl: validation.redirectUrl!,
+          redirectUrl: validation.redirectUrl,
           isLoading: false,
         }))
         
         // Auto-redirect after a brief delay to show the redirect
         setTimeout(() => {
-          onNavigate(validation.redirectUrl!)
+          onNavigate(validation.redirectUrl)
         }, 1000)
         return
       }
@@ -81,7 +82,7 @@ export const ToubkalRouter: React.FC<ToubkalRouterProps> = ({
         setRouterState(prev => ({
           ...prev,
           isLoading: false,
-          error: validation.error || 'Invalid URL',
+          error: validation.error ?? 'Invalid URL',
         }))
         return
       }
@@ -107,7 +108,7 @@ export const ToubkalRouter: React.FC<ToubkalRouterProps> = ({
 
   // Handle URL changes
   useEffect(() => {
-    handleUrlChange(currentUrl)
+    void handleUrlChange(currentUrl)
   }, [currentUrl, handleUrlChange])
 
   // Show loading state
@@ -123,7 +124,7 @@ export const ToubkalRouter: React.FC<ToubkalRouterProps> = ({
   }
 
   // Show redirect notification
-  if (routerState.redirectUrl) {
+  if (routerState.redirectUrl != null && routerState.redirectUrl.length > 0) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
         <div className="text-center max-w-md mx-auto p-6">
@@ -144,7 +145,7 @@ export const ToubkalRouter: React.FC<ToubkalRouterProps> = ({
   }
 
   // Show error state
-  if (routerState.error) {
+  if (routerState.error != null && routerState.error.length > 0) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
         <div className="text-center max-w-2xl mx-auto p-6">

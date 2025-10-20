@@ -9,6 +9,8 @@ import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { Result } from '@/types/CommonTypes'
+import { UrlValidationResult } from '@/services/url-scheme-manager'
 import ToubkalRouter from './ToubkalRouter'
 import { urlSchemeManager } from '@/services/url-scheme-manager'
 import { INTERNAL_PAGES, LEGACY_CHROME_URLS } from '@/constants/url-schemes'
@@ -266,8 +268,8 @@ describe('ToubkalRouter', () => {
   describe('loading state', () => {
     it('should show loading state while processing URL', async () => {
       // Arrange
-      let resolveProcessUrl: (value: any) => void
-      const processUrlPromise = new Promise((resolve) => {
+      let resolveProcessUrl: (value: Result<UrlValidationResult>) => void
+      const processUrlPromise = new Promise<Result<UrlValidationResult>>((resolve) => {
         resolveProcessUrl = resolve
       })
       mockUrlSchemeManager.processUrl.mockReturnValue(processUrlPromise)
@@ -284,7 +286,7 @@ describe('ToubkalRouter', () => {
       expect(screen.queryByTestId('test-content')).not.toBeInTheDocument()
 
       // Resolve the promise
-      resolveProcessUrl!({
+      resolveProcessUrl({
         success: true,
         data: {
           isValid: true,
@@ -320,7 +322,7 @@ describe('ToubkalRouter', () => {
   })
 
   describe('URL changes', () => {
-    it('should handle URL changes', async () => {
+    it('should handle URL changes', () => {
       // Arrange
       mockUrlSchemeManager.processUrl.mockResolvedValue({
         success: true,

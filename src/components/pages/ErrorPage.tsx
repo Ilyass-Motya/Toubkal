@@ -85,7 +85,7 @@ export const ErrorPage: React.FC<ErrorPageProps> = ({
 
         {/* Error Description */}
         <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
-          {errorMessage || errorContent.description}
+          {errorMessage ?? errorContent.description}
         </p>
 
         {/* Suggestions */}

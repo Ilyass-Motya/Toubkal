@@ -34,19 +34,20 @@ describe('PrivacyDashboard', () => {
   })
 
   describe('loading state', () => {
-    it('should display loading animation initially', () => {
+    it('should display loading animation initially', async () => {
       // Arrange
       mockTelemetryManager.getPrivacyDashboardState.mockImplementation(
         () => new Promise(() => {}) // Never resolves
       )
 
       // Act
-      render(<PrivacyDashboard {...mockProps} />)
+      const { container } = render(<PrivacyDashboard {...mockProps} />)
 
-      // Assert
-      expect(screen.getByText('Privacy Dashboard')).toBeInTheDocument()
-      // Check for loading animation elements instead of text
-      expect(screen.getByText('Privacy Dashboard')).toBeInTheDocument()
+      // Assert - check for loading skeleton animation
+      await waitFor(() => {
+        const loadingSkeleton = container.querySelector('.animate-pulse')
+        expect(loadingSkeleton).toBeInTheDocument()
+      })
     })
   })
 

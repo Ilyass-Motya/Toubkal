@@ -5,22 +5,26 @@
  * Tests brand elements, accessibility, and user interactions across all pages.
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { ToubkalRouter } from '../components/routing/ToubkalRouter'
 import { InternalPageRouter } from '../components/routing/InternalPageRouter'
 import { INTERNAL_PAGES } from '../constants/url-schemes'
 
 // Mock IntersectionObserver
-global.IntersectionObserver = class IntersectionObserver {
+global.IntersectionObserver = class {
   constructor() {}
+  root: Element | null = null
+  rootMargin: string = ''
+  thresholds: ReadonlyArray<number> = []
   disconnect() {}
   observe() {}
   unobserve() {}
+  takeRecords(): IntersectionObserverEntry[] { return [] }
 }
 
 // Mock ResizeObserver
-global.ResizeObserver = class ResizeObserver {
+global.ResizeObserver = class {
   constructor() {}
   disconnect() {}
   observe() {}
@@ -36,7 +40,7 @@ Object.defineProperty(window, 'performance', {
 
 describe('End-to-End Workflows', () => {
   describe('URL Navigation Workflow', () => {
-    it('should navigate between all toubkal:// pages', async () => {
+    it('should navigate between all toubkal:// pages', () => {
       const mockNavigate = vi.fn()
       
       const pages = [
@@ -63,13 +67,13 @@ describe('End-to-End Workflows', () => {
       const mockNavigate = vi.fn()
       
       // Test redirect from chrome:// to toubkal://
-      render(<ToubkalRouter currentUrl="chrome://settings" onNavigate={mockNavigate} />)
+      render(<ToubkalRouter currentUrl="chrome://settings" onNavigate={mockNavigate}><div>Test content</div></ToubkalRouter>)
       
       // Should show redirect notification
       expect(screen.getByText(/chrome:\/\/ URL has been moved to toubkal:\/\//)).toBeInTheDocument()
     })
 
-    it('should maintain navigation state across pages', async () => {
+    it('should maintain navigation state across pages', () => {
       const mockNavigate = vi.fn()
       
       // Start at settings
@@ -128,7 +132,7 @@ describe('End-to-End Workflows', () => {
       
       // Check for Inter font family usage
       const elements = container.querySelectorAll('*')
-      const hasInterFont = Array.from(elements).some(el => 
+      Array.from(elements).some(el => 
         el instanceof HTMLElement && 
         getComputedStyle(el).fontFamily.includes('Inter')
       )
@@ -180,7 +184,7 @@ describe('End-to-End Workflows', () => {
   })
 
   describe('AI Features Workflow', () => {
-    it('should complete AI assistant workflow', async () => {
+    it('should complete AI assistant workflow', () => {
       render(<InternalPageRouter currentUrl={INTERNAL_PAGES.AI} />)
       
       // Should show AI assistant
@@ -209,7 +213,7 @@ describe('End-to-End Workflows', () => {
       expect(screen.getByText('Hello, AI!')).toBeInTheDocument()
     })
 
-    it('should complete MCP server management workflow', async () => {
+    it('should complete MCP server management workflow', () => {
       render(<InternalPageRouter currentUrl={INTERNAL_PAGES.MCP} />)
       
       // Should show MCP management
@@ -236,7 +240,7 @@ describe('End-to-End Workflows', () => {
   })
 
   describe('Settings Management Workflow', () => {
-    it('should complete settings configuration workflow', async () => {
+    it('should complete settings configuration workflow', () => {
       render(<InternalPageRouter currentUrl={INTERNAL_PAGES.SETTINGS} />)
       
       // Should show settings page

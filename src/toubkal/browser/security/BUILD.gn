@@ -1,0 +1,46 @@
+import("//build/config/compiler/compiler.gni")
+
+# Toubkal Browser Security Module
+# Implements Content Security Policy and Mojo security validation
+
+source_set("toubkal_security") {
+  sources = [
+    "content_security_policy.cc",
+    "content_security_policy.h",
+    "mojo_security_validator.cc",
+    "mojo_security_validator.h",
+  ]
+
+  deps = [
+    "//base",
+    "//url",
+  ]
+
+  public_deps = [
+    "//base",
+    "//url",
+  ]
+
+  # Enable C++17 features
+  cflags_cc = [ "-std=c++17" ]
+}
+
+# Security tests
+source_set("toubkal_security_tests") {
+  testonly = true
+  
+  sources = [
+    "content_security_policy_test.cc",
+    "mojo_security_validator_test.cc",
+  ]
+
+  deps = [
+    ":toubkal_security",
+    "//base/test:test_support",
+    "//testing/gtest",
+    "//url",
+  ]
+
+  # Enable C++17 features
+  cflags_cc = [ "-std=c++17" ]
+}

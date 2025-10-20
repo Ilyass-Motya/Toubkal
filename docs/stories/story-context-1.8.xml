@@ -1,0 +1,80 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>1.8</epicId>
+    <storyId>1.8</storyId>
+    <title>Diagnostics & Scalability Infrastructure</title>
+    <status>Ready</status>
+    <generatedAt>2025-01-27</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/stories/story-1.8.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer and operations engineer</asA>
+    <iWant>comprehensive diagnostics, logging, and scalability infrastructure built into Toubkal Browser</iWant>
+    <soThat>I can troubleshoot issues effectively, monitor performance, and ensure the browser scales as features are added</soThat>
+    <tasks>Phase 1: Logging Infrastructure (C++ & TypeScript)
+Phase 2: Error Tracking & Reporting
+Phase 3: Performance Monitoring
+Phase 4: Scalability Framework
+Phase 5: Developer Tools & Diagnostics Dashboard
+Phase 6: Testing & Documentation</tasks>
+  </story>
+
+  <acceptanceCriteria>Logging Infrastructure
+Error Tracking & Reporting
+Performance Monitoring
+Scalability Framework
+Developer Tools & Utilities</acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <artifact path="docs/contributing/testing-strategy.md" title="Testing Strategy" section="Performance Testing, Security Testing, Mocking Strategies" snippet="Testing frameworks and patterns for diagnostics infrastructure including performance monitoring, security testing, and mocking strategies for external dependencies." />
+      <artifact path="CODING-RULES.md" title="Toubkal Coding Rules" section="Error Handling, Silent Error Swallowing, Result<T> Pattern" snippet="Error handling patterns including Result&lt;T&gt; pattern, no silent error swallowing, and structured error reporting required for diagnostics infrastructure." />
+      <artifact path="docs/PRIVACY-ETHICS-POLICY.md" title="Privacy & Ethics Policy" section="Zero Telemetry by Default, Consent-Gated Features" snippet="Privacy requirements for diagnostics including zero telemetry by default, consent-gated error reporting, and PII protection in logging and monitoring." />
+      <artifact path="docs/architecture/ARCHITECTURE-OVERVIEW.md" title="Architecture Overview" section="Technology Stack, High-Level System Architecture" snippet="System architecture showing browser/renderer process separation, Mojo IPC integration points, and Chromium base libraries for diagnostics implementation." />
+    </docs>
+    <code>
+      <artifact path="src/toubkal/browser/" kind="chromium-integration" symbol="src/toubkal/browser" lines="" reason="Existing Chromium browser-level code where diagnostics infrastructure should integrate using base/logging.h and other Chromium APIs" />
+      <artifact path="src/services/" kind="existing-services" symbol="src/services" lines="" reason="Existing services that need diagnostic integration (privacy-manager, audit-logger, telemetry-manager) for monitoring and logging" />
+      <artifact path="src/test/setup.ts" kind="test-infrastructure" symbol="setup.ts" lines="1-64" reason="Vitest test setup that needs extension for diagnostics testing with appropriate mocks and cleanup" />
+      <artifact path="src/toubkal/components/" kind="c++-modules" symbol="src/toubkal/components" lines="" reason="C++ component modules that need diagnostic integration following Brave patterns" />
+    </code>
+    <dependencies>
+      <ecosystem name="Chromium Base Libraries">
+        <packages>
+          <package name="base/logging.h" version="chromium-builtin" type="runtime">Chromium logging infrastructure for structured logging and error reporting</package>
+          <package name="base/run_loop.h" version="chromium-builtin" type="runtime">Run loop for background task scheduling and performance monitoring</package>
+          <package name="base/task_scheduler.h" version="chromium-builtin" type="runtime">Task scheduling infrastructure for scalability framework</package>
+        </packages>
+      </ecosystem>
+      <ecosystem name="Node.js/TypeScript">
+        <packages>
+          <package name="vitest" version="^2.1.8" type="dev">Testing framework for diagnostics component and integration testing</package>
+          <package name="react" version="^18.2.0" type="runtime">React framework for diagnostics dashboard UI components</package>
+        </packages>
+      </ecosystem>
+    </dependencies>
+  </artifacts>
+
+  <constraints>Privacy-first logging with zero telemetry by default
+Structured logging with JSON format and correlation IDs
+Chromium integration using base/logging.h patterns
+Consent-gated error reporting and diagnostics upload
+Resource monitoring without performance impact
+Scalability patterns for AI inference and MCP connections</constraints>
+  <interfaces></interfaces>
+  <tests>
+    <standards>Unit tests: Vitest for TypeScript diagnostics, gtest for C++ diagnostics components. Integration tests: Cross-process logging validation, Mojo IPC diagnostics communication. Performance tests: Resource usage monitoring, logging overhead measurement. Security tests: PII filtering validation, consent-gated diagnostics. Scalability tests: Load testing for AI inference queues, MCP connection pools. 80% minimum test coverage. AAA pattern for all tests. Result&lt;T&gt; pattern for error handling. Mock external dependencies appropriately.</standards>
+    <locations>src/toubkal/app/core/diagnostics/ - TypeScript diagnostics component tests
+src/toubkal/components/diagnostics/ - C++ diagnostics component tests
+src/toubkal/tests/integration/ - Integration tests for logging and monitoring systems
+src/toubkal/tests/performance/ - Performance and scalability tests
+src/toubkal/tests/security/ - Security testing for diagnostics (PII filtering, consent validation)</locations>
+    <ideas>AC1-Logging-infrastructure: Test structured logging with JSON format, privacy-safe logging (no PII), log filtering by level and component, C++/TypeScript integration
+AC2-Error-tracking: Test error capture with stack traces, error aggregation and deduplication, consent-gated reporting, global error handlers
+AC3-Performance-monitoring: Test AI inference latency tracking, network request monitoring, resource usage metrics, performance budget alerts
+AC4-Scalability-framework: Test AI inference queue management, MCP connection pooling, audit log rotation, background task scheduling
+AC5-Developer-tools: Test diagnostics dashboard accessibility, live log streaming, performance profiling, state inspection with export functionality</ideas>
+  </tests>
+</story-context>

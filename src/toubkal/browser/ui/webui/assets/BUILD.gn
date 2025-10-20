@@ -1,0 +1,76 @@
+import("//build/config/compiler/compiler.gni")
+
+# Toubkal Brand Assets Build Configuration
+
+# Brand CSS and styling files
+source_set("toubkal_brand_styles") {
+  sources = [
+    "toubkal-brand.css",
+  ]
+  
+  # This is a data-only target for CSS files
+  # No compilation needed, just file inclusion
+}
+
+# Brand SVG assets
+source_set("toubkal_brand_svgs") {
+  sources = [
+    "toubkal-logo.svg",
+    "toubkal-icon.svg",
+  ]
+  
+  # This is a data-only target for SVG files
+  # No compilation needed, just file inclusion
+}
+
+# Brand configuration files
+source_set("toubkal_brand_config") {
+  sources = [
+    "tailwind.config.js",
+    "brand-assets.gni",
+  ]
+  
+  # This is a data-only target for config files
+  # No compilation needed, just file inclusion
+}
+
+# Combined brand assets group
+group("toubkal_brand_assets") {
+  deps = [
+    ":toubkal_brand_styles",
+    ":toubkal_brand_svgs", 
+    ":toubkal_brand_config",
+  ]
+  
+  public_deps = [
+    ":toubkal_brand_styles",
+    ":toubkal_brand_svgs",
+    ":toubkal_brand_config",
+  ]
+}
+
+# Copy brand assets to output directory
+action("copy_brand_assets") {
+  script = "//build/scripts/copy_assets.py"
+  
+  inputs = [
+    "toubkal-brand.css",
+    "toubkal-logo.svg", 
+    "toubkal-icon.svg",
+    "tailwind.config.js",
+  ]
+  
+  outputs = [
+    "$target_gen_dir/toubkal_brand/toubkal-brand.css",
+    "$target_gen_dir/toubkal_brand/toubkal-logo.svg",
+    "$target_gen_dir/toubkal_brand/toubkal-icon.svg", 
+    "$target_gen_dir/toubkal_brand/tailwind.config.js",
+  ]
+  
+  args = [
+    "--input-dir",
+    ".",
+    "--output-dir", 
+    "$target_gen_dir/toubkal_brand",
+  ]
+}

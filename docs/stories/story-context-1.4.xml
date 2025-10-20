@@ -1,0 +1,268 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>1</epicId>
+    <storyId>4</storyId>
+    <title>Privacy Defaults (Fingerprinting + Tracker Blocking)</title>
+    <status>Implemented</status>
+    <generatedAt>2025-10-18</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/stories/phase1-week1-2/story-1.4.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>privacy-conscious user</asA>
+    <iWant>Toubkal Browser to enable fingerprinting protection and tracker blocking by default</iWant>
+    <soThat>I'm protected without manual configuration</soThat>
+    <tasks>- [ ] Task 1: Implement fingerprinting protection defaults (AC: 1, 7, 8)
+  - [ ] Integrate Canvas API randomization (C++)
+  - [ ] Implement WebRTC IP leak prevention (C++)
+  - [ ] Add User-Agent normalization (C++)
+  - [ ] Enable fingerprinting protection in Brave Shields by default
+  - [ ] Test activation time <2 seconds
+
+- [ ] Task 2: Implement tracker blocking defaults (AC: 2, 6)
+  - [ ] Integrate with existing adblock-rust engine (Phase 0.5.7-0.5.10)
+  - [ ] Enable EasyList and uBlock Origin filters by default
+  - [ ] Configure CNAME uncloaking (aggressive mode)
+  - [ ] Add audit logging for all blocked requests
+  - [ ] Test blocking effectiveness vs. baseline
+
+- [ ] Task 3: Create privacy settings UI (AC: 3, 4)
+  - [ ] Design privacy dashboard component (React)
+  - [ ] Show "Protection: Enabled" status on first launch
+  - [ ] Implement opt-out functionality with privacy warnings
+  - [ ] Add visual indicators for protection state
+  - [ ] Integrate with existing settings architecture
+
+- [ ] Task 4: Implement audit logging for privacy changes (AC: 5)
+  - [ ] Create audit log entries for privacy setting changes
+  - [ ] Integrate with existing audit trail system (Phase 0.5.1)
+  - [ ] Add Ed25519 signature for privacy decisions
+  - [ ] Test signature verification and logging
+
+- [ ] Task 5: Create comprehensive test suite (AC: 9, 10, 11, 12)
+  - [ ] Unit tests for fingerprinting protection (C++ Google Test)
+  - [ ] Integration tests for tracker blocking (TypeScript)
+  - [ ] E2E tests for privacy UI functionality (Playwright)
+  - [ ] Performance tests for activation time (<2 seconds)
+  - [ ] Panopticlick fingerprinting test integration
+  - [ ] Mock external dependencies (adblock-rust, audit logger)
+  - [ ] Achieve ≥80% test coverage
+  - [ ] Use Result<T> pattern for error handling
+  - [ ] No `any` types in TypeScript code</tasks>
+  </story>
+
+  <acceptanceCriteria>1. Fingerprinting protection enabled by default (Canvas randomization, WebRTC IP leak prevention, User-Agent normalization)
+2. Tracker blocking enabled by default (EasyList + uBlock Origin filters via adblock-rust integration)
+3. Privacy settings UI shows "Protection: Enabled" on first launch
+4. User can opt-out via settings (with clear warning about reduced privacy)
+5. Audit log entry created when privacy settings changed (Ed25519-signed)
+6. Integration with existing ad blocking system (Phase 0.5.7-0.5.10)
+7. First-run experience completes in <10 seconds
+8. Privacy protection activation time <2 seconds
+9. Passes Panopticlick fingerprinting tests (>12 bits entropy reduction)
+10. Test coverage ≥80% for privacy settings components
+11. TypeScript strict mode compliance (no `any` types)
+12. Error handling uses Result<T> pattern
+13. Code review approved</acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <artifact>
+        <path>docs/PRIVACY-DEFAULTS-IMPLEMENTATION-SUMMARY.md</path>
+        <title>Privacy Defaults Implementation Summary</title>
+        <section>Complete implementation details for privacy defaults</section>
+        <snippet>Comprehensive implementation of fingerprinting protection and tracker blocking with C++ Chromium integration, React UI, and full testing coverage.</snippet>
+      </artifact>
+      <artifact>
+        <path>docs/epics/epic-1.3-privacy-controls.md</path>
+        <title>Epic 1.3: Privacy Controls & Consent Fabric</title>
+        <section>Privacy architecture and requirements</section>
+        <snippet>Defines privacy controls architecture including fingerprinting protection, tracker blocking, consent fabric, and audit logging requirements.</snippet>
+      </artifact>
+      <artifact>
+        <path>docs/epics/epic-0.5.2-ad-blocking-mvp.md</path>
+        <title>Epic 0.5.2: Ad Blocking MVP</title>
+        <section>Phase 0.5 ad blocking foundation</section>
+        <snippet>Phase 0.5 implementation of ad blocking with Brave's adblock-rust integration, providing the foundation for tracker blocking defaults.</snippet>
+      </artifact>
+      <artifact>
+        <path>docs/architecture/CPP-ADBLOCKING-SPEC.md</path>
+        <title>C++ Ad Blocking Specification</title>
+        <section>Technical ad blocking implementation</section>
+        <snippet>Detailed technical specification for C++ ad blocking implementation using adblock-rust and Chromium integration.</snippet>
+      </artifact>
+      <artifact>
+        <path>docs/PRIVACY-ETHICS-POLICY.md</path>
+        <title>Privacy Ethics Policy</title>
+        <section>Privacy principles and requirements</section>
+        <snippet>Defines zero-telemetry-by-default policy, cryptographic auditability, and user sovereignty principles that guide privacy defaults implementation.</snippet>
+      </artifact>
+    </docs>
+    <code>
+      <artifact>
+        <path>src/components/settings/PrivacySettings.tsx</path>
+        <kind>component</kind>
+        <symbol>PrivacySettings</symbol>
+        <lines>1-150</lines>
+        <reason>React component for privacy settings UI showing protection status and opt-out controls</reason>
+      </artifact>
+      <artifact>
+        <path>src/hooks/use-privacy-settings.ts</path>
+        <kind>hook</kind>
+        <symbol>usePrivacySettings</symbol>
+        <lines>1-80</lines>
+        <reason>React hook managing privacy settings state and user interactions</reason>
+      </artifact>
+      <artifact>
+        <path>src/services/privacy-manager.ts</path>
+        <kind>service</kind>
+        <symbol>PrivacyManager</symbol>
+        <lines>1-200</lines>
+        <reason>TypeScript service coordinating privacy features and settings management</reason>
+      </artifact>
+      <artifact>
+        <path>src/toubkal/browser/privacy/privacy_manager.h</path>
+        <kind>interface</kind>
+        <symbol>PrivacyManager</symbol>
+        <lines>1-100</lines>
+        <reason>C++ header defining privacy manager interface for Chromium integration</reason>
+      </artifact>
+      <artifact>
+        <path>src/toubkal/browser/privacy/privacy_manager.cc</path>
+        <kind>service</kind>
+        <symbol>PrivacyManager</symbol>
+        <lines>1-300</lines>
+        <reason>C++ implementation of privacy manager with real Chromium integration</reason>
+      </artifact>
+      <artifact>
+        <path>src/toubkal/browser/privacy/fingerprinting_protection.h</path>
+        <kind>interface</kind>
+        <symbol>FingerprintingProtection</symbol>
+        <lines>1-80</lines>
+        <reason>C++ header for real fingerprinting protection implementation</reason>
+      </artifact>
+      <artifact>
+        <path>src/toubkal/browser/privacy/tracker_blocker.h</path>
+        <kind>interface</kind>
+        <symbol>TrackerBlocker</symbol>
+        <lines>1-60</lines>
+        <reason>C++ header for tracker blocking implementation</reason>
+      </artifact>
+      <artifact>
+        <path>src/toubkal/browser/privacy/brave_shields_manager.h</path>
+        <kind>interface</kind>
+        <symbol>BraveShieldsManager</symbol>
+        <lines>1-50</lines>
+        <reason>C++ header for Brave Shields integration</reason>
+      </artifact>
+      <artifact>
+        <path>src/toubkal/common/privacy.mojom</path>
+        <kind>interface</kind>
+        <symbol>PrivacyService</symbol>
+        <lines>1-100</lines>
+        <reason>Mojo IPC interface definitions for privacy communication between browser and renderer processes</reason>
+      </artifact>
+    </code>
+    <dependencies>
+      <ecosystem name="cpp">
+        <package name="adblock-rust">Latest</package>
+        <package name="chromium-base">Built-in</package>
+        <package name="boringssl">Built-in</package>
+      </ecosystem>
+      <ecosystem name="typescript">
+        <package name="react">^19.0.0</package>
+        <package name="@types/react">^19.0.0</package>
+        <package name="vitest">^1.0.0</package>
+        <package name="@testing-library/react">^14.0.0</package>
+      </ecosystem>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint>
+      <description>Privacy-first defaults with opt-out design - protection must be enabled by default</description>
+      <rationale>Zero-telemetry-by-default policy requires active user opt-out rather than opt-in</rationale>
+    </constraint>
+    <constraint>
+      <description>Cryptographic audit logging with Ed25519 signatures for all privacy decisions</description>
+      <rationale>Privacy claims must be mathematically verifiable through cryptographic audit trails</rationale>
+    </constraint>
+    <constraint>
+      <description>Browser-level enforcement via Chromium network stack integration</description>
+      <rationale>Client-side only solutions can be bypassed; real protection requires browser-level implementation</rationale>
+    </constraint>
+    <constraint>
+      <description>React-based settings UI with Tailwind CSS styling</description>
+      <rationale>Consistent with established UI framework and design system</rationale>
+    </constraint>
+    <constraint>
+      <description>Integration with existing ad blocking system from Phase 0.5.7-0.5.10</description>
+      <rationale>Builds upon established adblock-rust integration rather than duplicating functionality</rationale>
+    </constraint>
+    <constraint>
+      <description>TypeScript strict mode compliance with no 'any' types</description>
+      <rationale>Code quality and maintainability requirements from CODING-RULES.md</rationale>
+    </constraint>
+    <constraint>
+      <description>Error handling using Result&lt;T&gt; pattern throughout</description>
+      <rationale>Consistent error handling approach defined in coding rules</rationale>
+    </constraint>
+    <constraint>
+      <description>Performance requirements: &lt;2s activation time, &lt;10s first-run experience</description>
+      <rationale>User experience requirements to ensure protection doesn't impact usability</rationale>
+    </constraint>
+  </constraints>
+  <interfaces>
+    <interface>
+      <name>PrivacyService</name>
+      <kind>Mojo IPC Interface</kind>
+      <signature>interface PrivacyService {
+  EnableFingerprintingProtection() => (bool success);
+  DisableFingerprintingProtection() => (bool success);
+  EnableTrackerBlocking() => (bool success);
+  DisableTrackerBlocking() => (bool success);
+  GetPrivacyStatus() => (PrivacyStatus status);
+  LogPrivacyChange(PrivacyChange change) => (bool success);
+};</signature>
+      <path>src/toubkal/common/privacy.mojom</path>
+    </interface>
+    <interface>
+      <name>PrivacyManager</name>
+      <kind>C++ Class Interface</kind>
+      <signature>class PrivacyManager {
+ public:
+  virtual bool Initialize() = 0;
+  virtual bool EnableFingerprintingProtection() = 0;
+  virtual bool EnableTrackerBlocking() = 0;
+  virtual PrivacyStatus GetStatus() const = 0;
+  virtual bool LogPrivacyChange(const PrivacyChange& change) = 0;
+};</signature>
+      <path>src/toubkal/browser/privacy/privacy_manager.h</path>
+    </interface>
+    <interface>
+      <name>PrivacyManager</name>
+      <kind>TypeScript Service Interface</kind>
+      <signature>export interface PrivacyManager {
+  initialize(): Promise<Result<void>>;
+  enableFingerprintingProtection(): Promise<Result<void>>;
+  enableTrackerBlocking(): Promise<Result<void>>;
+  getStatus(): Promise<Result<PrivacyStatus>>;
+  logPrivacyChange(change: PrivacyChange): Promise<Result<void>>;
+}</signature>
+      <path>src/services/privacy-manager.ts</path>
+    </interface>
+  </interfaces>
+  <tests>
+    <standards>Use Vitest for TypeScript/React unit tests, Google Test for C++ unit tests, Playwright for E2E tests. Mock external dependencies (adblock-rust, audit logger, Chromium APIs). Achieve ≥80% test coverage. Use Result&lt;T&gt; pattern for error handling in tests.</standards>
+    <locations>src/**/*.test.ts for TypeScript unit tests, src/**/*.integration.test.ts for integration tests, src/**/*.performance.test.ts for performance tests, src/toubkal/**/*.cc for C++ unit tests, tests/e2e/ for E2E tests</locations>
+    <ideas>- Unit test PrivacySettings component renders protection status correctly
+- Integration test fingerprinting protection APIs work end-to-end
+- Performance test activation time meets &lt;2s requirement
+- E2E test Panopticlick fingerprinting score improves with protection enabled
+- Unit test audit logging creates Ed25519-signed entries for privacy changes
+- Integration test tracker blocking integrates with adblock-rust engine
+- Error handling test verifies Result&lt;T&gt; pattern usage throughout
+- Type safety test ensures no 'any' types in TypeScript code</ideas>
+  </tests>
+</story-context>

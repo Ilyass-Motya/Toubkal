@@ -1,0 +1,12 @@
+import("//build/config/compiler/compiler.gni")
+
+# Mojo interface definitions for Toubkal UI
+mojom("toubkal_ui") {
+  sources = [
+    "toubkal_ui.mojom",
+  ]
+
+  public_deps = [
+    "//mojo/public/mojom/base",
+  ]
+}

@@ -1,0 +1,219 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>1</epicId>
+    <storyId>3</storyId>
+    <title>Rebrand URL Scheme (chrome:// → toubkal://)</title>
+    <status>Implemented</status>
+    <generatedAt>2025-10-18</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/stories/phase1-week1-2/story-1.3-url-scheme-rebrand.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>Toubkal Browser user</asA>
+    <iWant>all internal pages to use toubkal:// URLs instead of chrome:// URLs</iWant>
+    <soThat>Toubkal has a distinct brand identity</soThat>
+    <tasks>- [ ] Task 1: Audit and catalog existing URL schemes (AC: 1, 3)
+  - [ ] Search codebase for chrome:// URLs
+  - [ ] Identify Brave-specific URLs (rewards, wallet, referrals)
+  - [ ] Document URL scheme usage patterns
+
+- [ ] Task 2: Implement toubkal:// URL scheme registration (AC: 1, 2)
+  - [ ] Update Chromium URL scheme registration
+  - [ ] Replace chrome:// with toubkal:// in C++ code
+  - [ ] Update TypeScript/JavaScript references
+
+- [ ] Task 3: Remove Brave-specific URLs (AC: 3)
+  - [ ] Remove brave://rewards functionality
+  - [ ] Remove brave://wallet functionality
+  - [ ] Remove brave://referrals functionality
+  - [ ] Update navigation and routing logic
+
+- [ ] Task 4: Update user-facing strings and documentation (AC: 4, 5)
+  - [ ] Update help documentation with toubkal:// URLs
+  - [ ] Update error pages to show toubkal:// examples
+  - [ ] Update user interface strings
+  - [ ] Update developer documentation
+
+- [ ] Task 5: Create comprehensive test suite (AC: 2, 6, 7, 8)
+  - [ ] Unit tests for URL scheme handling
+  - [ ] Integration tests for toubkal:// navigation
+  - [ ] E2E tests for internal page access
+  - [ ] Backward compatibility tests for chrome:// redirects
+  - [ ] Performance tests for URL scheme impact
+  - [ ] Navigation consistency tests
+  - [ ] Achieve 80% test coverage minimum</tasks>
+  </story>
+
+  <acceptanceCriteria>1. All chrome:// URLs changed to toubkal:// throughout codebase
+2. Internal pages accessible via toubkal:// (e.g., toubkal://settings, toubkal://newtab)
+3. Brave-specific URLs rebranded (brave://rewards → removed, brave://wallet → removed)
+4. Help documentation updated with new URL scheme
+5. Error pages show toubkal:// URLs in examples
+6. Chrome:// URLs auto-redirect to toubkal:// for backward compatibility
+7. All internal navigation uses toubkal:// scheme consistently
+8. URL scheme changes don't impact page load performance (>5% degradation)</acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <artifact>
+        <path>docs/adrs/ADR-008-url-schema.md</path>
+        <title>ADR-008: Custom URL Scheme (toubkal://)</title>
+        <section>Complete technical specification for toubkal:// URL scheme implementation</section>
+        <snippet>Comprehensive ADR defining toubkal:// URL scheme registration, chrome:// auto-redirect logic, security considerations, and cross-platform OS registration.</snippet>
+      </artifact>
+      <artifact>
+        <path>docs/help/url-scheme-guide.md</path>
+        <title>URL Scheme Guide</title>
+        <section>User-facing documentation for URL scheme usage</section>
+        <snippet>Help documentation explaining toubkal:// URLs, chrome:// redirects, and common usage patterns for users.</snippet>
+      </artifact>
+      <artifact>
+        <path>docs/epics/epic-1.2-brand-identity.md</path>
+        <title>Epic 1.2: Brand Identity & Internal Pages</title>
+        <section>Brand identity implementation requirements</section>
+        <snippet>Defines the epic scope for implementing toubkal:// URL scheme, internal page rebranding, and brand identity features.</snippet>
+      </artifact>
+    </docs>
+    <code>
+      <artifact>
+        <path>src/toubkal/browser/url/url_scheme_registration.h</path>
+        <kind>interface</kind>
+        <symbol>RegisterToubkalURLScheme</symbol>
+        <lines>1-50</lines>
+        <reason>C++ header defining URL scheme registration interface for Chromium integration</reason>
+      </artifact>
+      <artifact>
+        <path>src/toubkal/browser/url/url_scheme_registration.cc</path>
+        <kind>service</kind>
+        <symbol>RegisterToubkalURLScheme</symbol>
+        <lines>1-80</lines>
+        <reason>C++ implementation registering toubkal:// scheme with Chromium's URL parser</reason>
+      </artifact>
+      <artifact>
+        <path>src/toubkal/browser/url/url_redirect_handler.h</path>
+        <kind>interface</kind>
+        <symbol>RedirectChromeURLToToubkal</symbol>
+        <lines>1-40</lines>
+        <reason>C++ header defining chrome:// to toubkal:// auto-redirect interface</reason>
+      </artifact>
+      <artifact>
+        <path>src/toubkal/browser/url/url_redirect_handler.cc</path>
+        <kind>service</kind>
+        <symbol>RedirectChromeURLToToubkal</symbol>
+        <lines>1-100</lines>
+        <reason>C++ implementation handling automatic redirects from chrome:// to toubkal:// URLs</reason>
+      </artifact>
+      <artifact>
+        <path>src/constants/url-schemes.ts</path>
+        <kind>constants</kind>
+        <symbol>INTERNAL_PAGES</symbol>
+        <lines>1-100</lines>
+        <reason>TypeScript constants defining all toubkal:// URL mappings and redirect rules</reason>
+      </artifact>
+      <artifact>
+        <path>src/components/routing/ToubkalRouter.tsx</path>
+        <kind>component</kind>
+        <symbol>ToubkalRouter</symbol>
+        <lines>1-250</lines>
+        <reason>React router component handling toubkal:// URL routing and navigation</reason>
+      </artifact>
+    </code>
+    <dependencies>
+      <ecosystem name="cpp">
+        <package name="chromium-url">Built-in</package>
+        <package name="chromium-content">Built-in</package>
+        <package name="base">Built-in</package>
+      </ecosystem>
+      <ecosystem name="typescript">
+        <package name="react">^19.0.0</package>
+        <package name="react-router-dom">^6.0.0</package>
+      </ecosystem>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint>
+      <description>Follow Chromium C++ style guide for URL scheme modifications</description>
+      <rationale>Maintains code consistency with Chromium codebase and reduces merge conflicts</rationale>
+    </constraint>
+    <constraint>
+      <description>Use TypeScript strict mode with no 'any' types</description>
+      <rationale>Code quality and maintainability requirements from CODING-RULES.md</rationale>
+    </constraint>
+    <constraint>
+      <description>Implement Result&lt;T&gt; pattern for error handling throughout</description>
+      <rationale>Consistent error handling approach defined in coding rules</rationale>
+    </constraint>
+    <constraint>
+      <description>Maintain backward compatibility with chrome:// URLs via auto-redirect</description>
+      <rationale>Ensures existing extensions and user bookmarks continue to work</rationale>
+    </constraint>
+    <constraint>
+      <description>Register toubkal:// scheme with operating systems (Windows/macOS/Linux)</description>
+      <rationale>Allows external applications to open toubkal:// URLs from email/chat clients</rationale>
+    </constraint>
+    <constraint>
+      <description>Implement CSP headers for all toubkal:// pages</description>
+      <rationale>Security requirement from ADR-007: UI Security to prevent XSS attacks</rationale>
+    </constraint>
+    <constraint>
+      <description>Performance impact must be &lt;5% degradation in page load times</description>
+      <rationale>URL scheme changes should not negatively impact user experience</rationale>
+    </constraint>
+    <constraint>
+      <description>All toubkal:// pages must validate URL parameters and prevent injection attacks</description>
+      <rationale>Security hardening as specified in ADR-008</rationale>
+    </constraint>
+  </constraints>
+  <interfaces>
+    <interface>
+      <name>URLSchemeRegistration</name>
+      <kind>C++ Class Interface</kind>
+      <signature>class URLSchemeRegistration {
+ public:
+  static void RegisterToubkalURLScheme();
+  static bool IsToubkalURL(const GURL& url);
+};</signature>
+      <path>src/toubkal/browser/url/url_scheme_registration.h</path>
+    </interface>
+    <interface>
+      <name>URLRedirectHandler</name>
+      <kind>C++ Class Interface</kind>
+      <signature>class URLRedirectHandler {
+ public:
+  static GURL RedirectChromeURLToToubkal(const GURL& url);
+  static bool ShouldRedirectToToubkal(const GURL& url);
+};</signature>
+      <path>src/toubkal/browser/url/url_redirect_handler.h</path>
+    </interface>
+    <interface>
+      <name>ToubkalRouter</name>
+      <kind>React Component Interface</kind>
+      <signature>interface ToubkalRouterProps {
+  currentUrl: string;
+  onNavigate: (url: string) => void;
+}
+
+const ToubkalRouter: React.FC<ToubkalRouterProps> = ({
+  currentUrl,
+  onNavigate
+}) => {
+  // Component implementation
+};</signature>
+      <path>src/components/routing/ToubkalRouter.tsx</path>
+    </interface>
+  </interfaces>
+  <tests>
+    <standards>Use Google Test for C++ unit tests, Vitest for TypeScript tests, Playwright for E2E tests. Mock Chromium APIs and external dependencies. Achieve ≥80% test coverage. Use Result&lt;T&gt; pattern for error handling in tests.</standards>
+    <locations>src/toubkal/browser/url/*_unittest.cc for C++ unit tests, src/**/*.test.ts for TypeScript tests, src/components/routing/*.test.tsx for component tests, tests/e2e/url-scheme.spec.ts for E2E tests</locations>
+    <ideas>- Unit test URL scheme registration initializes correctly
+- Integration test chrome:// to toubkal:// redirects work end-to-end
+- E2E test all internal pages are accessible via toubkal:// scheme
+- Performance test URL redirects have &lt;5ms latency
+- Security test invalid toubkal:// URLs are rejected
+- Cross-platform test URL scheme registration works on Windows/macOS/Linux
+- Component test ToubkalRouter handles all URL schemes correctly
+- Error handling test malformed URLs return appropriate error responses</ideas>
+  </tests>
+</story-context>

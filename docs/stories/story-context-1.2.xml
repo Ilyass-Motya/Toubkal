@@ -1,0 +1,276 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>1</epicId>
+    <storyId>1.2</storyId>
+    <title>Chromium Fork Setup Documentation</title>
+    <status>Implemented</status>
+    <generatedAt>2025-10-18</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/stories/phase1-week1-2/story-002-chromium-fork-setup-docs.md</sourceStoryPath>
+    <architecturalNote>This context uses current project settings and can proceed in parallel with Phase 0.5. Should be updated with ADR-009 architectural guidance once Phase 0.5.0 completes.</architecturalNote>
+  </metadata>
+
+  <story>
+    <asA>Toubkal Browser developer</asA>
+    <iWant>comprehensive documentation and templates for setting up the Chromium fork</iWant>
+    <soThat>I can quickly onboard new developers and ensure consistent build environments across the team</soThat>
+    <tasks>Task 1: Create comprehensive setup guide (AC: 1)
+  - Research Chromium fork setup requirements across platforms
+  - Document prerequisites (depot_tools, Python, Node.js, etc.)
+  - Write step-by-step setup instructions for Linux
+  - Write step-by-step setup instructions for macOS
+  - Write step-by-step setup instructions for Windows
+  - Add troubleshooting section for common issues
+  - Include verification steps to confirm setup success
+  - Add screenshots for complex configuration steps
+
+Task 2: Create configuration templates (AC: 2)
+  - Create .gclient.template with Toubkal repository configuration
+  - Create args.gn.template with optimized build arguments
+  - Add detailed comments explaining each configuration option
+  - Test templates on all target platforms
+  - Document template customization options
+
+Task 3: Create build automation scripts (AC: 3)
+  - Create scripts/setup-build.sh for environment setup
+  - Create scripts/build.sh for build execution
+  - Add platform detection and appropriate handling
+  - Implement error handling and user feedback
+  - Add progress reporting and status updates
+  - Test scripts on all target platforms
+
+Task 4: Ensure documentation quality (AC: 4)
+  - Verify all code examples work as documented
+  - Test all external links and resources
+  - Review documentation for clarity and completeness
+  - Apply Toubkal documentation style guide
+  - Add table of contents and navigation
+  - Include quick start section for experienced developers
+
+Task 5: Verify privacy compliance (AC: 5)
+  - Audit setup process for unsanctioned network requests
+  - Document all external downloads and their purposes
+  - Add privacy verification steps to setup guide
+  - Ensure setup respects zero-telemetry-by-default policy
+  - Document how to verify no data leakage during setup
+
+Task 6: Create comprehensive test suite (AC: 1, 2, 3, 4, 5)
+  - Unit tests for build scripts functionality
+  - Integration tests for template configuration
+  - E2E tests for complete setup process
+  - Documentation tests to verify all examples work
+  - Privacy compliance tests for network monitoring
+  - Achieve 80% test coverage minimum</tasks>
+  </story>
+
+  <acceptanceCriteria>1. Complete setup guide created (AC: 1)
+   - Comprehensive chromium-fork-setup.md with step-by-step instructions
+   - Covers Linux, macOS, and Windows platforms
+   - Includes troubleshooting section for common issues
+   - Documents all prerequisites and dependencies
+
+2. Configuration templates provided (AC: 2)
+   - .gclient.template with Toubkal-specific configuration
+   - args.gn.template with optimized build arguments
+   - Both templates include detailed comments explaining each setting
+   - Templates work out-of-the-box for new developers
+
+3. Build scripts created (AC: 3)
+   - scripts/setup-build.sh for automated environment setup
+   - scripts/build.sh for consistent build execution
+   - Scripts handle platform differences automatically
+   - Include error handling and progress reporting
+
+4. Documentation quality standards met (AC: 4)
+   - All code examples tested and verified
+   - Screenshots included for complex setup steps
+   - Links to external resources verified and current
+   - Documentation follows Toubkal style guide
+
+5. Privacy compliance verified (AC: 5)
+   - Setup process respects zero-telemetry-by-default policy
+   - No unsanctioned network requests during setup
+   - All external downloads explicitly documented and consented
+   - Setup guide includes privacy verification steps</acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/contributing/chromium-fork-setup.md</path>
+        <title>Chromium Fork Setup Guide</title>
+        <section>Complete Setup Instructions</section>
+        <snippet>Comprehensive guide with step-by-step instructions for setting up Chromium fork on Linux, macOS, and Windows platforms. Includes prerequisites, depot_tools setup, and troubleshooting.</snippet>
+      </doc>
+      <doc>
+        <path>docs/contributing/build-instructions.md</path>
+        <title>Build Instructions</title>
+        <section>GN + Siso Build System</section>
+        <snippet>Detailed build system documentation covering GN configuration, Ninja builds, and incremental builds with Siso. Includes platform-specific notes and troubleshooting.</snippet>
+      </doc>
+      <doc>
+        <path>docs/adrs/ADR-005-build-system.md</path>
+        <title>Build System Architecture Decision</title>
+        <section>Chromium GN + Ninja Decision</section>
+        <snippet>Architecture decision documenting the choice of Chromium's GN meta-build system and Ninja for Toubkal Browser builds, including rationale and alternatives considered.</snippet>
+      </doc>
+      <doc>
+        <path>docs/adrs/ADR-002-browser-engine.md</path>
+        <title>Browser Engine Architecture Decision</title>
+        <section>Chromium Fork Strategy</section>
+        <snippet>Documents the decision to fork Chromium as the browser engine, including integration points, maintenance strategy, and security considerations.</snippet>
+      </doc>
+      <doc>
+        <path>docs/contributing/testing-strategy.md</path>
+        <title>Testing Strategy</title>
+        <section>Test Pyramid and Coverage Requirements</section>
+        <snippet>Comprehensive testing guide covering unit tests, integration tests, E2E tests, and performance testing. Defines 80% coverage minimum and mocking strategies.</snippet>
+      </doc>
+      <doc>
+        <path>docs/PRIVACY-ETHICS-POLICY.md</path>
+        <title>Privacy & Ethics Policy</title>
+        <section>Zero-Telemetry-by-Default</section>
+        <snippet>Foundational privacy principles requiring zero telemetry by default, cryptographic auditability, and explicit user consent for any data collection.</snippet>
+      </doc>
+      <doc>
+        <path>docs/TOUBKAL-PRD.md</path>
+        <title>Product Requirements Document</title>
+        <section>Build System Requirements</section>
+        <snippet>Product requirements for build system, including deterministic builds, cross-platform support, and privacy-compliant tooling.</snippet>
+      </doc>
+    </docs>
+    <code>
+      <artifact>
+        <path>scripts/setup-build.sh</path>
+        <kind>script</kind>
+        <symbol>setup-build.sh</symbol>
+        <lines></lines>
+        <reason>Environment setup script for automated Chromium fork configuration</reason>
+      </artifact>
+      <artifact>
+        <path>scripts/setup-build.bat</path>
+        <kind>script</kind>
+        <symbol>setup-build.bat</symbol>
+        <lines></lines>
+        <reason>Windows batch script for environment setup</reason>
+      </artifact>
+      <artifact>
+        <path>scripts/build.sh</path>
+        <kind>script</kind>
+        <symbol>build.sh</symbol>
+        <lines></lines>
+        <reason>Build execution script for consistent Toubkal Browser builds</reason>
+      </artifact>
+      <artifact>
+        <path>args.gn.template</path>
+        <kind>template</kind>
+        <symbol>args.gn.template</symbol>
+        <lines></lines>
+        <reason>GN build arguments template with Toubkal-specific optimizations</reason>
+      </artifact>
+      <artifact>
+        <path>.gclient.template</path>
+        <kind>template</kind>
+        <symbol>.gclient.template</symbol>
+        <lines></lines>
+        <reason>Chromium sync configuration template with Toubkal dependencies</reason>
+      </artifact>
+      <artifact>
+        <path>src/toubkal/browser/url/url_scheme_registration.h</path>
+        <kind>interface</kind>
+        <symbol>UrlSchemeRegistration</symbol>
+        <lines>1-50</lines>
+        <reason>Toubkal URL scheme registration interface for toubkal:// protocol</reason>
+      </artifact>
+      <artifact>
+        <path>src/toubkal/browser/privacy/privacy_manager.h</path>
+        <kind>service</kind>
+        <symbol>PrivacyManager</symbol>
+        <lines>1-100</lines>
+        <reason>Privacy management service implementing zero-telemetry-by-default</reason>
+      </artifact>
+      <artifact>
+        <path>src/toubkal/common/privacy.mojom</path>
+        <kind>interface</kind>
+        <symbol>PrivacyInterface</symbol>
+        <lines></lines>
+        <reason>Mojo IPC interface for privacy services communication</reason>
+      </artifact>
+    </code>
+    <dependencies>
+      <ecosystem name="nodejs">
+        <package name="vitest" version="^2.1.8" type="dev">Unit and integration testing framework with 80% coverage requirement</package>
+        <package name="eslint" version="^9.15.0" type="dev">Code linting and quality enforcement</package>
+        <package name="typescript" version="^5.5.0" type="dev">Type safety and strict mode compilation</package>
+        <package name="husky" version="^9.1.6" type="dev">Git hooks for pre-commit quality checks</package>
+        <package name="prettier" version="^3.3.3" type="dev">Code formatting consistency</package>
+        <package name="react" version="^18.2.0" type="runtime">UI framework for browser components</package>
+      </ecosystem>
+      <ecosystem name="python">
+        <package name="python3" version="3.8+" type="build">Chromium build scripts and GN meta-build system</package>
+      </ecosystem>
+      <ecosystem name="cpp">
+        <package name="chromium" version="latest" type="fork">Chromium browser engine fork as base</package>
+        <package name="depot_tools" version="latest" type="build">Chromium build toolchain and dependency management</package>
+        <package name="ninja" version="latest" type="build">Build system for fast incremental compilation</package>
+        <package name="gn" version="latest" type="build">Meta-build system for Chromium configuration</package>
+      </ecosystem>
+      <ecosystem name="build-tools">
+        <package name="clang-format" version="latest" type="dev">C++ code formatting for consistency</package>
+        <package name="pnpm" version="8+" type="dev">Package manager for Node.js dependencies</package>
+      </ecosystem>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint category="build-system">Follow Chromium build system patterns and conventions - use GN meta-build system, Ninja for compilation, and depot_tools for dependency management</constraint>
+    <constraint category="reproducibility">Use deterministic build flags for reproducible builds - ensure same inputs produce identical outputs across different machines</constraint>
+    <constraint category="dependency-management">Implement proper dependency management - use DEPS files for third-party dependencies and version pinning</constraint>
+    <constraint category="coding-standards">Follow Toubkal coding rules for configuration files - use kebab-case for scripts, dot-case for templates, and proper naming conventions</constraint>
+    <constraint category="privacy">Respect zero-telemetry-by-default policy throughout setup - audit all network requests and document external downloads</constraint>
+    <constraint category="cross-platform">Ensure cross-platform compatibility - provide scripts and documentation for Linux, macOS, and Windows</constraint>
+    <constraint category="testing">Maintain 80% test coverage minimum - include unit tests for scripts, integration tests for templates, and E2E tests for setup process</constraint>
+    <constraint category="architecture">Reference Phase 0.5.0 architectural guidance (ADR-009) once available - align setup documentation with defined Mojo IPC interfaces and integration patterns</constraint>
+    <constraint category="project-paths">Use current project paths: Project=C:\ToubkalBrowser, DepotTools=C:\depot_tools, Chromium=C:\chromium, GitHub=https://github.com/Ilyass-Motya/Toubkal.git</constraint>
+  </constraints>
+  <interfaces>
+    <interface>
+      <name>GN Build Configuration</name>
+      <kind>Build System API</kind>
+      <signature>gn gen out/Debug --args='...' and gn args out/Debug</signature>
+      <path>args.gn.template</path>
+    </interface>
+    <interface>
+      <name>Chromium Sync Configuration</name>
+      <kind>Repository Management</kind>
+      <signature>gclient config/sync with custom_deps and custom_vars</signature>
+      <path>.gclient.template</path>
+    </interface>
+    <interface>
+      <name>Setup Script API</name>
+      <kind>Automation Interface</kind>
+      <signature>setup-build.sh [--platform linux|macos|windows] [--clean]</signature>
+      <path>scripts/setup-build.sh</path>
+    </interface>
+    <interface>
+      <name>Build Script API</name>
+      <kind>Build Interface</kind>
+      <signature>build.sh [--target debug|release] [--component component_name]</signature>
+      <path>scripts/build.sh</path>
+    </interface>
+  </interfaces>
+  <tests>
+    <standards>Unit tests for build scripts functionality using Jest + Vitest framework. Integration tests for template configuration validation. E2E tests for complete setup process verification. Documentation tests to verify all examples work correctly. Privacy compliance tests for network monitoring during setup. 80% test coverage minimum enforced by Vitest configuration. Mock external dependencies where appropriate to ensure deterministic testing.</standards>
+    <locations>tests/setup/ - Setup process test suite
+src/test/ - General integration and unit tests
+scripts/test/ - Build script specific tests
+vitest.config.ts - Test configuration and coverage settings</locations>
+    <ideas>
+      <idea ac="1">Unit test chromium-fork-setup.md documentation examples to ensure they execute without errors</idea>
+      <idea ac="2">Integration test .gclient.template and args.gn.template on all target platforms</idea>
+      <idea ac="3">E2E test complete setup process from clean environment to successful build</idea>
+      <idea ac="4">Documentation test to verify all external links are current and accessible</idea>
+      <idea ac="5">Privacy compliance test to monitor network requests during setup process</idea>
+      <idea ac="1,2,3,4,5">Cross-platform compatibility test suite covering Linux, macOS, and Windows</idea>
+    </ideas>
+  </tests>
+</story-context>

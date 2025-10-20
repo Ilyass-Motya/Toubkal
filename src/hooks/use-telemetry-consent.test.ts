@@ -5,10 +5,11 @@
  * Following Toubkal coding rules: AAA pattern, proper mocking
  */
 
-import { renderHook, act, waitFor } from '@testing-library/react'
+import { renderHook, act } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { useTelemetryConsent } from './use-telemetry-consent'
-import type { ConsentRequest } from '@/types/TelemetryTypes'
+import type { ConsentRequest, ConsentResponse } from '@/types/TelemetryTypes'
+import { Result } from '@/types/CommonTypes'
 
 // Mock the telemetry manager
 vi.mock('@/services/telemetry-manager', () => ({
@@ -56,7 +57,7 @@ describe('useTelemetryConsent', () => {
 
       // Act
       const { result } = renderHook(() => useTelemetryConsent())
-      let consentResult: any
+      let consentResult: Result<boolean>
 
       await act(async () => {
         consentResult = await result.current.hasConsent('AI_QUERY_CLOUD', 'test-user')
@@ -65,24 +66,24 @@ describe('useTelemetryConsent', () => {
       // Assert
       expect(mockTelemetryManager.hasConsent).toHaveBeenCalledWith('AI_QUERY_CLOUD', 'test-user')
       expect(consentResult.success).toBe(true)
-      if (consentResult.success) {
+      if (consentResult.success === true) {
         expect(consentResult.data).toBe(false)
       }
     })
 
     it('should set loading state during call', async () => {
       // Arrange
-      let resolvePromise: (value: any) => void
-      const promise = new Promise(resolve => {
+      let resolvePromise: (value: boolean) => void
+      const promise = new Promise<boolean>(resolve => {
         resolvePromise = resolve
       })
-      mockTelemetryManager.hasConsent.mockReturnValue(promise as any)
+      mockTelemetryManager.hasConsent.mockReturnValue(promise)
 
       // Act
       const { result } = renderHook(() => useTelemetryConsent())
 
       act(() => {
-        result.current.hasConsent('AI_QUERY_CLOUD', 'test-user')
+        void result.current.hasConsent('AI_QUERY_CLOUD', 'test-user')
       })
 
       // Assert
@@ -90,7 +91,7 @@ describe('useTelemetryConsent', () => {
 
       // Cleanup
       await act(async () => {
-        resolvePromise!({ success: true, data: false })
+        resolvePromise({ success: true, data: false })
         await promise
       })
     })
@@ -105,7 +106,7 @@ describe('useTelemetryConsent', () => {
 
       // Act
       const { result } = renderHook(() => useTelemetryConsent())
-      let consentResult: any
+      let consentResult: Result<boolean>
 
       await act(async () => {
         consentResult = await result.current.hasConsent('AI_QUERY_CLOUD', 'test-user')
@@ -123,7 +124,7 @@ describe('useTelemetryConsent', () => {
 
       // Act
       const { result } = renderHook(() => useTelemetryConsent())
-      let consentResult: any
+      let consentResult: Result<boolean>
 
       await act(async () => {
         consentResult = await result.current.hasConsent('AI_QUERY_CLOUD', 'test-user')
@@ -158,7 +159,7 @@ describe('useTelemetryConsent', () => {
 
       // Act
       const { result } = renderHook(() => useTelemetryConsent())
-      let consentResult: any
+      let consentResult: Result<boolean>
 
       await act(async () => {
         consentResult = await result.current.requestConsent(mockRequest)
@@ -167,24 +168,24 @@ describe('useTelemetryConsent', () => {
       // Assert
       expect(mockTelemetryManager.requestConsent).toHaveBeenCalledWith(mockRequest)
       expect(consentResult.success).toBe(true)
-      if (consentResult.success) {
+      if (consentResult.success === true) {
         expect(consentResult.data).toEqual(mockResponse)
       }
     })
 
     it('should set loading state during call', async () => {
       // Arrange
-      let resolvePromise: (value: any) => void
-      const promise = new Promise(resolve => {
+      let resolvePromise: (value: Result<ConsentResponse>) => void
+      const promise = new Promise<Result<ConsentResponse>>(resolve => {
         resolvePromise = resolve
       })
-      mockTelemetryManager.requestConsent.mockReturnValue(promise as any)
+      mockTelemetryManager.requestConsent.mockReturnValue(promise)
 
       // Act
       const { result } = renderHook(() => useTelemetryConsent())
 
       act(() => {
-        result.current.requestConsent(mockRequest)
+        void result.current.requestConsent(mockRequest)
       })
 
       // Assert
@@ -192,7 +193,7 @@ describe('useTelemetryConsent', () => {
 
       // Cleanup
       await act(async () => {
-        resolvePromise!({ success: true, data: { granted: false, timestamp: Date.now(), consentId: 'test' } })
+        resolvePromise({ success: true, data: { granted: false, timestamp: Date.now(), consentId: 'test' } })
         await promise
       })
     })
@@ -207,7 +208,7 @@ describe('useTelemetryConsent', () => {
 
       // Act
       const { result } = renderHook(() => useTelemetryConsent())
-      let consentResult: any
+      let consentResult: Result<boolean>
 
       await act(async () => {
         consentResult = await result.current.requestConsent(mockRequest)
@@ -230,7 +231,7 @@ describe('useTelemetryConsent', () => {
 
       // Act
       const { result } = renderHook(() => useTelemetryConsent())
-      let revokeResult: any
+      let revokeResult: Result<boolean>
 
       await act(async () => {
         revokeResult = await result.current.revokeConsent(consentId)
@@ -243,17 +244,17 @@ describe('useTelemetryConsent', () => {
 
     it('should set loading state during call', async () => {
       // Arrange
-      let resolvePromise: (value: any) => void
-      const promise = new Promise(resolve => {
+      let resolvePromise: (value: Result<boolean>) => void
+      const promise = new Promise<Result<boolean>>(resolve => {
         resolvePromise = resolve
       })
-      mockTelemetryManager.revokeConsent.mockReturnValue(promise as any)
+      mockTelemetryManager.revokeConsent.mockReturnValue(promise)
 
       // Act
       const { result } = renderHook(() => useTelemetryConsent())
 
       act(() => {
-        result.current.revokeConsent('test-consent-id')
+        void result.current.revokeConsent('test-consent-id')
       })
 
       // Assert
@@ -261,7 +262,7 @@ describe('useTelemetryConsent', () => {
 
       // Cleanup
       await act(async () => {
-        resolvePromise!({ success: true, data: undefined })
+        resolvePromise({ success: true, data: undefined })
         await promise
       })
     })
@@ -276,7 +277,7 @@ describe('useTelemetryConsent', () => {
 
       // Act
       const { result } = renderHook(() => useTelemetryConsent())
-      let revokeResult: any
+      let revokeResult: Result<boolean>
 
       await act(async () => {
         revokeResult = await result.current.revokeConsent('test-consent-id')
@@ -322,7 +323,7 @@ describe('useTelemetryConsent', () => {
 
       // Act
       const { result } = renderHook(() => useTelemetryConsent())
-      let consentResult: any
+      let consentResult: Result<boolean>
 
       await act(async () => {
         consentResult = await result.current.hasConsent('AI_QUERY_CLOUD', 'test-user')

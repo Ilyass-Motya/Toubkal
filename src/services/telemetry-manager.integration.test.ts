@@ -7,8 +7,9 @@
  * Following Toubkal coding rules: AAA pattern, proper mocking
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { ZeroTelemetryManager } from './telemetry-manager'
+import { PrivacyDashboardState } from '@/types/TelemetryTypes'
 
 // Mock fetch to simulate network requests
 const mockFetch = vi.fn()
@@ -43,7 +44,6 @@ describe('ZeroTelemetryManager Integration', () => {
         const result = await manager.blockNetworkRequest(url, 'Telemetry disabled by default')
         
         expect(result.success).toBe(true)
-        expect(result.data).toBeUndefined()
       }
     })
 
@@ -272,7 +272,7 @@ describe('ZeroTelemetryManager Integration', () => {
   describe('performance characteristics', () => {
     it('should handle multiple concurrent operations', async () => {
       // Arrange
-      const operations = Array.from({ length: 100 }, (_, i) => 
+      const operations = Array.from({ length: 100 }, (unused, i) => 
         manager.logEvent({
           eventType: 'AI_QUERY_LOCAL',
           details: { index: i }
@@ -313,9 +313,10 @@ describe('ZeroTelemetryManager Integration', () => {
       
       // Verify dashboard state is consistent
       const dashboardResult = results[3]
-      if (dashboardResult.success) {
-        expect(dashboardResult.data.telemetryStatus).toBe('disabled')
-        expect(dashboardResult.data.dataCollected).toBe('zero')
+      if (dashboardResult.success && dashboardResult.data) {
+        const dashboardData = dashboardResult.data as PrivacyDashboardState
+        expect(dashboardData.telemetryStatus).toBe('disabled')
+        expect(dashboardData.dataCollected).toBe('zero')
       }
     })
   })

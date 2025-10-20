@@ -32,7 +32,7 @@ export function PrivacySettings({ className = '' }: PrivacySettingsProps): React
   } = usePrivacySettings()
 
   const [isRunningTests, setIsRunningTests] = useState(false)
-  const [testResults, setTestResults] = useState<any[]>([])
+  const [testResults, setTestResults] = useState<unknown[]>([])
 
   const handleToggleProtection = async (): Promise<void> => {
     if (isProtectionEnabled) {
@@ -115,7 +115,7 @@ export function PrivacySettings({ className = '' }: PrivacySettingsProps): React
     )
   }
 
-  if (error) {
+  if (error != null && error.length > 0) {
     return (
       <div className={`p-6 ${className}`}>
         <div className="bg-red-50 border border-red-200 rounded-md p-4">
@@ -205,7 +205,8 @@ export function PrivacySettings({ className = '' }: PrivacySettingsProps): React
               </p>
             </div>
             <button
-              onClick={handleToggleProtection}
+              onClick={() => void handleToggleProtection()}
+              aria-label="Toggle privacy protection"
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
                 isProtectionEnabled ? 'bg-blue-600' : 'bg-gray-200'
               }`}
@@ -231,8 +232,9 @@ export function PrivacySettings({ className = '' }: PrivacySettingsProps): React
                 </p>
               </div>
               <button
-                onClick={handleToggleFingerprinting}
+                onClick={() => void handleToggleFingerprinting()}
                 disabled={!isProtectionEnabled}
+                aria-label="Toggle fingerprinting protection"
                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
                   isFingerprintingEnabled && isProtectionEnabled
                     ? 'bg-blue-600'
@@ -258,8 +260,9 @@ export function PrivacySettings({ className = '' }: PrivacySettingsProps): React
                 </p>
               </div>
               <button
-                onClick={handleToggleTrackerBlocking}
+                onClick={() => void handleToggleTrackerBlocking()}
                 disabled={!isProtectionEnabled}
+                aria-label="Toggle tracker blocking"
                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
                   isTrackerBlockingEnabled && isProtectionEnabled
                     ? 'bg-blue-600'
@@ -286,8 +289,9 @@ export function PrivacySettings({ className = '' }: PrivacySettingsProps): React
                   </p>
                 </div>
                 <button
-                  onClick={handleToggleBraveShields}
+                  onClick={() => void handleToggleBraveShields()}
                   disabled={!isProtectionEnabled}
+                  aria-label="Toggle Brave Shields"
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
                     settings.braveShieldsAggressive && isProtectionEnabled
                       ? 'bg-blue-600'
@@ -316,7 +320,7 @@ export function PrivacySettings({ className = '' }: PrivacySettingsProps): React
             </p>
           </div>
           <button
-            onClick={handleRunTests}
+            onClick={() => void handleRunTests()}
             disabled={isRunningTests}
             className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
           >
@@ -342,12 +346,12 @@ export function PrivacySettings({ className = '' }: PrivacySettingsProps): React
                 </div>
                 <span
                   className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                    result.passed
+                    result.passed === true
                       ? 'bg-green-100 text-green-800'
                       : 'bg-red-100 text-red-800'
                   }`}
                 >
-                  {result.passed ? 'Passed' : 'Failed'}
+                  {result.passed === true ? 'Passed' : 'Failed'}
                 </span>
               </div>
             ))}

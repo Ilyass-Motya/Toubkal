@@ -1,0 +1,38 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Toubkal Icon -->
+  <defs>
+    <linearGradient id="iconGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1E40AF;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#10B981;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3B82F6;stop-opacity:1" />
+    </linearGradient>
+    <radialGradient id="mountainShadow" cx="50%" cy="100%" r="50%">
+      <stop offset="0%" style="stop-color:#1E40AF;stop-opacity:0.3" />
+      <stop offset="100%" style="stop-color:#1E40AF;stop-opacity:0" />
+    </radialGradient>
+  </defs>
+  
+  <!-- Background Circle -->
+  <circle cx="32" cy="32" r="32" fill="url(#iconGradient)"/>
+  
+  <!-- Mountain Range -->
+  <g id="mountains">
+    <!-- Left Peak -->
+    <path d="M12 48 L20 28 L28 48 Z" fill="white" opacity="0.9"/>
+    <!-- Center Peak -->
+    <path d="M24 48 L32 24 L40 48 Z" fill="white" opacity="0.95"/>
+    <!-- Right Peak -->
+    <path d="M36 48 L44 32 L52 48 Z" fill="white" opacity="0.9"/>
+    <!-- Base -->
+    <path d="M8 48 L16 40 L24 48 L32 40 L40 48 L48 40 L56 48 Z" fill="white" opacity="0.8"/>
+  </g>
+  
+  <!-- Privacy Shield -->
+  <g id="privacy-shield">
+    <circle cx="32" cy="28" r="12" fill="none" stroke="white" stroke-width="2" opacity="0.9"/>
+    <path d="M28 28 L30 30 L36 24" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+  </g>
+  
+  <!-- Shadow -->
+  <ellipse cx="32" cy="56" rx="24" ry="8" fill="url(#mountainShadow)"/>
+</svg>

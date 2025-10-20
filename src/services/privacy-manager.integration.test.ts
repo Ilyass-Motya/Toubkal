@@ -5,9 +5,8 @@
  * audit logging, fingerprinting tests, and end-to-end workflows.
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { PrivacyManager } from './privacy-manager'
-import { getAuditLogger } from './audit-logger'
 
 describe('PrivacyManager Integration', () => {
   let privacyManager: PrivacyManager
@@ -169,7 +168,8 @@ describe('PrivacyManager Integration', () => {
     it('should create audit log entry for settings changes', async () => {
       // Arrange
       await privacyManager.initialize()
-      const initialLogCount = privacyManager.getAuditLog().length
+      const initialLogResult = await privacyManager.getAuditLog()
+      const initialLogCount = initialLogResult.success ? initialLogResult.data.length : 0
 
       // Act
       await privacyManager.updateSettings({
@@ -177,45 +177,53 @@ describe('PrivacyManager Integration', () => {
       })
 
       // Assert
-      const newLogCount = privacyManager.getAuditLog().length
+      const newLogResult = await privacyManager.getAuditLog()
+      const newLogCount = newLogResult.success ? newLogResult.data.length : 0
       expect(newLogCount).toBeGreaterThan(initialLogCount)
 
-      const latestEntry = privacyManager.getAuditLog(1)[0]
-      expect(latestEntry.eventType).toBe('PRIVACY_SETTINGS_CHANGED')
-      expect(latestEntry.details.userId).toBeDefined()
-      expect(latestEntry.signature).toBeDefined()
-      expect(latestEntry.merkleProof).toBeDefined()
+      const latestLogResult = await privacyManager.getAuditLog(1)
+      const latestEntry = latestLogResult.success ? latestLogResult.data[0] : null
+      expect(latestEntry?.eventType).toBe('PRIVACY_SETTINGS_CHANGED')
+      expect(latestEntry?.details.userId).toBeDefined()
+      expect(latestEntry?.signature).toBeDefined()
+      expect(latestEntry?.merkleProof).toBeDefined()
     })
 
     it('should create audit log entry for protection enable/disable', async () => {
       // Arrange
       await privacyManager.initialize()
-      const initialLogCount = privacyManager.getAuditLog().length
+      const initialLogResult = await privacyManager.getAuditLog()
+      const initialLogCount = initialLogResult.success ? initialLogResult.data.length : 0
 
       // Act
       await privacyManager.disableProtection()
 
       // Assert
-      const newLogCount = privacyManager.getAuditLog().length
+      const newLogResult = await privacyManager.getAuditLog()
+      const newLogCount = newLogResult.success ? newLogResult.data.length : 0
       expect(newLogCount).toBeGreaterThan(initialLogCount)
 
-      const latestEntry = privacyManager.getAuditLog(1)[0]
-      expect(latestEntry.eventType).toBe('PRIVACY_SETTINGS_CHANGED')
+      const latestLogResult = await privacyManager.getAuditLog(1)
+      const latestEntry = latestLogResult.success ? latestLogResult.data[0] : null
+      expect(latestEntry?.eventType).toBe('PRIVACY_SETTINGS_CHANGED')
     })
 
     it('should create audit log entry for initialization', async () => {
       // Arrange
-      const initialLogCount = privacyManager.getAuditLog().length
+      const initialLogResult = await privacyManager.getAuditLog()
+      const initialLogCount = initialLogResult.success ? initialLogResult.data.length : 0
 
       // Act
       await privacyManager.initialize()
 
       // Assert
-      const newLogCount = privacyManager.getAuditLog().length
+      const newLogResult = await privacyManager.getAuditLog()
+      const newLogCount = newLogResult.success ? newLogResult.data.length : 0
       expect(newLogCount).toBeGreaterThan(initialLogCount)
 
-      const latestEntry = privacyManager.getAuditLog(1)[0]
-      expect(latestEntry.eventType).toBe('PRIVACY_SETTINGS_CHANGED')
+      const latestLogResult = await privacyManager.getAuditLog(1)
+      const latestEntry = latestLogResult.success ? latestLogResult.data[0] : null
+      expect(latestEntry?.eventType).toBe('PRIVACY_SETTINGS_CHANGED')
     })
   })
 
@@ -357,8 +365,8 @@ describe('PrivacyManager Integration', () => {
       expect(duration).toBeLessThan(15000) // Should complete entire workflow within 15 seconds
 
       // Verify audit log has entries for all operations
-      const auditLog = privacyManager.getAuditLog()
-      expect(auditLog.length).toBeGreaterThan(0)
+      const auditLogResult = await privacyManager.getAuditLog()
+      expect(auditLogResult.success ? auditLogResult.data.length : 0).toBeGreaterThan(0)
     })
 
     it('should maintain consistency across multiple operations', async () => {
@@ -406,7 +414,7 @@ describe('PrivacyManager Integration', () => {
 
       // Act - Attempt invalid operation
       const result = await privacyManager.updateSettings({
-        fingerprintingProtection: 'invalid' as any
+        fingerprintingProtection: 'invalid' as unknown as 'strict' | 'moderate' | 'minimal'
       })
 
       // Assert
@@ -423,7 +431,7 @@ describe('PrivacyManager Integration', () => {
 
       // Act - Attempt invalid operation followed by valid operation
       const invalidResult = await privacyManager.updateSettings({
-        fingerprintingProtection: 'invalid' as any
+        fingerprintingProtection: 'invalid' as unknown as 'strict' | 'moderate' | 'minimal'
       })
       
       const validResult = await privacyManager.updateSettings({

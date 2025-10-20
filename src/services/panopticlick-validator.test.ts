@@ -158,7 +158,7 @@ describe('Panopticlick Fingerprinting Validation', () => {
       // Assert
       expect(privacyProps.doNotTrack).toBe('1') // DNT enabled
       expect(privacyProps.cookieEnabled).toBe(false) // Cookies disabled
-      expect(privacyProps.javaEnabled()).toBe(false) // Java disabled
+      expect(privacyProps.javaEnabled).toBe(false) // Java disabled
       expect(privacyProps.onLine).toBe(true) // Online status
     })
 
@@ -167,7 +167,7 @@ describe('Panopticlick Fingerprinting Validation', () => {
       // (navigator.getBattery mocked above)
 
       // Act
-      const battery = await navigator.getBattery()
+      const battery = await (navigator as unknown as { getBattery: () => Promise<unknown> }).getBattery()
 
       // Assert
       // Battery info should be standardized to prevent fingerprinting

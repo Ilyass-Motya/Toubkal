@@ -1,0 +1,142 @@
+# Toubkal Browser Privacy Components BUILD.gn
+#
+# Build configuration for privacy protection components including
+# cryptographic operations, audit trails, and key management.
+
+import("//build/config/features.gni")
+
+# Common Types - Shared types and utilities
+source_set("common_types") {
+  sources = [
+    "common_types.h",
+  ]
+
+  deps = [
+    "//base",
+  ]
+}
+
+# Key Manager Library - BoringSSL Ed25519 operations
+source_set("key_manager") {
+  sources = [
+    "crypto/key_manager.cc",
+    "crypto/key_manager.h",
+  ]
+
+  deps = [
+    ":common_types",
+    "//base",
+    "//third_party/boringssl",
+  ]
+
+  public_deps = [
+    ":common_types",
+    "//third_party/boringssl/src/include/openssl:headers",
+  ]
+}
+
+# Audit Storage Library - LevelDB key persistence
+source_set("audit_storage") {
+  sources = [
+    "audit/audit_storage.cc",
+    "audit/audit_storage.h",
+  ]
+
+  deps = [
+    ":common_types",
+    "//base",
+    "//third_party/leveldatabase",
+  ]
+
+  public_deps = [
+    ":common_types",
+    "//third_party/leveldatabase/src/include/leveldb:headers",
+  ]
+}
+
+# Integrated Key Manager - Combines crypto and storage
+source_set("key_manager_integrated") {
+  sources = [
+    "crypto/key_manager_integrated.cc",
+    "crypto/key_manager_integrated.h",
+  ]
+
+  deps = [
+    ":audit_storage",
+    ":key_manager",
+    ":common_types",
+    "//base",
+  ]
+
+  public_deps = [
+    ":common_types",
+  ]
+}
+
+# Privacy Components Module (combines all components)
+source_set("privacy_components") {
+  sources = []
+
+  deps = [
+    ":audit_storage",
+    ":key_manager",
+    ":key_manager_integrated",
+  ]
+
+  public_deps = [
+    ":audit_storage",
+    ":key_manager",
+    ":key_manager_integrated",
+  ]
+}
+
+# Unit Tests
+test("key_manager_unittests") {
+  sources = [
+    "crypto/key_manager_test.cc",
+  ]
+
+  deps = [
+    ":key_manager",
+    "//base/test:test_support",
+    "//testing/gtest",
+  ]
+}
+
+test("audit_storage_unittests") {
+  sources = [
+    "audit/audit_storage_test.cc",
+  ]
+
+  deps = [
+    ":audit_storage",
+    "//base/test:test_support",
+    "//testing/gtest",
+  ]
+}
+
+# Integration Tests
+test("crypto_integration_tests") {
+  sources = [
+    "crypto/crypto_integration_test.cc",
+  ]
+
+  deps = [
+    ":privacy_components",
+    "//base/test:test_support",
+    "//testing/gtest",
+  ]
+}
+
+# Performance Tests
+test("crypto_performance_tests") {
+  sources = [
+    "crypto/crypto_performance_test.cc",
+  ]
+
+  deps = [
+    ":privacy_components",
+    "//base/test:test_support",
+    "//testing/gtest",
+  ]
+}

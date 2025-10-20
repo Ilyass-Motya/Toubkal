@@ -2,7 +2,7 @@ import { expect, afterEach, vi, beforeAll, afterAll } from 'vitest'
 import { cleanup } from '@testing-library/react'
 import * as matchers from '@testing-library/jest-dom/matchers'
 
-// Extend Vitest matchers with jest-dom
+// Extend Vitest matchers with jest-dom for compatibility
 expect.extend(matchers)
 
 // Cleanup after each test
@@ -38,6 +38,12 @@ global.IntersectionObserver = vi.fn().mockImplementation(() => ({
   unobserve: vi.fn(),
   disconnect: vi.fn(),
 }))
+
+// Mock Element.prototype.scrollIntoView
+Object.defineProperty(Element.prototype, 'scrollIntoView', {
+  writable: true,
+  value: vi.fn(),
+})
 
 // Suppress console errors in tests unless explicitly testing error handling
 const originalError = console.error

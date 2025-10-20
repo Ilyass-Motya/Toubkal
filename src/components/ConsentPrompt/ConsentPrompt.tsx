@@ -137,14 +137,14 @@ export const ConsentPrompt: React.FC<ConsentPromptProps> = ({
           {/* Action Buttons */}
           <div className="flex space-x-3">
             <button
-              onClick={handleGrant}
+              onClick={() => { void handleGrant() }}
               disabled={isProcessing}
               className="flex-1 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {isProcessing ? 'Processing...' : 'Grant Consent'}
             </button>
             <button
-              onClick={handleDeny}
+              onClick={() => { void handleDeny() }}
               disabled={isProcessing}
               className="flex-1 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >

@@ -5,7 +5,7 @@
  * Ensures brand consistency across different screen sizes and themes.
  */
 
-import { describe, it, expect, beforeAll, afterAll } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { AuditPage } from '../components/pages/AuditPage'
 import { AIPage } from '../components/pages/AIPage'
@@ -16,15 +16,19 @@ import { NewTabPage } from '../components/pages/NewTabPage'
 import { ErrorPage } from '../components/pages/ErrorPage'
 
 // Mock IntersectionObserver for tests
-global.IntersectionObserver = class IntersectionObserver {
+global.IntersectionObserver = class {
   constructor() {}
+  root: Element | null = null
+  rootMargin: string = ''
+  thresholds: ReadonlyArray<number> = []
   disconnect() {}
   observe() {}
   unobserve() {}
+  takeRecords(): IntersectionObserverEntry[] { return [] }
 }
 
 // Mock ResizeObserver for tests
-global.ResizeObserver = class ResizeObserver {
+global.ResizeObserver = class {
   constructor() {}
   disconnect() {}
   observe() {}
@@ -138,7 +142,7 @@ describe('Visual Regression Tests', () => {
         <ErrorPage key="error" errorCode="404" />
       ]
 
-      pages.forEach((page, index) => {
+      pages.forEach((page) => {
         const { container } = render(page)
         
         // Check for Toubkal Blue usage in buttons and links

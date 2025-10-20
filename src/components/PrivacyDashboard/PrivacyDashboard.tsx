@@ -20,7 +20,7 @@ export const PrivacyDashboard: React.FC<PrivacyDashboardProps> = ({
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    loadPrivacyState()
+    void loadPrivacyState()
   }, [])
 
   const loadPrivacyState = async (): Promise<void> => {
@@ -82,7 +82,7 @@ export const PrivacyDashboard: React.FC<PrivacyDashboardProps> = ({
     )
   }
 
-  if (error) {
+  if (error != null && error.length > 0) {
     return (
       <div className="p-6 bg-white rounded-lg shadow-md">
         <div className="text-red-600 mb-4">
@@ -90,7 +90,7 @@ export const PrivacyDashboard: React.FC<PrivacyDashboardProps> = ({
           <p className="text-sm">{error}</p>
         </div>
         <button
-          onClick={loadPrivacyState}
+          onClick={() => { void loadPrivacyState() }}
           className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
         >
           Retry
@@ -183,7 +183,7 @@ export const PrivacyDashboard: React.FC<PrivacyDashboardProps> = ({
           Privacy Settings
         </button>
         <button
-          onClick={loadPrivacyState}
+          onClick={() => { void loadPrivacyState() }}
           className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors"
         >
           Refresh

@@ -207,7 +207,7 @@ describe('ZeroTelemetryManager Performance', () => {
     it('should handle concurrent log events efficiently', async () => {
       // Arrange
       const eventCount = 100
-      const events = Array.from({ length: eventCount }, (_, i) => ({
+      const events = Array.from({ length: eventCount }, (unused, i) => ({
         eventType: 'AI_QUERY_LOCAL' as const,
         details: { index: i }
       }))
@@ -228,7 +228,7 @@ describe('ZeroTelemetryManager Performance', () => {
     it('should handle concurrent consent operations efficiently', async () => {
       // Arrange
       const operationCount = 50
-      const operations = Array.from({ length: operationCount }, (_, i) => 
+      const operations = Array.from({ length: operationCount }, (unused, i) => 
         manager.requestConsent({
           actionType: 'TEST',
           userId: `user${i}`,

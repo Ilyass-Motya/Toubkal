@@ -5,22 +5,26 @@
  * for Toubkal Browser. Implements Result<T> pattern for error handling.
  */
 
-import { 
-  PrivacySettings, 
-  PrivacyStatus, 
-  AuditLogEntry, 
+import {
+  PrivacySettings,
+  PrivacyStatus,
+  AuditLogEntry,
   TrackerBlocklist,
   FingerprintingTestResult,
   PrivacyWarning,
   PrivacyManagerConfig,
-  PrivacyEvent,
-  Result
+  PrivacyEvent
 } from '@/types/PrivacyTypes'
+import { Result } from '@/types/CommonTypes'
+import { getAuditLogger } from './audit-logger'
+
+// Maximum number of audit log entries to keep in memory
+// const MAX_AUDIT_LOG_SIZE = 1000
 
 export class PrivacyManager {
   private settings: PrivacySettings
   private config: PrivacyManagerConfig
-  private auditLog: AuditLogEntry[] = []
+  private auditLogger = getAuditLogger()
   private blocklists: TrackerBlocklist[] = []
   private warnings: PrivacyWarning[] = []
   private eventListeners: Map<string, (event: PrivacyEvent) => void> = new Map()
@@ -107,7 +111,7 @@ export class PrivacyManager {
           activationTime: totalTime,
           firstRunTime: totalTime
         },
-        lastAuditId: this.auditLog[this.auditLog.length - 1]?.eventId || ''
+        lastAuditId: 'audit_' + Date.now()
       }
 
       return { success: true, data: status }
@@ -139,7 +143,7 @@ export class PrivacyManager {
         activationTime: 0, // Will be set during activation
         firstRunTime: 0
       },
-      lastAuditId: this.auditLog[this.auditLog.length - 1]?.eventId || ''
+      lastAuditId: 'audit_' + Date.now()
     }
   }
 
@@ -247,8 +251,8 @@ export class PrivacyManager {
       tests.push(fontResult)
 
       // Calculate overall score
-      const totalScore = tests.reduce((sum, test) => sum + test.score, 0) / tests.length
-      const overallPassed = totalScore >= 80 // 80% threshold
+      // const totalScore = tests.reduce((sum, test) => sum + test.score, 0) / tests.length
+      // const overallPassed = totalScore >= 80 // 80% threshold
 
       return { success: true, data: tests }
     } catch (error) {
@@ -260,9 +264,14 @@ export class PrivacyManager {
   /**
    * Get audit log entries
    */
-  getAuditLog(limit?: number): AuditLogEntry[] {
-    const entries = [...this.auditLog].reverse() // Most recent first
-    return limit ? entries.slice(0, limit) : entries
+  getAuditLog(limit?: number): Promise<Result<AuditLogEntry[]>> {
+    try {
+      const entries = this.auditLogger.getEntries({ limit })
+      return { success: true, data: entries }
+    } catch (error) {
+      console.error('[PrivacyManager] Failed to get audit log:', error)
+      return { success: false, error: 'Failed to get audit log' }
+    }
   }
 
   /**
@@ -270,19 +279,11 @@ export class PrivacyManager {
    */
   async exportAuditLog(format: 'json' | 'csv' | 'pdf' = 'json'): Promise<Result<string>> {
     try {
-      const entries = this.getAuditLog()
-      
-      switch (format) {
-        case 'json':
-          return { success: true, data: JSON.stringify(entries, null, 2) }
-        case 'csv':
-          const csv = this.convertToCSV(entries)
-          return { success: true, data: csv }
-        case 'pdf':
-          // PDF generation would require additional library
-          return { success: false, error: 'PDF export not implemented yet' }
-        default:
-          return { success: false, error: 'Unsupported export format' }
+      const result = await this.auditLogger.exportLog(format)
+      if (result.success) {
+        return { success: true, data: result.data }
+      } else {
+        return { success: false, error: result.error }
       }
     } catch (error) {
       console.error('[PrivacyManager] Export failed:', error)
@@ -310,7 +311,7 @@ export class PrivacyManager {
     return `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   }
 
-  private async loadSettings(): Promise<Result<PrivacySettings>> {
+  private loadSettings(): Promise<Result<PrivacySettings>> {
     try {
       // In a real implementation, this would load from storage
       // For now, return the default settings
@@ -321,14 +322,14 @@ export class PrivacyManager {
     }
   }
 
-  private async saveSettings(): Promise<Result<boolean>> {
+  private saveSettings(): Promise<Result<boolean>> {
     try {
       // In a real implementation, this would save to storage
       // For now, just return success
-      return { success: true, data: true }
+      return Promise.resolve({ success: true, data: true })
     } catch (error) {
       console.error('[PrivacyManager] Failed to save settings:', error)
-      return { success: false, error: 'Failed to save privacy settings' }
+      return Promise.resolve({ success: false, error: 'Failed to save privacy settings' })
     }
   }
 
@@ -343,7 +344,7 @@ export class PrivacyManager {
     }
 
     // Validate userId if provided
-    if (updates.userId && typeof updates.userId !== 'string') {
+    if (updates.userId !== null && updates.userId !== undefined && typeof updates.userId !== 'string') {
       return { success: false, error: 'Invalid userId: must be string' }
     }
 
@@ -374,22 +375,22 @@ export class PrivacyManager {
     }
   }
 
-  private async activateFingerprintingProtection(): Promise<void> {
+  private activateFingerprintingProtection(): Promise<void> {
     // In a real implementation, this would configure Chromium's fingerprinting protection
     console.log('[PrivacyManager] Activating fingerprinting protection')
   }
 
-  private async activateTrackerBlocking(): Promise<void> {
+  private activateTrackerBlocking(): Promise<void> {
     // In a real implementation, this would configure tracker blocking
     console.log('[PrivacyManager] Activating tracker blocking')
   }
 
-  private async activateBraveShields(): Promise<void> {
+  private activateBraveShields(): Promise<void> {
     // In a real implementation, this would configure Brave Shields
     console.log('[PrivacyManager] Activating Brave Shields (Aggressive mode)')
   }
 
-  private async updateBlocklists(): Promise<Result<boolean>> {
+  private updateBlocklists(): Promise<Result<boolean>> {
     try {
       // In a real implementation, this would fetch and update blocklists
       console.log('[PrivacyManager] Updating blocklists')
@@ -419,7 +420,7 @@ export class PrivacyManager {
     ]
   }
 
-  private async testCanvasFingerprinting(): Promise<FingerprintingTestResult> {
+  private testCanvasFingerprinting(): Promise<FingerprintingTestResult> {
     // Mock implementation - in real app would test actual canvas fingerprinting
     return {
       testName: 'Canvas Fingerprinting',
@@ -438,7 +439,7 @@ export class PrivacyManager {
     }
   }
 
-  private async testWebGLFingerprinting(): Promise<FingerprintingTestResult> {
+  private testWebGLFingerprinting(): Promise<FingerprintingTestResult> {
     return {
       testName: 'WebGL Fingerprinting',
       testUrl: 'https://panopticlick.eff.org/',
@@ -456,7 +457,7 @@ export class PrivacyManager {
     }
   }
 
-  private async testFontFingerprinting(): Promise<FingerprintingTestResult> {
+  private testFontFingerprinting(): Promise<FingerprintingTestResult> {
     return {
       testName: 'Font Fingerprinting',
       testUrl: 'https://panopticlick.eff.org/',
@@ -474,7 +475,7 @@ export class PrivacyManager {
     }
   }
 
-  private async checkPrivacyWarnings(oldSettings: PrivacySettings, newSettings: PrivacySettings): Promise<void> {
+  private checkPrivacyWarnings(oldSettings: PrivacySettings, newSettings: PrivacySettings): Promise<void> {
     // Check if privacy was reduced
     if (oldSettings.protectionEnabled && !newSettings.protectionEnabled) {
       const warning: PrivacyWarning = {
@@ -508,34 +509,24 @@ export class PrivacyManager {
   }
 
   private async logEvent(event: PrivacyEvent): Promise<void> {
-    const auditEntry: AuditLogEntry = {
-      eventId: this.generateEventId(),
-      timestamp: event.timestamp,
-      eventType: event.type as any,
-      details: {
-        ...event.data as any,
-        userId: event.userId
-      },
-      signature: this.generateSignature(event),
-      merkleProof: this.generateMerkleProof(event)
+    try {
+      const result = await this.auditLogger.logEvent(
+        event.type,
+        {
+          ...event.data,
+          userId: event.userId
+        },
+        event.userId
+      )
+      
+      if (!result.success) {
+        console.error('[PrivacyManager] Failed to log event:', result.error)
+      }
+    } catch (error) {
+      console.error('[PrivacyManager] Failed to log event:', error)
     }
-
-    this.auditLog.push(auditEntry)
   }
 
-  private generateEventId(): string {
-    return `event_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-  }
-
-  private generateSignature(event: PrivacyEvent): string {
-    // In a real implementation, this would generate Ed25519 signature
-    return `signature_${event.timestamp}_${Math.random().toString(36).substr(2, 9)}`
-  }
-
-  private generateMerkleProof(event: PrivacyEvent): string[] {
-    // In a real implementation, this would generate Merkle tree proof
-    return [`proof_${event.timestamp}_${Math.random().toString(36).substr(2, 9)}`]
-  }
 
   private emitEvent(event: PrivacyEvent): void {
     const listener = this.eventListeners.get(event.type)
@@ -544,18 +535,6 @@ export class PrivacyManager {
     }
   }
 
-  private convertToCSV(entries: AuditLogEntry[]): string {
-    const headers = ['eventId', 'timestamp', 'eventType', 'userId', 'signature']
-    const rows = entries.map(entry => [
-      entry.eventId,
-      entry.timestamp,
-      entry.eventType,
-      entry.details.userId,
-      entry.signature
-    ])
-
-    return [headers, ...rows].map(row => row.join(',')).join('\n')
-  }
 }
 
 // Singleton instance

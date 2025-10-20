@@ -1,0 +1,55 @@
+import("//build/config/compiler/compiler.gni")
+
+source_set("branding") {
+  sources = [
+    "branding_config.cc",
+    "branding_config.h",
+    "branding_manager.cc",
+    "branding_manager.h",
+    "window_title_manager.cc",
+    "window_title_manager.h",
+  ]
+
+  deps = [
+    "//base",
+  ]
+
+  public_deps = [
+    "//base",
+  ]
+
+  # Enable C++17 features
+  cflags_cc = [ "-std=c++17" ]
+}
+
+# Unit tests for branding
+test("branding_test") {
+  sources = [
+    "branding_test.cc",
+  ]
+
+  deps = [
+    ":branding",
+    "//testing/gtest",
+    "//base",
+  ]
+
+  # Enable C++17 features
+  cflags_cc = [ "-std=c++17" ]
+}
+
+# Unit tests for window title manager
+test("window_title_manager_test") {
+  sources = [
+    "window_title_manager_test.cc",
+  ]
+
+  deps = [
+    ":branding",
+    "//testing/gtest",
+    "//base",
+  ]
+
+  # Enable C++17 features
+  cflags_cc = [ "-std=c++17" ]
+}

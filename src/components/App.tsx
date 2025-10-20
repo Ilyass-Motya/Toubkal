@@ -27,7 +27,8 @@ export const App: React.FC = () => {
   })
 
   // Handle navigation to new URLs
-  const handleNavigate = async (url: string) => {
+  const handleNavigate = (url: string) => {
+    void (async () => {
     setAppState(prev => ({ ...prev, isLoading: true, error: null }))
 
     try {
@@ -49,7 +50,7 @@ export const App: React.FC = () => {
       if (validation.isLegacy && validation.redirectUrl) {
         setAppState(prev => ({
           ...prev,
-          currentUrl: validation.redirectUrl!,
+          currentUrl: validation.redirectUrl,
           isInternalPage: true,
           isLoading: false,
         }))
@@ -74,7 +75,7 @@ export const App: React.FC = () => {
         currentUrl: url,
         isInternalPage: validation.isInternal,
         isLoading: false,
-        error: validation.isValid ? null : validation.error || 'Invalid URL',
+        error: validation.isValid ? null : (validation.error ?? 'Invalid URL'),
       }))
 
     } catch (error) {
@@ -85,23 +86,24 @@ export const App: React.FC = () => {
         error: error instanceof Error ? error.message : 'Navigation failed',
       }))
     }
+    })()
   }
 
   // Handle external URL navigation
-  const handleExternalNavigate = (url: string) => {
-    // For external URLs, we would typically open them in a new tab
-    // For now, we'll just log and show an error
-    console.log('External URL navigation:', url)
-    setAppState(prev => ({
-      ...prev,
-      error: 'External URL navigation not implemented in this demo',
-    }))
-  }
+  // const handleExternalNavigate = (url: string) => {
+  //   // For external URLs, we would typically open them in a new tab
+  //   // For now, we'll just log and show an error
+  //   console.log('External URL navigation:', url)
+  //   setAppState(prev => ({
+  //     ...prev,
+  //     error: 'External URL navigation not implemented in this demo',
+  //   }))
+  // }
 
   // Initialize app with default URL
   useEffect(() => {
     // In a real browser, this would be set by the browser's navigation system
-    handleNavigate('toubkal://newtab')
+    void handleNavigate('toubkal://newtab')
   }, [])
 
   // Show loading state
@@ -117,7 +119,7 @@ export const App: React.FC = () => {
   }
 
   // Show error state
-  if (appState.error && !appState.isInternalPage) {
+  if (appState.error != null && appState.error.length > 0 && !appState.isInternalPage) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
         <div className="text-center max-w-md mx-auto p-6">
@@ -129,7 +131,7 @@ export const App: React.FC = () => {
               {appState.error}
             </p>
             <button
-              onClick={() => handleNavigate('toubkal://newtab')}
+              onClick={() => void handleNavigate('toubkal://newtab')}
               className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors"
             >
               Go to New Tab

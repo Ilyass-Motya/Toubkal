@@ -1,0 +1,182 @@
+/* Toubkal Consent History Styles */
+
+:root {
+  --toubkal-primary: #1E40AF;
+  --toubkal-secondary: #3B82F6;
+  --toubkal-accent: #10B981;
+  --toubkal-bg: #F8FAFC;
+  --toubkal-card: #FFFFFF;
+  --toubkal-text: #1F2937;
+  --toubkal-text-secondary: #6B7280;
+  --toubkal-border: #E5E7EB;
+  --toubkal-warning: #F59E0B;
+  --toubkal-danger: #EF4444;
+  --toubkal-success: #10B981;
+  --toubkal-info: #3B82F6;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--toubkal-bg);
+  color: var(--toubkal-text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Utility Classes */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.card {
+  background: var(--toubkal-card);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--toubkal-border);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: var(--toubkal-primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--toubkal-secondary);
+}
+
+.btn-secondary {
+  background: var(--toubkal-border);
+  color: var(--toubkal-text);
+}
+
+.btn-secondary:hover {
+  background: #D1D5DB;
+}
+
+.btn-danger {
+  background: var(--toubkal-danger);
+  color: white;
+}
+
+.btn-danger:hover {
+  background: #DC2626;
+}
+
+.btn-success {
+  background: var(--toubkal-success);
+  color: white;
+}
+
+.btn-success:hover {
+  background: #059669;
+}
+
+/* Status Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.badge-success {
+  background: var(--toubkal-success);
+  color: white;
+}
+
+.badge-warning {
+  background: var(--toubkal-warning);
+  color: white;
+}
+
+.badge-danger {
+  background: var(--toubkal-danger);
+  color: white;
+}
+
+.badge-info {
+  background: var(--toubkal-info);
+  color: white;
+}
+
+.badge-secondary {
+  background: var(--toubkal-border);
+  color: var(--toubkal-text);
+}
+
+/* Loading Spinner */
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--toubkal-border);
+  border-top: 4px solid var(--toubkal-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 0.5rem;
+  }
+  
+  .card {
+    padding: 1rem;
+  }
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--toubkal-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--toubkal-border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #D1D5DB;
+}

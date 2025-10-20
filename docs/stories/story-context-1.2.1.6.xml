@@ -1,0 +1,108 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>1.2</epicId>
+    <storyId>1.6</storyId>
+    <title>Chromium Fork Setup Test Suite</title>
+    <status>Ready</status>
+    <generatedAt>2025-10-20</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/stories/phase1-week1-2/story-006-chromium-fork-setup-tests.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>Toubkal Browser QA engineer</asA>
+    <iWant>comprehensive tests for the Chromium fork setup documentation and tooling</iWant>
+    <soThat>I can ensure the setup process works reliably across all platforms and configurations</soThat>
+    <tasks>Task 1: Implement unit tests for build scripts
+Task 2: Implement integration tests for templates
+Task 3: Implement E2E tests for setup process
+Task 4: Implement documentation validation tests
+Task 5: Implement privacy compliance tests</tasks>
+  </story>
+
+  <acceptanceCriteria>1. Unit tests for build scripts (AC: 1)
+2. Integration tests for templates (AC: 2)
+3. E2E tests for setup process (AC: 3)
+4. Documentation validation tests (AC: 4)
+5. Privacy compliance tests (AC: 5)</acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <artifact path="docs/contributing/testing-strategy.md" title="Testing Strategy" section="Unit Testing, Integration Testing, End-to-End Testing" snippet="Comprehensive testing guide covering unit tests, integration tests, E2E tests, performance testing, and security testing with specific frameworks and coverage requirements." />
+      <artifact path="docs/contributing/chromium-fork-setup.md" title="Chromium Fork Setup Documentation" section="Setup Guide, Configuration Templates, Build Scripts" snippet="Complete setup guide covering Linux, macOS, and Windows platforms with configuration templates (.gclient.template, args.gn.template) and build scripts (setup-build.sh, build.sh)." />
+      <artifact path="CODING-RULES.md" title="Toubkal Browser Coding Rules" section="Testing Rules, Error Handling" snippet="Strict coding rules including testing patterns, mocking strategies, error handling with Result&lt;T&gt; pattern, and forbidden patterns for consistent codebase." />
+      <artifact path="docs/PRIVACY-ETHICS-POLICY.md" title="Privacy & Ethics Policy" section="Zero Telemetry by Default, Network Monitoring" snippet="Privacy compliance requirements including zero telemetry by default, network monitoring during setup, and data leakage prevention testing." />
+    </docs>
+    <code>
+      <artifact path="scripts/setup-build.sh" kind="script" symbol="setup-build.sh" lines="1-467" reason="Main setup script for Linux/macOS with comprehensive error handling, logging, and platform detection" />
+      <artifact path="scripts/setup-build.bat" kind="script" symbol="setup-build.bat" lines="" reason="Windows setup script equivalent to setup-build.sh" />
+      <artifact path="scripts/build.sh" kind="script" symbol="build.sh" lines="" reason="Build execution script with cross-platform support" />
+      <artifact path="src/test/setup.ts" kind="test-setup" symbol="setup.ts" lines="1-64" reason="Vitest test setup with global mocks and cleanup utilities" />
+      <artifact path="src/integration/url-scheme-integration.test.ts" kind="integration-test" symbol="url-scheme-integration.test.ts" lines="1-311" reason="Example integration test using Result&lt;T&gt; pattern and comprehensive test coverage" />
+      <artifact path="src/services/url-scheme-manager.ts" kind="service" symbol="urlSchemeManager" lines="" reason="URL scheme processing service with performance tracking and error handling" />
+      <artifact path=".gclient.template" kind="config-template" symbol=".gclient.template" lines="" reason="Chromium sync configuration template with Toubkal-specific settings" />
+      <artifact path="args.gn.template" kind="config-template" symbol="args.gn.template" lines="" reason="GN build arguments template with optimized Chromium build settings" />
+    </code>
+    <dependencies>
+      <ecosystem name="Node.js">
+        <packages>
+          <package name="vitest" version="^2.1.8" type="dev">Unit and integration testing framework with React Testing Library integration</package>
+          <package name="eslint" version="^9.15.0" type="dev">Linting and code quality enforcement with TypeScript support</package>
+          <package name="typescript" version="^5.5.0" type="dev">TypeScript compiler and type checking</package>
+          <package name="husky" version="^9.1.6" type="dev">Git hooks for pre-commit validation</package>
+          <package name="prettier" version="^3.3.3" type="dev">Code formatting and consistency</package>
+          <package name="react" version="^18.2.0" type="runtime">React framework for UI components</package>
+          <package name="react-dom" version="^18.2.0" type="runtime">React DOM rendering</package>
+        </packages>
+      </ecosystem>
+      <ecosystem name="Chromium Build System">
+        <packages>
+          <package name="depot_tools" version="latest" type="build">Chromium development tools including gclient, gn, ninja</package>
+          <package name="gn" version="latest" type="build">Generate Ninja build files from GN configuration</package>
+          <package name="ninja" version="latest" type="build">Fast build system for parallel compilation</package>
+          <package name="goma" version="optional" type="build">Google's distributed compilation service</package>
+          <package name="sccache" version="optional" type="build">Compilation caching for faster rebuilds</package>
+        </packages>
+      </ecosystem>
+      <ecosystem name="System Dependencies">
+        <packages>
+          <package name="python3" version=">=3.8" type="system">Python runtime for build scripts and tools</package>
+          <package name="git" version="latest" type="system">Version control for Chromium source management</package>
+          <package name="build-essential" version="latest" type="system">Linux build tools and compilers</package>
+          <package name="pkg-config" version="latest" type="system">Package configuration tool</package>
+        </packages>
+      </ecosystem>
+      <ecosystem name="Testing Frameworks">
+        <packages>
+          <package name="gtest" version="chromium-builtin" type="test">Google Test framework for C++ unit tests</package>
+          <package name="playwright" version="latest" type="test">End-to-end testing for browser automation</package>
+          <package name="jest-dom" version="latest" type="test">Custom Jest matchers for DOM testing</package>
+        </packages>
+      </ecosystem>
+    </dependencies>
+  </artifacts>
+
+  <constraints>Follow Toubkal testing strategy (80% coverage minimum)
+Use Vitest for TypeScript tests, gtest for C++ tests
+Mock external dependencies appropriately
+Test privacy compliance throughout
+Ensure cross-platform compatibility</constraints>
+  <interfaces></interfaces>
+  <tests>
+    <standards>Unit tests: Vitest + React Testing Library for TypeScript, gtest for C++ components. Integration tests: Template validation and configuration testing. E2E tests: Complete setup process verification with mocked external dependencies. Documentation tests: Example validation and link checking. Privacy tests: Network monitoring during setup process. Security tests: XSS prevention and input sanitization. Performance tests: Bundle size and lighthouse metrics. 80% minimum test coverage across all test types. Mock external dependencies appropriately. Use AAA pattern (Arrange-Act-Assert) for all tests. Result&lt;T&gt; pattern for error handling in tests.</standards>
+    <locations>src/test/ - Unit tests for React/TypeScript components and services
+src/integration/ - Integration tests for service interactions
+tests/setup/ - Setup process specific test suite
+src/test/setup-process.test.ts - Unit tests for build scripts
+src/test/template-validation.test.ts - Template integration tests
+src/test/e2e-setup.test.ts - End-to-end setup tests
+src/test/privacy-setup.test.ts - Privacy compliance tests
+tests/unit/ - C++ unit tests using gtest
+tests/integration/ - C++ integration tests</locations>
+    <ideas>AC1-Unit-tests-build-scripts: Test setup-build.sh functions (platform detection, dependency installation, error handling); mock system calls and external downloads
+AC2-Integration-tests-templates: Validate .gclient.template parsing, args.gn.template configuration, cross-platform template variations, template error recovery
+AC3-E2E-tests-setup-process: Test complete setup workflow with mocked Chromium sync, build environment creation, platform-specific setup verification
+AC4-Documentation-validation-tests: Test all setup documentation examples, validate external links, verify code samples work, check documentation completeness
+AC5-Privacy-compliance-tests: Network monitoring during setup (zero unsanctioned requests), privacy policy compliance verification, data leakage prevention, external download validation</ideas>
+  </tests>
+</story-context>

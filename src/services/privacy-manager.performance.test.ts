@@ -5,7 +5,7 @@
  * to ensure AC6 and AC7 requirements are met.
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { PrivacyManager } from './privacy-manager'
 
 describe('PrivacyManager Performance', () => {
@@ -112,7 +112,7 @@ describe('PrivacyManager Performance', () => {
       const startTime = performance.now()
 
       // Act
-      const result = await privacyManager.activateProtection()
+      const result = await (privacyManager as unknown as { activateProtection: () => Promise<void> }).activateProtection()
 
       // Assert
       const endTime = performance.now()
@@ -149,7 +149,7 @@ describe('PrivacyManager Performance', () => {
   describe('Memory usage optimization', () => {
     it('should not leak memory during repeated operations', async () => {
       // Arrange
-      const initialMemory = (performance as any).memory?.usedJSHeapSize || 0
+      const initialMemory = (performance as unknown as { memory?: { usedJSHeapSize: number } }).memory?.usedJSHeapSize ?? 0
 
       // Act - Perform many operations
       for (let i = 0; i < 100; i++) {
@@ -164,7 +164,7 @@ describe('PrivacyManager Performance', () => {
         global.gc()
       }
 
-      const finalMemory = (performance as any).memory?.usedJSHeapSize || 0
+      const finalMemory = (performance as unknown as { memory?: { usedJSHeapSize: number } }).memory?.usedJSHeapSize ?? 0
       const memoryIncrease = finalMemory - initialMemory
 
       // Assert - Memory increase should be reasonable (less than 10MB)
@@ -182,11 +182,11 @@ describe('PrivacyManager Performance', () => {
         })
       }
 
-      const auditLog = privacyManager.getAuditLog()
       const startTime = performance.now()
 
       // Get all entries
-      const allEntries = privacyManager.getAuditLog()
+      const allEntriesResult = await privacyManager.getAuditLog()
+      const allEntries = allEntriesResult.success ? allEntriesResult.data : []
       const endTime = performance.now()
       const duration = endTime - startTime
 

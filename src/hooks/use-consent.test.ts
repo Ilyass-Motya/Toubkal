@@ -95,7 +95,9 @@ describe('useConsent', () => {
 
       // Assert
       expect(grantResult.success).toBe(false)
-      expect(grantResult.error).toBe('Consent request failed')
+      if (!grantResult.success) {
+        expect(grantResult.error).toBe('Consent request failed')
+      }
       expect(result.current.hasConsent).toBe(false)
     })
 
@@ -115,7 +117,9 @@ describe('useConsent', () => {
 
       // Assert
       expect(grantResult.success).toBe(false)
-      expect(grantResult.error).toBe('Network error')
+      if (!grantResult.success) {
+        expect(grantResult.error).toBe('Network error')
+      }
       expect(result.current.error).toBe('Network error')
     })
   })

@@ -6,6 +6,7 @@
  */
 
 import { AuditLogEntry, PrivacyEventType } from '@/types/PrivacyTypes'
+import { Result } from '@/types/CommonTypes'
 
 export interface AuditLoggerConfig {
   /** Maximum number of entries to keep in memory */
@@ -104,15 +105,15 @@ export class AuditLogger {
       filtered = filtered.filter(entry => entry.eventType === options.eventType)
     }
 
-    if (options.userId) {
+    if (options.userId != null && options.userId.length > 0) {
       filtered = filtered.filter(entry => entry.details.userId === options.userId)
     }
 
-    if (options.startTime) {
+    if (options.startTime !== undefined) {
       filtered = filtered.filter(entry => entry.timestamp >= options.startTime)
     }
 
-    if (options.endTime) {
+    if (options.endTime !== undefined) {
       filtered = filtered.filter(entry => entry.timestamp <= options.endTime)
     }
 
@@ -120,7 +121,7 @@ export class AuditLogger {
     filtered.sort((a, b) => b.timestamp - a.timestamp)
 
     // Apply limit
-    if (options.limit) {
+    if (options.limit != null && options.limit > 0) {
       filtered = filtered.slice(0, options.limit)
     }
 
@@ -171,16 +172,17 @@ export class AuditLogger {
   /**
    * Export audit log in various formats
    */
-  async exportLog(format: 'json' | 'csv' | 'pdf' = 'json'): Promise<Result<string>> {
+  exportLog(format: 'json' | 'csv' | 'pdf' = 'json'): Promise<Result<string>> {
     try {
       const entries = this.getEntries()
 
       switch (format) {
         case 'json':
           return { success: true, data: JSON.stringify(entries, null, 2) }
-        case 'csv':
+        case 'csv': {
           const csv = this.convertToCSV(entries)
           return { success: true, data: csv }
+        }
         case 'pdf':
           return { success: false, error: 'PDF export not implemented yet' }
         default:
@@ -271,7 +273,7 @@ export class AuditLogger {
     // In a real implementation, this would use Web Crypto API
     const encoder = new TextEncoder()
     const dataBuffer = encoder.encode(data)
-    const hashBuffer = await crypto.subtle.digest('SHA-256', dataBuffer)
+    const hashBuffer = await globalThis.crypto.subtle.digest('SHA-256', dataBuffer)
     const hashArray = Array.from(new Uint8Array(hashBuffer))
     return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
   }
@@ -407,7 +409,3 @@ export function getAuditLogger(): AuditLogger {
   return auditLoggerInstance
 }
 
-// Type for Result<T> pattern
-export type Result<T> =
-  | { success: true; data: T }
-  | { success: false; error: string }

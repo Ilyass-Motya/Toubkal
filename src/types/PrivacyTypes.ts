@@ -1,13 +1,9 @@
 /**
  * Privacy Types for Toubkal Browser
- * 
+ *
  * Defines TypeScript interfaces and types for privacy settings,
  * fingerprinting protection, and tracker blocking functionality.
  */
-
-export type Result<T> =
-  | { success: true; data: T }
-  | { success: false; error: string }
 
 export interface PrivacySettings {
   /** Whether fingerprinting protection is enabled */
@@ -48,7 +44,7 @@ export interface AuditLogEntry {
   /** Timestamp of the event */
   timestamp: number
   /** Type of privacy event */
-  eventType: 'PRIVACY_SETTINGS_CHANGED' | 'FINGERPRINTING_BLOCKED' | 'TRACKER_BLOCKED' | 'SHIELDS_UPDATED'
+  eventType: PrivacyEventType
   /** Event details */
   details: {
     setting?: string

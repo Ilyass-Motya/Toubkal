@@ -1,0 +1,37 @@
+import("//build/config/compiler/compiler.gni")
+
+# WebUI controllers for Toubkal internal pages
+source_set("toubkal_webui") {
+  sources = [
+    "audit/audit_ui.cc",
+    "audit/audit_ui.h",
+    "consent/consent_ui.cc",
+    "consent/consent_ui.h",
+    "settings/toubkal_settings_ui.cc",
+    "settings/toubkal_settings_ui.h",
+    "settings/toubkal_settings_page.cc",
+    "settings/toubkal_settings_page.h",
+    "about/toubkal_about_page.cc",
+    "about/toubkal_about_page.h",
+    "version/toubkal_version_page.cc",
+    "version/toubkal_version_page.h",
+    "flags/toubkal_flags_page.cc",
+    "flags/toubkal_flags_page.h",
+  ]
+
+  deps = [
+    "//content/public/browser",
+    "//mojo/public/cpp/bindings",
+    "//toubkal/mojo/ui",
+    "//toubkal/browser/branding",
+    "//toubkal/browser/ui/webui/react",
+    "//toubkal/browser/ui/webui/assets",
+  ]
+
+  public_deps = [
+    "//content/public/browser",
+  ]
+
+  # Enable C++17 features
+  cflags_cc = [ "-std=c++17" ]
+}

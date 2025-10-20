@@ -5,7 +5,7 @@
  * Tests rendering, functionality, and user interactions.
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { AuditPage } from '../components/pages/AuditPage'
 import { AIPage } from '../components/pages/AIPage'
@@ -16,15 +16,19 @@ import { NewTabPage } from '../components/pages/NewTabPage'
 import { ErrorPage } from '../components/pages/ErrorPage'
 
 // Mock IntersectionObserver
-global.IntersectionObserver = class IntersectionObserver {
+global.IntersectionObserver = class {
   constructor() {}
+  root: Element | null = null
+  rootMargin: string = ''
+  thresholds: ReadonlyArray<number> = []
   disconnect() {}
   observe() {}
   unobserve() {}
+  takeRecords(): IntersectionObserverEntry[] { return [] }
 }
 
 // Mock ResizeObserver
-global.ResizeObserver = class ResizeObserver {
+global.ResizeObserver = class {
   constructor() {}
   disconnect() {}
   observe() {}
@@ -142,7 +146,7 @@ describe('Page Components', () => {
       expect(modelCard.closest('div')).toHaveClass('border-blue-500')
     })
 
-    it('should handle message input and sending', async () => {
+    it('should handle message input and sending', () => {
       render(<AIPage />)
       
       const messageInput = screen.getByPlaceholderText('Type your message here...')

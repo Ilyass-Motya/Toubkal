@@ -1,0 +1,86 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>1.7</epicId>
+    <storyId>1.7</storyId>
+    <title>Project Structure Migration to Feature-First Architecture</title>
+    <status>Ready</status>
+    <generatedAt>2025-01-27</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/stories/story-1.7.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer</asA>
+    <iWant>the Toubkal Browser codebase to follow feature-first organization patterns</iWant>
+    <soThat>the code is scalable, maintainable, and follows modern best practices for both React/TypeScript and Chromium C++ development</soThat>
+    <tasks>Phase 1: Create New Structure (Foundation)
+Phase 2: Migrate Features (Privacy & Consent)
+Phase 3: Extract Shared Code
+Phase 4: Setup Core Infrastructure
+Phase 5: Migrate Remaining Features
+Phase 6: Migrate Tests
+Phase 7: Cleanup and Documentation</tasks>
+  </story>
+
+  <acceptanceCriteria>React/TypeScript Code Migration
+Core Infrastructure Setup
+C++ Code Organization
+Documentation and Validation
+Testing and Build System</acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <artifact path="docs/architecture/ARCHITECTURE-OVERVIEW.md" title="Architecture Overview" section="High-Level System Architecture, Technology Stack" snippet="Current monolithic Chromium-based architecture with React WebUI, Mojo IPC, and C++ backend components. Defines separation between browser process, renderer process, and external components." />
+      <artifact path="docs/contributing/testing-strategy.md" title="Testing Strategy" section="Unit Testing, Integration Testing, Test Pyramid" snippet="Comprehensive testing guide with 80% coverage minimum, Vitest for TypeScript, gtest for C++, integration tests for build system validation." />
+      <artifact path="CODING-RULES.md" title="Toubkal Coding Rules" section="File Naming, Error Handling, Testing Rules" snippet="Strict coding standards including PascalCase for components, kebab-case for hooks/services, Result&lt;T&gt; pattern, 80% test coverage minimum, proper import aliases." />
+      <artifact path="docs/PRIVACY-ETHICS-POLICY.md" title="Privacy & Ethics Policy" section="Zero Telemetry by Default, Consent-Gated Features" snippet="Privacy-first design principles ensuring zero telemetry by default, consent-gated diagnostics, and PII protection in all logging and monitoring." />
+    </docs>
+    <code>
+      <artifact path="src/components/" kind="current-structure" symbol="src/components" lines="" reason="Current mixed-concern React components that need feature-based organization - includes ConsentBanner, PrivacyDashboard, routing components, and page components" />
+      <artifact path="src/hooks/" kind="current-structure" symbol="src/hooks" lines="" reason="Current generic hooks (use-consent, use-privacy-settings) that need to be moved to feature-specific or shared directories" />
+      <artifact path="src/services/" kind="current-structure" symbol="src/services" lines="" reason="Current mixed services (privacy-manager, audit-logger, telemetry-manager) that need feature-based organization" />
+      <artifact path="src/types/" kind="current-structure" symbol="src/types" lines="" reason="Current shared types (PrivacyTypes, TelemetryTypes) that need to be moved to feature-specific or shared directories" />
+      <artifact path="src/toubkal/app/" kind="target-structure" symbol="src/toubkal/app" lines="" reason="Target feature-first structure with features/, shared/, and core/ directories - some basic structure already exists" />
+      <artifact path="src/toubkal/browser/" kind="c++-structure" symbol="src/toubkal/browser" lines="" reason="Existing C++ browser-level code following Brave patterns - should remain in browser/ directory" />
+      <artifact path="src/toubkal/components/" kind="c++-structure" symbol="src/toubkal/components" lines="" reason="Existing C++ feature modules following Brave patterns - should remain in components/ directory" />
+      <artifact path="src/test/setup.ts" kind="test-infrastructure" symbol="setup.ts" lines="1-64" reason="Vitest test setup with global mocks and cleanup utilities - needs migration to new structure" />
+      <artifact path="src/integration/" kind="test-infrastructure" symbol="src/integration" lines="" reason="Integration tests that need to be migrated to new testing structure" />
+    </code>
+    <dependencies>
+      <ecosystem name="Node.js/TypeScript">
+        <packages>
+          <package name="typescript" version="^5.5.0" type="dev">TypeScript compiler with strict mode and path mapping for feature-first imports</package>
+          <package name="react" version="^18.2.0" type="runtime">React framework for UI components in feature-first architecture</package>
+          <package name="vitest" version="^2.1.8" type="dev">Unit and integration testing framework for migrated feature tests</package>
+          <package name="eslint" version="^9.15.0" type="dev">Linting with custom rules for feature-first import validation</package>
+        </packages>
+      </ecosystem>
+      <ecosystem name="Build System">
+        <packages>
+          <package name="gn" version="latest" type="build">GN build system for generating Ninja files with new directory structure</package>
+          <package name="ninja" version="latest" type="build">Ninja build tool for compiling migrated code structure</package>
+        </packages>
+      </ecosystem>
+    </dependencies>
+  </artifacts>
+
+  <constraints>Follow feature-first organization patterns
+Use React best practices and Brave patterns
+Ensure incremental migration without breaking existing functionality
+Maintain proper separation between React UI and C++ backend
+Follow Toubkal coding rules and file naming conventions</constraints>
+  <interfaces></interfaces>
+  <tests>
+    <standards>Unit tests: Vitest + React Testing Library for migrated feature components and hooks. Integration tests: Validate feature imports and cross-feature communication. E2E tests: Build system validation and import resolution testing. Migration tests: Import path validation and build success verification. 80% minimum test coverage across all migrated features. AAA pattern (Arrange-Act-Assert) for all tests. Result&lt;T&gt; pattern for error handling in migrated services.</standards>
+    <locations>src/toubkal/app/features/*/ - Feature-specific unit tests in components/, hooks/, services/ subdirectories
+src/toubkal/app/shared/ - Shared utility and component tests
+src/toubkal/tests/unit/ - Migrated unit tests for new structure
+src/toubkal/tests/integration/ - Integration tests for feature communication and imports
+src/toubkal/tests/migration/ - Tests specifically for migration validation</locations>
+    <ideas>AC1-React-migration: Test that all React components migrate successfully with correct feature-based imports and maintain existing functionality
+AC2-Core-infrastructure: Validate routing, Mojo bindings, and build configuration work with new structure
+AC3-C++-organization: Ensure C++ code remains properly organized following Brave patterns and integrates with new React structure
+AC4-Documentation-validation: Test that all import paths resolve correctly and documentation reflects new structure
+AC5-Testing-build-system: Validate that all tests pass after migration, build system works, and TypeScript compilation succeeds with new paths</ideas>
+  </tests>
+</story-context>

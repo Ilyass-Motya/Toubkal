@@ -1,0 +1,86 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>1.2</epicId>
+    <storyId>1.5</storyId>
+    <title>Brand Identity Implementation</title>
+    <status>Implemented</status>
+    <generatedAt>2025-10-19</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/stories/story-1.5.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>As a user,</asA>
+    <iWant>I want Toubkal Browser to have a distinct brand identity,</iWant>
+    <soThat>so that I can immediately recognize I'm using Toubkal and not another Chromium-based browser.</soThat>
+    <tasks>- Implement C++ URL scheme registration
+- Rebrand browser window and basic UI elements
+- Implement rebranded internal pages
+- Establish React WebUI foundation for transparency dashboards
+- Implement Mojo IPC interfaces for dashboard data
+- Add brand styling and assets</tasks>
+  </story>
+
+  <acceptanceCriteria>1. Browser window displays "Toubkal Browser" in title bar and about dialogs
+2. Internal pages (settings, about, version) show Toubkal branding instead of Chromium branding
+3. toubkal:// URL scheme is fully functional with auto-redirect from chrome:// URLs
+4. Custom Toubkal logo/icon is displayed in browser UI where appropriate
+5. No visible "Chromium" or "Chrome" references in internal pages
+6. Internal page styling uses Toubkal brand colors and typography
+7. React-based transparency dashboard foundation is established for toubkal://audit
+8. All internal page URLs use toubkal:// scheme (no chrome:// references)</acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc path="docs/epics/epic-1.2-brand-identity.md" title="Epic 1.2: Brand Identity & Internal Pages" section="Business Value, Success Metrics, Technical Architecture" snippet="Toubkal Browser requires distinct brand identity with custom toubkal:// URL scheme and React-based transparency dashboards for audit trail visibility." />
+      <doc path="docs/adrs/ADR-001-ui-framework.md" title="ADR-001: UI Framework Selection" section="Decision Outcome, Consequences" snippet="React 19 + TypeScript 5.5 + Tailwind CSS 4 chosen for internal pages with GN + Vite integration for fast development and type safety." />
+      <doc path="docs/adrs/ADR-008-url-schema.md" title="ADR-008: Custom URL Scheme" section="Decision Outcome, Implementation" snippet="Custom toubkal:// scheme registered with auto-redirect from chrome:// URLs for brand identity and backward compatibility." />
+      <doc path="docs/architecture/ARCHITECTURE-OVERVIEW.md" title="Architecture Overview" section="Brand Identity & URL Scheme" snippet="System architecture for URL scheme registration, React WebUI integration, and Mojo IPC communication between browser and UI components." />
+      <doc path="docs/contributing/testing-strategy.md" title="Testing Strategy" section="Unit Testing, Integration Testing, E2E Testing" snippet="Vitest + React Testing Library for TypeScript, gtest for C++, Playwright for E2E, with 70% unit, 20% integration, 10% E2E test distribution." />
+    </docs>
+    <code>
+      <code path="src/toubkal/browser/url/url_scheme_registration.h" kind="interface" symbol="RegisterToubkalUrlScheme, GetToubkalRedirectUrl, IsValidToubkalInternalUrl" lines="17-49" reason="Core URL scheme registration interfaces for toubkal:// scheme and chrome:// redirects" />
+      <code path="src/toubkal/browser/url/url_scheme_registration.cc" kind="service" symbol="RegisterToubkalUrlScheme, GetToubkalRedirectUrl, IsValidToubkalInternalUrl" lines="59-120" reason="Implementation of URL scheme registration with redirect mappings for internal pages" />
+      <code path="src/constants/url-schemes.ts" kind="constants" symbol="INTERNAL_PAGES, URL_REDIRECTS, LEGACY_CHROME_URLS" lines="12-67" reason="URL scheme constants defining toubkal:// pages and chrome:// to toubkal:// redirects" />
+      <code path="src/components/pages/SettingsPage.tsx" kind="component" symbol="SettingsPage" lines="16-161" reason="React settings page with Toubkal branding replacing chrome://settings" />
+      <code path="src/services/url-scheme-manager.ts" kind="service" symbol="UrlSchemeManager" lines="1-50" reason="Service managing URL scheme registration and redirects in browser initialization" />
+    </code>
+    <dependencies>
+      <dependency ecosystem="npm" name="react" version="^18.2.0" packages="react, react-dom, @types/react, @types/react-dom" />
+      <dependency ecosystem="npm" name="typescript" version="^5.5.0" packages="@typescript-eslint/parser, @typescript-eslint/eslint-plugin" />
+      <dependency ecosystem="npm" name="vite" version="^2.1.8" packages="@vitejs/plugin-react, vitest" />
+      <dependency ecosystem="npm" name="tailwindcss" version="^3.3.3" packages="tailwindcss, @tailwindcss/forms, @tailwindcss/typography" />
+      <dependency ecosystem="npm" name="testing" version="latest" packages="@testing-library/react, @testing-library/user-event, playwright" />
+      <dependency ecosystem="chromium" name="url" version="chromium" packages="url/gurl.h, url/url_constants.h, url/url_util.h" />
+      <dependency ecosystem="chromium" name="base" version="chromium" packages="base/logging.h, base/strings/string_util.h" />
+      <dependency ecosystem="chromium" name="content" version="chromium" packages="content/public/browser" />
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint>Monolithic Architecture: Follow Chromium's GN + Siso build system patterns with proper BUILD.gn files</constraint>
+    <constraint>WebUI Pattern: Use Chromium's WebUI framework for internal React pages (matches ADR-001)</constraint>
+    <constraint>Mojo IPC: Follow established Mojo patterns for browser ↔ UI communication</constraint>
+    <constraint>URL Scheme: Implement custom scheme registration per ADR-008 specifications</constraint>
+    <constraint>Security: Apply CSP and Trusted Types per ADR-007 for internal page security</constraint>
+    <constraint>Testing Standards: ≥80% coverage for new C++ code, React component coverage, Vitest + gtest frameworks</constraint>
+    <constraint>Code Style: PascalCase classes, snake_case members, Chromium C++ style guide compliance</constraint>
+    <constraint>Path Normalization: Convert absolute paths to project-relative format (strip {project-root} prefix)</constraint>
+  </constraints>
+  <interfaces>
+    <interface name="URL Scheme Registration" kind="C++ header" signature="void RegisterToubkalUrlScheme(); GURL GetToubkalRedirectUrl(const GURL&amp; url);" path="src/toubkal/browser/url/url_scheme_registration.h" />
+    <interface name="Mojo IPC UI" kind="Mojo interface" signature="interface ToubkalUI { GetAuditLogs() => (array&lt;AuditLog&gt; logs); GetConsentHistory() => (array&lt;Consent&gt; history); };" path="src/toubkal/mojo/ui/toubkal_ui.mojom" />
+    <interface name="WebUI Controller" kind="C++ class" signature="class ToubkalUI : public content::WebUIController { void BindInterface(mojo::ScopedInterfaceEndpointHandle handle); };" path="src/toubkal/browser/ui/webui/toubkal_ui.h" />
+    <interface name="React Component API" kind="TypeScript interface" signature="interface ToubkalAPI { privacy: { getAuditLogs(): Promise&lt;AuditLog[]&gt;; exportAuditLogs(): Promise&lt;Blob&gt;; }; };" path="src/components/pages/AuditPage.tsx" />
+  </interfaces>
+  <tests>
+    <standards>Vitest + React Testing Library for TypeScript/React (70% unit, 20% integration, 10% E2E). gtest for C++ unit tests. Playwright for E2E browser automation. 80%+ coverage target for new code. AAA test pattern with proper mocking.</standards>
+    <locations>src/**/*.test.ts, src/**/*.test.tsx, src/toubkal/**/test.cc, src/toubkal/**/test.h, e2e/**/*.spec.ts, scripts/check-bundle-size.ts</locations>
+    <ideas>- Test toubkal://settings page loads with Toubkal branding (React Testing Library)
+- Test chrome://settings redirects to toubkal://settings (Playwright E2E)
+- Test URL scheme registration initializes correctly (C++ gtest)
+- Test Mojo IPC communication between audit UI and browser backend (integration test)
+- Test bundle size stays under 200KB gzipped (performance test)
+- Test CSP headers prevent XSS in internal pages (security test)</ideas>
+  </tests>
+</story-context>

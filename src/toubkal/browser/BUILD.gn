@@ -1,0 +1,45 @@
+import("//build/config/compiler/compiler.gni")
+
+source_set("toubkal_browser") {
+  sources = [
+    "toubkal_content_browser_client.cc",
+    "toubkal_content_browser_client.h",
+  ]
+
+  deps = [
+    "//content/public/browser",
+    "//url",
+    "//base",
+    ":url_scheme_registration",
+    "//toubkal/browser/branding",
+  ]
+
+  public_deps = [
+    "//content/public/browser",
+  ]
+
+  # Enable C++17 features
+  cflags_cc = [ "-std=c++17" ]
+}
+
+# Include URL scheme registration
+source_set("url_scheme_registration") {
+  sources = [
+    "url/url_scheme_registration.cc",
+    "url/url_scheme_registration.h",
+    "url/url_redirect_handler.cc",
+    "url/url_redirect_handler.h",
+  ]
+
+  deps = [
+    "//url",
+    "//base",
+  ]
+
+  public_deps = [
+    "//url",
+  ]
+
+  # Enable C++17 features
+  cflags_cc = [ "-std=c++17" ]
+}

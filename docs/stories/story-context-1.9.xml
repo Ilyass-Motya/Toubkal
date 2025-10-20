@@ -1,0 +1,80 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>1.9</epicId>
+    <storyId>1.9</storyId>
+    <title>Basic Transparency Dashboard</title>
+    <status>Ready</status>
+    <generatedAt>2025-01-27</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/stories/story-1.9.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>privacy-conscious user</asA>
+    <iWant>a real-time transparency dashboard that shows all browser operations</iWant>
+    <soThat>I can verify Toubkal Browser's privacy claims and understand what data is being processed</soThat>
+    <tasks>Task 1: Design and implement real-time operation log viewer
+Task 2: Implement consent history display
+Task 3: Create audit export functionality
+Task 4: Set up dashboard authentication and access
+Task 5: Integrate with audit trail system
+Task 6: Create comprehensive test suite</tasks>
+  </story>
+
+  <acceptanceCriteria>Real-time operation log viewer functional and accessible
+Consent history display working with detailed decision logs
+Audit export functionality (JSON/CSV) working properly
+Dashboard accessible via toubkal://audit with proper authentication
+Dashboard integrated with audit trail system and shows 100% of operations</acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <artifact path="docs/architecture/audit-trail.md" title="Audit Trail System Architecture" section="Cryptographic Audit Trail, Real-time Transparency" snippet="Audit trail system design with Ed25519 signatures, Merkle trees, and real-time operation logging required for transparency dashboard." />
+      <artifact path="CODING-RULES.md" title="Toubkal Coding Rules" section="Error Handling, Result<T> Pattern" snippet="Error handling patterns and TypeScript strict mode requirements for dashboard implementation." />
+      <artifact path="docs/contributing/testing-strategy.md" title="Testing Strategy" section="E2E Testing, Integration Testing" snippet="Testing patterns for UI components, real-time data streaming, and audit system integration." />
+      <artifact path="docs/TOUBKAL-PRD.md" title="Product Requirements" section="Live Transparency Mode" snippet="Product requirements for real-time transparency dashboard and audit data accessibility." />
+    </docs>
+    <code>
+      <artifact path="src/services/audit-logger.ts" kind="existing-service" symbol="audit-logger" lines="" reason="Existing audit logging service that needs integration with transparency dashboard for real-time data streaming" />
+      <artifact path="src/toubkal/browser/privacy/audit/" kind="c++-audit-system" symbol="audit/" lines="" reason="C++ audit trail implementation that dashboard needs to connect to via Mojo IPC" />
+      <artifact path="src/components/routing/" kind="existing-routing" symbol="routing" lines="" reason="Existing routing system that needs extension for toubkal://audit page" />
+      <artifact path="src/toubkal/app/" kind="feature-structure" symbol="app/" lines="" reason="Feature-first structure where transparency-dashboard feature should be implemented" />
+      <artifact path="src/test/setup.ts" kind="test-infrastructure" symbol="setup.ts" lines="1-64" reason="Test setup that needs extension for dashboard testing with appropriate mocks" />
+    </code>
+    <dependencies>
+      <ecosystem name="Node.js/TypeScript">
+        <packages>
+          <package name="react" version="^18.2.0" type="runtime">React framework for dashboard UI components and real-time updates</package>
+          <package name="vitest" version="^2.1.8" type="dev">Testing framework for dashboard component and integration testing</package>
+          <package name="typescript" version="^5.5.0" type="dev">TypeScript for type-safe audit data handling and UI components</package>
+        </packages>
+      </ecosystem>
+      <ecosystem name="Chromium">
+        <packages>
+          <package name="mojo" version="chromium-builtin" type="runtime">Mojo IPC for communication between dashboard UI and C++ audit system</package>
+          <package name="leveldb" version="chromium-builtin" type="runtime">LevelDB for audit log storage and retrieval</package>
+        </packages>
+      </ecosystem>
+    </dependencies>
+  </artifacts>
+
+  <constraints>Follow Chromium C++ style guide for audit system integration
+Use TypeScript strict mode (no 'any' types)
+Implement Result&lt;T&gt; pattern for error handling
+Follow Toubkal coding rules for file naming and structure
+Real-time data streaming without page refresh
+Privacy-safe audit data display (no sensitive information leaks)</constraints>
+  <interfaces></interfaces>
+  <tests>
+    <standards>Unit tests: Vitest + React Testing Library for dashboard components. Integration tests: Audit system integration, Mojo IPC communication. E2E tests: Complete dashboard workflow, authentication, export functionality. Real-time tests: WebSocket/Server-Sent Events streaming validation. Security tests: Authentication bypass prevention, data export sanitization. 80% minimum test coverage. AAA pattern for all tests. Result&lt;T&gt; pattern for audit data handling. Mock audit system and LevelDB for isolated testing.</standards>
+    <locations>src/toubkal/app/features/transparency-dashboard/ - Dashboard component unit tests
+src/integration/ - Integration tests for audit system connectivity and real-time streaming
+src/test/e2e/ - End-to-end tests for complete dashboard workflows
+src/test/security/ - Security tests for authentication and data export validation</locations>
+    <ideas>AC1-Real-time-log-viewer: Test log streaming interface, filtering and search, real-time updates without refresh, log categorization
+AC2-Consent-history-display: Test consent decision timeline, detailed information display, filtering and search, export functionality
+AC3-Audit-export-functionality: Test JSON export with complete audit data, CSV export compatibility, filtering and date ranges, integrity verification
+AC4-Dashboard-authentication: Test toubkal://audit routing, user authentication, session management, access logging
+AC5-Audit-system-integration: Test complete audit trail integration, real-time data streaming, 100% operation coverage, audit data verification</ideas>
+  </tests>
+</story-context>

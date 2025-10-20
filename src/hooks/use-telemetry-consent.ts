@@ -5,8 +5,9 @@
  * Following Toubkal coding rules: use-kebab-case for hooks
  */
 
-import { useState, useEffect, useCallback } from 'react'
-import type { ConsentRequest, ConsentResponse, Result } from '@/types/TelemetryTypes'
+import { useState, useCallback } from 'react'
+import type { ConsentRequest, ConsentResponse } from '@/types/TelemetryTypes'
+import { Result } from '@/types/CommonTypes'
 import { telemetryManager } from '@/services/telemetry-manager'
 
 export interface UseTelemetryConsentReturn {

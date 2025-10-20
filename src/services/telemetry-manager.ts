@@ -9,16 +9,12 @@
 import type {
   TelemetryManager,
   TelemetryEvent,
-  TelemetryEventType,
   ConsentRequest,
   ConsentResponse,
   PrivacyDashboardState,
-  AuditLogEntry,
-  Result,
-  TelemetryError,
-  ConsentError,
-  AuditLogError
+  TelemetryAuditLogEntry
 } from '@/types/TelemetryTypes'
+import { Result } from '@/types/CommonTypes'
 
 /**
  * Zero-telemetry implementation of TelemetryManager
@@ -32,7 +28,7 @@ export class ZeroTelemetryManager implements TelemetryManager {
     maxRetentionDays: 90
   }
 
-  private readonly auditLogs: AuditLogEntry[] = []
+  private readonly auditLogs: TelemetryAuditLogEntry[] = []
   private readonly consentRecords: Map<string, ConsentResponse> = new Map()
   private readonly blockedRequests: Array<{ url: string; reason: string; timestamp: number }> = []
 
@@ -47,10 +43,10 @@ export class ZeroTelemetryManager implements TelemetryManager {
    * No-op: Logs event to audit trail but doesn't send anywhere
    * AC5: Create audit log entries for telemetry operations
    */
-  async logEvent(event: Omit<TelemetryEvent, 'eventId' | 'timestamp'>): Promise<Result<void>> {
+  logEvent(event: Omit<TelemetryEvent, 'eventId' | 'timestamp'>): Promise<Result<void>> {
     try {
       // Create audit log entry for transparency
-      const auditEntry: AuditLogEntry = {
+      const auditEntry: TelemetryAuditLogEntry = {
         id: this.generateId(),
         timestamp: Date.now(),
         eventType: event.eventType,
@@ -164,7 +160,7 @@ export class ZeroTelemetryManager implements TelemetryManager {
    * Returns audit logs for transparency
    * AC5: Audit log entries for telemetry operations
    */
-  async getAuditLogs(limit = 100): Promise<Result<AuditLogEntry[]>> {
+  getAuditLogs(limit = 100): Promise<Result<TelemetryAuditLogEntry[]>> {
     try {
       const logs = this.auditLogs
         .slice(-limit)
@@ -184,7 +180,7 @@ export class ZeroTelemetryManager implements TelemetryManager {
    * Returns privacy dashboard state
    * AC3: Privacy dashboard shows "Telemetry: Disabled (Zero Data Collected)"
    */
-  async getPrivacyDashboardState(): Promise<Result<PrivacyDashboardState>> {
+  getPrivacyDashboardState(): Promise<Result<PrivacyDashboardState>> {
     try {
       const state: PrivacyDashboardState = {
         telemetryStatus: 'disabled',

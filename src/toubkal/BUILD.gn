@@ -1,0 +1,47 @@
+import("//build/config/compiler/compiler.gni")
+
+# Main Toubkal Browser build configuration
+group("toubkal") {
+  deps = [
+    ":browser",
+    ":mojo",
+  ]
+}
+
+# Browser components
+group("browser") {
+  deps = [
+    ":toubkal_browser",
+    ":branding",
+    ":ui",
+    ":security",
+  ]
+}
+
+# Branding components
+group("branding") {
+  deps = [
+    "//toubkal/browser/branding",
+  ]
+}
+
+# UI components
+group("ui") {
+  deps = [
+    "//toubkal/browser/ui/webui",
+  ]
+}
+
+# Security components
+group("security") {
+  deps = [
+    "//toubkal/browser/security",
+  ]
+}
+
+# Mojo interfaces
+group("mojo") {
+  deps = [
+    "//toubkal/mojo/ui",
+  ]
+}

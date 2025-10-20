@@ -192,7 +192,6 @@ describe('URL Scheme Integration', () => {
       const url = INTERNAL_PAGES.SETTINGS
 
       // Mock a processing error
-      const originalProcessUrl = urlSchemeManager.processUrl
       vi.spyOn(urlSchemeManager, 'processUrl').mockResolvedValue({
         success: false,
         error: 'Processing failed'

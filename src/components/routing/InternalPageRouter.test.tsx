@@ -97,7 +97,9 @@ describe('InternalPageRouter', () => {
         button.closest('button')?.querySelector('.text-3xl')
       )
       expect(quickAccessButton).toBeInTheDocument()
-      await user.click(quickAccessButton!)
+      if (quickAccessButton) {
+        await user.click(quickAccessButton)
+      }
 
       // Assert
       expect(mockOnNavigate).toHaveBeenCalledWith(INTERNAL_PAGES.SETTINGS)

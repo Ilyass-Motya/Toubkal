@@ -6,7 +6,7 @@
  */
 
 import React, { useState, useRef, useEffect } from 'react'
-import { INTERNAL_PAGES } from '@/constants/url-schemes'
+// import { INTERNAL_PAGES } from '@/constants/url-schemes'
 
 interface AIModel {
   id: string
@@ -46,7 +46,6 @@ export const AIPage: React.FC<AIPageProps> = ({
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [inputMessage, setInputMessage] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [isStreaming, setIsStreaming] = useState(false)
   const [resourceUsage, setResourceUsage] = useState<ResourceUsage>({
     ram: 0,
     vram: 0,
@@ -125,7 +124,7 @@ export const AIPage: React.FC<AIPageProps> = ({
   }, [])
 
   const handleSendMessage = async () => {
-    if (!inputMessage.trim() || isLoading) return
+    if (inputMessage.trim().length === 0 || isLoading) return
 
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
@@ -147,16 +146,16 @@ export const AIPage: React.FC<AIPageProps> = ({
       setError('Failed to get AI response')
     } finally {
       setIsLoading(false)
-      setIsStreaming(false)
     }
   }
 
   const simulateAIResponse = async (userInput: string) => {
     const model = availableModels.find(m => m.id === selectedModel)
-    if (!model) throw new Error('Selected model not found')
+    if (model === undefined) {
+      throw new Error('Selected model not found')
+    }
 
     const startTime = Date.now()
-    setIsStreaming(true)
 
     // Simulate streaming response
     const responses = [
@@ -169,7 +168,7 @@ export const AIPage: React.FC<AIPageProps> = ({
       "I'd be happy to help you understand this better. ",
       "Let me break this down for you step by step. ",
       "This is a complex topic that requires careful consideration. ",
-      "I hope this helps clarify things for you!"
+      "I hope this helps clarify things for you"
     ]
 
     let fullResponse = ''
@@ -215,9 +214,9 @@ export const AIPage: React.FC<AIPageProps> = ({
   }
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === 'Enter' && e.shiftKey === false) {
       e.preventDefault()
-      handleSendMessage()
+      void handleSendMessage()
     }
   }
 
@@ -417,10 +416,10 @@ export const AIPage: React.FC<AIPageProps> = ({
                           message.role === 'user' ? 'text-blue-100' : 'text-gray-500 dark:text-gray-400'
                         }`}>
                           {formatTimestamp(message.timestamp)}
-                          {message.tokens && (
+                          {message.tokens !== null && message.tokens !== undefined && message.tokens > 0 && (
                             <span className="ml-2">
                               {message.tokens} tokens
-                              {message.latency && ` (${message.latency}ms)`}
+                              {message.latency !== null && message.latency !== undefined && message.latency > 0 && ` (${message.latency}ms)`}
                             </span>
                           )}
                         </div>
@@ -445,7 +444,7 @@ export const AIPage: React.FC<AIPageProps> = ({
 
               {/* Input Area */}
               <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700">
-                {error && (
+                {error !== null && error !== undefined && error.length > 0 && (
                   <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-md">
                     <p className="text-sm text-red-800 dark:text-red-300">{error}</p>
                   </div>
@@ -462,8 +461,8 @@ export const AIPage: React.FC<AIPageProps> = ({
                     disabled={isLoading}
                   />
                   <button
-                    onClick={handleSendMessage}
-                    disabled={!inputMessage.trim() || isLoading}
+                    onClick={() => void handleSendMessage()}
+                    disabled={inputMessage.trim().length === 0 || isLoading}
                     className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
                   >
                     {isLoading ? 'Sending...' : 'Send'}

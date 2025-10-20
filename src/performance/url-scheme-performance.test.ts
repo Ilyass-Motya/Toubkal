@@ -205,7 +205,7 @@ describe('URL Scheme Performance (AC8)', () => {
       // Arrange
       const baseUrl = 'toubkal://test-page-'
       const urlCount = 100
-      const urls = Array.from({ length: urlCount }, (_, i) => `${baseUrl}${i}`)
+      const urls = Array.from({ length: urlCount }, (unused, i) => `${baseUrl}${i}`)
       let currentTime = 0
       mockPerformanceNow.mockImplementation(() => currentTime++)
 
@@ -225,13 +225,15 @@ describe('URL Scheme Performance (AC8)', () => {
   })
 
   describe('performance threshold validation (AC8)', () => {
-    it('should detect performance impact exceeding 5% threshold', () => {
+    it('should detect performance impact exceeding 5% threshold', async () => {
       // Arrange
+      urlSchemeManager.clearPerformanceMetrics()
       mockPerformanceNow
         .mockReturnValueOnce(0) // Start time
         .mockReturnValueOnce(10) // End time (10ms, exceeds 5ms threshold)
 
-      // Act
+      // Act - call processUrl first to populate metrics
+      await urlSchemeManager.processUrl(INTERNAL_PAGES.SETTINGS)
       const result = urlSchemeManager.checkPerformanceImpact()
 
       // Assert
@@ -242,13 +244,15 @@ describe('URL Scheme Performance (AC8)', () => {
       }
     })
 
-    it('should confirm performance within 5% threshold', () => {
+    it('should confirm performance within 5% threshold', async () => {
       // Arrange
+      urlSchemeManager.clearPerformanceMetrics()
       mockPerformanceNow
         .mockReturnValueOnce(0) // Start time
         .mockReturnValueOnce(3) // End time (3ms, within 5ms threshold)
 
-      // Act
+      // Act - call processUrl first to populate metrics
+      await urlSchemeManager.processUrl(INTERNAL_PAGES.SETTINGS)
       const result = urlSchemeManager.checkPerformanceImpact()
 
       // Assert
@@ -259,13 +263,15 @@ describe('URL Scheme Performance (AC8)', () => {
       }
     })
 
-    it('should handle edge case at exactly 5ms threshold', () => {
+    it('should handle edge case at exactly 5ms threshold', async () => {
       // Arrange
+      urlSchemeManager.clearPerformanceMetrics()
       mockPerformanceNow
         .mockReturnValueOnce(0) // Start time
         .mockReturnValueOnce(5) // End time (5ms, exactly at threshold)
 
-      // Act
+      // Act - call processUrl first to populate metrics
+      await urlSchemeManager.processUrl(INTERNAL_PAGES.SETTINGS)
       const result = urlSchemeManager.checkPerformanceImpact()
 
       // Assert
@@ -280,9 +286,10 @@ describe('URL Scheme Performance (AC8)', () => {
   describe('performance metrics accuracy', () => {
     it('should track performance metrics accurately', async () => {
       // Arrange
+      urlSchemeManager.clearPerformanceMetrics()
       mockPerformanceNow
-        .mockReturnValueOnce(100) // Start time
-        .mockReturnValueOnce(105) // End time (5ms difference)
+        .mockReturnValueOnce(0) // Start time
+        .mockReturnValueOnce(5) // End time (5ms difference)
 
       // Act
       await urlSchemeManager.processUrl(INTERNAL_PAGES.SETTINGS)

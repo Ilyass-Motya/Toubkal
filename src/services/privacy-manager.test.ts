@@ -7,7 +7,7 @@
 
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
 import { PrivacyManager } from './privacy-manager'
-import { PrivacySettings, PrivacyStatus } from '@/types/PrivacyTypes'
+import type { Result } from '@/types/Result'
 
 // Mock crypto.subtle for signature generation
 Object.defineProperty(global, 'crypto', {
@@ -120,7 +120,7 @@ describe('PrivacyManager', () => {
     it('should validate settings before updating', async () => {
       // Arrange
       const invalidUpdates = {
-        fingerprintingProtection: 'invalid' as any
+        fingerprintingProtection: 'invalid' as unknown as 'strict' | 'moderate' | 'minimal'
       }
 
       // Act
@@ -128,7 +128,9 @@ describe('PrivacyManager', () => {
 
       // Assert
       expect(result.success).toBe(false)
-      expect(result.error).toContain('Invalid value for fingerprintingProtection')
+      if (!result.success) {
+        expect(result.error).toContain('Invalid value for fingerprintingProtection')
+      }
     })
 
     it('should preserve unchanged settings', async () => {
@@ -277,19 +279,26 @@ describe('PrivacyManager', () => {
   describe('audit logging', () => {
     it('should log settings changes', async () => {
       // Arrange
-      const initialLogCount = privacyManager.getAuditLog().length
+      const initialLogResult = await privacyManager.getAuditLog()
+      const initialLogCount = initialLogResult.success ? initialLogResult.data.length : 0
 
       // Act
       await privacyManager.updateSettings({ fingerprintingProtection: false })
 
       // Assert
-      const newLogCount = privacyManager.getAuditLog().length
-      expect(newLogCount).toBeGreaterThan(initialLogCount)
-      
-      const latestEntry = privacyManager.getAuditLog(1)[0]
-      expect(latestEntry.eventType).toBe('PRIVACY_SETTINGS_CHANGED')
-      expect(latestEntry.details.userId).toBeDefined()
-      expect(latestEntry.signature).toBeDefined()
+      const newLogResult = await privacyManager.getAuditLog()
+      if (!newLogResult.success) {
+        console.log('Audit log error:', newLogResult.error)
+      }
+      expect(newLogResult.success).toBe(true)
+      if (newLogResult.success) {
+        expect(newLogResult.data.length).toBeGreaterThan(initialLogCount)
+        
+        const latestEntry = newLogResult.data[0]
+        expect(latestEntry.eventType).toBe('PRIVACY_SETTINGS_CHANGED')
+        expect(latestEntry.details.userId).toBeDefined()
+        expect(latestEntry.signature).toBeDefined()
+      }
     })
 
     it('should export audit log as JSON', async () => {
@@ -323,15 +332,21 @@ describe('PrivacyManager', () => {
       }
     })
 
-    it('should limit audit log entries', () => {
+    it('should limit audit log entries', async () => {
       // Arrange
       const limit = 5
 
       // Act
-      const entries = privacyManager.getAuditLog(limit)
+      const result = await privacyManager.getAuditLog(limit)
 
       // Assert
-      expect(entries.length).toBeLessThanOrEqual(limit)
+      if (!result.success) {
+        console.log('Audit log error:', result.error)
+      }
+      expect(result.success).toBe(true)
+      if (result.success) {
+        expect(result.data.length).toBeLessThanOrEqual(limit)
+      }
     })
   })
 
@@ -357,19 +372,21 @@ describe('PrivacyManager', () => {
       const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
       
       // Mock a failing operation by overriding the activateProtection method
-      const originalActivateProtection = (privacyManager as any).activateProtection
-      ;(privacyManager as any).activateProtection = vi.fn().mockRejectedValue(new Error('Test error'))
+      const originalActivateProtection = (privacyManager as unknown as { activateProtection: () => Promise<void> }).activateProtection
+      ;(privacyManager as unknown as { activateProtection: () => Promise<void> }).activateProtection = vi.fn().mockRejectedValue(new Error('Test error'))
 
       // Act
       const result = await privacyManager.initialize()
 
       // Assert
       expect(result.success).toBe(false)
-      expect(result.error).toBe('Failed to initialize privacy protection')
+      if (!result.success) {
+        expect(result.error).toBe('Failed to initialize privacy protection')
+      }
       expect(mockConsoleError).toHaveBeenCalled()
 
       // Cleanup
-      ;(privacyManager as any).activateProtection = originalActivateProtection
+      ;(privacyManager as unknown as { activateProtection: () => Promise<void> }).activateProtection = originalActivateProtection
       mockConsoleError.mockRestore()
     })
 
@@ -378,20 +395,22 @@ describe('PrivacyManager', () => {
       const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
       
       // Mock a failing save operation
-      const originalSaveSettings = (privacyManager as any).saveSettings
-      ;(privacyManager as any).saveSettings = vi.fn().mockResolvedValue({ success: false, error: 'Save failed' })
+      const originalSaveSettings = (privacyManager as unknown as { saveSettings: () => Promise<Result<boolean>> }).saveSettings
+      ;(privacyManager as unknown as { saveSettings: () => Promise<Result<boolean>> }).saveSettings = vi.fn().mockResolvedValue({ success: false, error: 'Save failed' })
 
       // Act
       const result = await privacyManager.updateSettings({ fingerprintingProtection: false })
 
       // Assert
       expect(result.success).toBe(false)
-      expect(result.error).toBe('Save failed')
+      if (!result.success) {
+        expect(result.error).toBe('Save failed')
+      }
       // Note: console.error might not be called if the error is handled gracefully
       // expect(mockConsoleError).toHaveBeenCalled()
 
       // Cleanup
-      ;(privacyManager as any).saveSettings = originalSaveSettings
+      ;(privacyManager as unknown as { saveSettings: () => Promise<Result<boolean>> }).saveSettings = originalSaveSettings
       mockConsoleError.mockRestore()
     })
   })

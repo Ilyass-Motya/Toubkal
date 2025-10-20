@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grit latest_public_version="3" current_public_version="3" output_all_resource_defines="false">
+  <outputs>
+    <output filename="grit/toubkal_branding_resources.h" type="rc_header">
+      <emit emit_type='prepend'>#include "build/build_config.h"</emit>
+    </output>
+    <output filename="toubkal_branding_resources.pak" type="data_package" />
+  </outputs>
+  <release seq="3">
+    <includes>
+      <include name="IDR_TOUBKAL_BRANDING_STRINGS" file="strings/toubkal_branding_strings.xtb" type="chrome_html" />
+    </includes>
+    <structures>
+      <structure name="IDR_TOUBKAL_BRANDING_STRINGS" file="strings/toubkal_branding_strings.xtb" type="chrome_html" />
+    </structures>
+  </release>
+</grit>
