@@ -1,0 +1,53 @@
+name: Documentation Validation
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'docs/**'
+      - '*.md'
+      - 'src/scripts/validate-documentation.ts'
+      - 'src/test/documentation-validation.test.ts'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'docs/**'
+      - '*.md'
+      - 'src/scripts/validate-documentation.ts'
+      - 'src/test/documentation-validation.test.ts'
+
+jobs:
+  validate-documentation:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Run documentation validation tests
+      run: npm test -- --run src/test/documentation-validation.test.ts
+      
+    - name: Run documentation validation script
+      run: npm run validate-docs:strict
+      
+    - name: Check for documentation formatting issues
+      run: npm run format:check
+      
+    - name: Upload documentation validation report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: documentation-validation-report
+        path: |
+          test-report.json
+          eslint-report.json
+        retention-days: 30

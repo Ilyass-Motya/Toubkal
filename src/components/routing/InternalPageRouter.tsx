@@ -1,6 +1,6 @@
 /**
  * Internal Page Router Component
- * 
+ *
  * Routes toubkal:// URLs to their corresponding page components.
  * Handles all internal page navigation as per AC2 and AC7.
  */
@@ -39,22 +39,22 @@ export const InternalPageRouter: React.FC<InternalPageRouterProps> = ({
     switch (pagePath) {
       case 'settings':
         return <SettingsPage currentSection="general" />
-      
+
       case 'settings/privacy':
         return <SettingsPage currentSection="privacy" />
-      
+
       case 'settings/ai':
       case 'ai/settings':
         return <SettingsPage currentSection="ai" />
-      
+
       case 'settings/mcp':
       case 'mcp/servers':
         return <SettingsPage currentSection="mcp" />
-      
+
       case 'newtab':
       case 'new-tab':
         return <NewTabPage onNavigate={onNavigate} />
-      
+
       case 'about':
         return (
           <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
@@ -94,7 +94,7 @@ export const InternalPageRouter: React.FC<InternalPageRouterProps> = ({
             </div>
           </div>
         )
-      
+
       case 'version':
         return (
           <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
@@ -143,7 +143,7 @@ export const InternalPageRouter: React.FC<InternalPageRouterProps> = ({
             </div>
           </div>
         )
-      
+
       case 'privacy':
         return (
           <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -154,39 +154,37 @@ export const InternalPageRouter: React.FC<InternalPageRouterProps> = ({
               <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8">
                 <div className="prose dark:prose-invert max-w-none">
                   <h2>Zero Telemetry by Default</h2>
-                  <p>
-                    Toubkal Browser collects no data by default. All telemetry is opt-in only.
-                  </p>
-                  
+                  <p>Toubkal Browser collects no data by default. All telemetry is opt-in only.</p>
+
                   <h2>Local AI Processing</h2>
                   <p>
-                    AI queries are processed locally using Ollama. No data is sent to external servers
-                    unless you explicitly consent to cloud AI providers.
+                    AI queries are processed locally using Ollama. No data is sent to external
+                    servers unless you explicitly consent to cloud AI providers.
                   </p>
-                  
+
                   <h2>Audit Trail</h2>
                   <p>
-                    All consent decisions and data access are logged locally with cryptographic signatures
-                    for transparency and accountability.
+                    All consent decisions and data access are logged locally with cryptographic
+                    signatures for transparency and accountability.
                   </p>
                 </div>
               </div>
             </div>
           </div>
         )
-      
+
       case 'audit':
         return <AuditPage />
-      
+
       case 'ai':
         return <AIPage />
-      
+
       case 'mcp':
         return <MCPPage />
-      
+
       case 'consent':
         return <ConsentPage />
-      
+
       case 'help':
         return (
           <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -200,11 +198,36 @@ export const InternalPageRouter: React.FC<InternalPageRouterProps> = ({
                     Getting Started
                   </h2>
                   <ul className="space-y-2 text-gray-700 dark:text-gray-300">
-                    <li>• <a href={INTERNAL_PAGES.SETTINGS} className="text-blue-600 hover:underline">Settings</a></li>
-                    <li>• <a href={INTERNAL_PAGES.PRIVACY} className="text-blue-600 hover:underline">Privacy Features</a></li>
-                    <li>• <a href={INTERNAL_PAGES.AI} className="text-blue-600 hover:underline">AI Assistant</a></li>
-                    <li>• <a href={INTERNAL_PAGES.MCP} className="text-blue-600 hover:underline">MCP Servers</a></li>
-                    <li>• <a href={INTERNAL_PAGES.CONSENT} className="text-blue-600 hover:underline">Consent History</a></li>
+                    <li>
+                      •{' '}
+                      <a href={INTERNAL_PAGES.SETTINGS} className="text-blue-600 hover:underline">
+                        Settings
+                      </a>
+                    </li>
+                    <li>
+                      •{' '}
+                      <a href={INTERNAL_PAGES.PRIVACY} className="text-blue-600 hover:underline">
+                        Privacy Features
+                      </a>
+                    </li>
+                    <li>
+                      •{' '}
+                      <a href={INTERNAL_PAGES.AI} className="text-blue-600 hover:underline">
+                        AI Assistant
+                      </a>
+                    </li>
+                    <li>
+                      •{' '}
+                      <a href={INTERNAL_PAGES.MCP} className="text-blue-600 hover:underline">
+                        MCP Servers
+                      </a>
+                    </li>
+                    <li>
+                      •{' '}
+                      <a href={INTERNAL_PAGES.CONSENT} className="text-blue-600 hover:underline">
+                        Consent History
+                      </a>
+                    </li>
                   </ul>
                 </div>
                 <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
@@ -212,22 +235,49 @@ export const InternalPageRouter: React.FC<InternalPageRouterProps> = ({
                     Troubleshooting
                   </h2>
                   <ul className="space-y-2 text-gray-700 dark:text-gray-300">
-                    <li>• <a href={INTERNAL_PAGES.AUDIT} className="text-blue-600 hover:underline">Audit Logs</a></li>
-                    <li>• <a href={INTERNAL_PAGES.VERSION} className="text-blue-600 hover:underline">Version Info</a></li>
-                    <li>• <a href="https://github.com/toubkal/toubkal" className="text-blue-600 hover:underline">GitHub Issues</a></li>
+                    <li>
+                      •{' '}
+                      <a href={INTERNAL_PAGES.AUDIT} className="text-blue-600 hover:underline">
+                        Audit Logs
+                      </a>
+                    </li>
+                    <li>
+                      •{' '}
+                      <a href={INTERNAL_PAGES.VERSION} className="text-blue-600 hover:underline">
+                        Version Info
+                      </a>
+                    </li>
+                    <li>
+                      •{' '}
+                      <a
+                        href="https://github.com/toubkal/toubkal"
+                        className="text-blue-600 hover:underline"
+                      >
+                        GitHub Issues
+                      </a>
+                    </li>
                   </ul>
                 </div>
               </div>
             </div>
           </div>
         )
-      
+
       case 'error':
       case '404':
         return <ErrorPage errorCode="404" onNavigate={onNavigate} />
-      
+
+      case 'network-error':
+        return <ErrorPage errorCode="network" onNavigate={onNavigate} />
+
       default:
-        return <ErrorPage errorCode="404" errorMessage={`Page "${pagePath}" not found`} onNavigate={onNavigate} />
+        return (
+          <ErrorPage
+            errorCode="404"
+            errorMessage={`Page "${pagePath}" not found`}
+            onNavigate={onNavigate}
+          />
+        )
     }
   }
 

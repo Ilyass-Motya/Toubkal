@@ -70,7 +70,7 @@ export class PrivacyManager {
       // Load settings from storage
       const settingsResult = await this.loadSettings()
       if (!settingsResult.success) {
-        return { success: false, error: settingsResult.error }
+        return Promise.resolve({ success: false, error: settingsResult.error })
       }
 
       // Update blocklists
@@ -82,7 +82,7 @@ export class PrivacyManager {
       // Activate privacy protection
       const activationResult = await this.activateProtection()
       if (!activationResult.success) {
-        return { success: false, error: activationResult.error }
+        return Promise.resolve({ success: false, error: activationResult.error })
       }
 
       const endTime = performance.now()
@@ -114,10 +114,10 @@ export class PrivacyManager {
         lastAuditId: 'audit_' + Date.now(),
       }
 
-      return { success: true, data: status }
+      return Promise.resolve({ success: true, data: status })
     } catch (error) {
       console.error('[PrivacyManager] Initialization failed:', error)
-      return { success: false, error: 'Failed to initialize privacy protection' }
+      return Promise.resolve({ success: false, error: 'Failed to initialize privacy protection' })
     }
   }
 
@@ -155,9 +155,9 @@ export class PrivacyManager {
       const oldSettings = { ...this.settings }
 
       // Validate updates
-      const validationResult = this.validateSettings(updates)
+      const validationResult = await this.validateSettings(updates)
       if (!validationResult.success) {
-        return { success: false, error: validationResult.error }
+        return Promise.resolve({ success: false, error: validationResult.error })
       }
 
       // Update settings
@@ -168,7 +168,7 @@ export class PrivacyManager {
       if (!saveResult.success) {
         // Revert changes
         this.settings = oldSettings
-        return { success: false, error: saveResult.error }
+        return Promise.resolve({ success: false, error: saveResult.error })
       }
 
       // Log the change
@@ -186,10 +186,10 @@ export class PrivacyManager {
       // Show warnings if privacy is reduced
       await this.checkPrivacyWarnings(oldSettings, this.settings)
 
-      return { success: true, data: this.settings }
+      return Promise.resolve({ success: true, data: this.settings })
     } catch (error) {
       console.error('[PrivacyManager] Failed to update settings:', error)
-      return { success: false, error: 'Failed to update privacy settings' }
+      return Promise.resolve({ success: false, error: 'Failed to update privacy settings' })
     }
   }
 
@@ -199,9 +199,9 @@ export class PrivacyManager {
   async enableProtection(): Promise<Result<boolean>> {
     const result = await this.updateSettings({ protectionEnabled: true })
     if (result.success) {
-      return { success: true, data: true }
+      return Promise.resolve({ success: true, data: true })
     }
-    return { success: false, error: result.error }
+    return Promise.resolve({ success: false, error: result.error })
   }
 
   /**
@@ -226,9 +226,9 @@ export class PrivacyManager {
 
     const result = await this.updateSettings({ protectionEnabled: false })
     if (result.success) {
-      return { success: true, data: true }
+      return Promise.resolve({ success: true, data: true })
     }
-    return { success: false, error: result.error }
+    return Promise.resolve({ success: false, error: result.error })
   }
 
   /**
@@ -254,10 +254,10 @@ export class PrivacyManager {
       // const totalScore = tests.reduce((sum, test) => sum + test.score, 0) / tests.length
       // const overallPassed = totalScore >= 80 // 80% threshold
 
-      return { success: true, data: tests }
+      return Promise.resolve({ success: true, data: tests })
     } catch (error) {
       console.error('[PrivacyManager] Fingerprinting tests failed:', error)
-      return { success: false, error: 'Failed to run fingerprinting tests' }
+      return Promise.resolve({ success: false, error: 'Failed to run fingerprinting tests' })
     }
   }
 
@@ -267,10 +267,10 @@ export class PrivacyManager {
   getAuditLog(limit?: number): Promise<Result<AuditLogEntry[]>> {
     try {
       const entries = this.auditLogger.getEntries({ limit })
-      return { success: true, data: entries }
+      return Promise.resolve({ success: true, data: entries })
     } catch (error) {
       console.error('[PrivacyManager] Failed to get audit log:', error)
-      return { success: false, error: 'Failed to get audit log' }
+      return Promise.resolve({ success: false, error: 'Failed to get audit log' })
     }
   }
 
@@ -281,13 +281,13 @@ export class PrivacyManager {
     try {
       const result = await this.auditLogger.exportLog(format)
       if (result.success) {
-        return { success: true, data: result.data }
+        return Promise.resolve({ success: true, data: result.data })
       } else {
-        return { success: false, error: result.error }
+        return Promise.resolve({ success: false, error: result.error })
       }
     } catch (error) {
       console.error('[PrivacyManager] Export failed:', error)
-      return { success: false, error: 'Failed to export audit log' }
+      return Promise.resolve({ success: false, error: 'Failed to export audit log' })
     }
   }
 
@@ -315,10 +315,10 @@ export class PrivacyManager {
     try {
       // In a real implementation, this would load from storage
       // For now, return the default settings
-      return { success: true, data: this.settings }
+      return Promise.resolve({ success: true, data: this.settings })
     } catch (error) {
       console.error('[PrivacyManager] Failed to load settings:', error)
-      return { success: false, error: 'Failed to load privacy settings' }
+      return Promise.resolve({ success: false, error: 'Failed to load privacy settings' })
     }
   }
 
@@ -333,7 +333,7 @@ export class PrivacyManager {
     }
   }
 
-  private validateSettings(updates: Partial<PrivacySettings>): Result<boolean> {
+  private validateSettings(updates: Partial<PrivacySettings>): Promise<Result<boolean>> {
     // Validate boolean values
     const booleanFields = [
       'fingerprintingProtection',
@@ -344,7 +344,10 @@ export class PrivacyManager {
 
     for (const field of booleanFields) {
       if (field in updates && typeof updates[field as keyof PrivacySettings] !== 'boolean') {
-        return { success: false, error: `Invalid value for ${field}: must be boolean` }
+        return Promise.resolve({
+          success: false,
+          error: `Invalid value for ${field}: must be boolean`,
+        })
       }
     }
 
@@ -354,10 +357,10 @@ export class PrivacyManager {
       updates.userId !== undefined &&
       typeof updates.userId !== 'string'
     ) {
-      return { success: false, error: 'Invalid userId: must be string' }
+      return Promise.resolve({ success: false, error: 'Invalid userId: must be string' })
     }
 
-    return { success: true, data: true }
+    return Promise.resolve({ success: true, data: true })
   }
 
   private async activateProtection(): Promise<Result<boolean>> {
@@ -377,10 +380,10 @@ export class PrivacyManager {
         await this.activateBraveShields()
       }
 
-      return { success: true, data: true }
+      return Promise.resolve({ success: true, data: true })
     } catch (error) {
       console.error('[PrivacyManager] Failed to activate protection:', error)
-      return { success: false, error: 'Failed to activate privacy protection' }
+      return Promise.resolve({ success: false, error: 'Failed to activate privacy protection' })
     }
   }
 
@@ -406,10 +409,10 @@ export class PrivacyManager {
     try {
       // In a real implementation, this would fetch and update blocklists
       console.log('[PrivacyManager] Updating blocklists')
-      return { success: true, data: true }
+      return Promise.resolve({ success: true, data: true })
     } catch (error) {
       console.error('[PrivacyManager] Failed to update blocklists:', error)
-      return { success: false, error: 'Failed to update blocklists' }
+      return Promise.resolve({ success: false, error: 'Failed to update blocklists' })
     }
   }
 
@@ -452,7 +455,7 @@ export class PrivacyManager {
   }
 
   private testWebGLFingerprinting(): Promise<FingerprintingTestResult> {
-    return {
+    return Promise.resolve({
       testName: 'WebGL Fingerprinting',
       testUrl: 'https://panopticlick.eff.org/',
       score: this.settings.fingerprintingProtection ? 90 : 15,
@@ -466,11 +469,11 @@ export class PrivacyManager {
         timezoneFingerprint: false,
       },
       timestamp: Date.now(),
-    }
+    })
   }
 
   private testFontFingerprinting(): Promise<FingerprintingTestResult> {
-    return {
+    return Promise.resolve({
       testName: 'Font Fingerprinting',
       testUrl: 'https://panopticlick.eff.org/',
       score: this.settings.fingerprintingProtection ? 85 : 10,
@@ -484,7 +487,7 @@ export class PrivacyManager {
         timezoneFingerprint: false,
       },
       timestamp: Date.now(),
-    }
+    })
   }
 
   private checkPrivacyWarnings(
@@ -521,6 +524,8 @@ export class PrivacyManager {
       }
       this.warnings.push(warning)
     }
+
+    return Promise.resolve()
   }
 
   private async logEvent(event: PrivacyEvent): Promise<void> {

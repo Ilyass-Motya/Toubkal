@@ -304,6 +304,8 @@ export class BrandConsistencyChecker {
         })
       }
     }
+
+    return Promise.resolve()
   }
 
   /**

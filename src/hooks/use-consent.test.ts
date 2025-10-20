@@ -72,8 +72,14 @@ describe('useConsent', () => {
 
       // Assert
       expect(grantResult.success).toBe(true)
-      expect(mockConsentManager.requestConsent).toHaveBeenCalledWith(defaultActionType)
-      expect(result.current.hasConsent).toBe(true)
+      expect(mockConsentManager.requestConsent).toHaveBeenCalledWith({
+        actionType: defaultActionType,
+        userId: 'current-user',
+        context: 'hook-request',
+      })
+      await waitFor(() => {
+        expect(result.current.hasConsent).toBe(true)
+      })
     })
 
     it('should handle consent grant failure', async () => {
@@ -98,7 +104,10 @@ describe('useConsent', () => {
       if (!grantResult.success) {
         expect(grantResult.error).toBe('Consent request failed')
       }
-      expect(result.current.hasConsent).toBe(false)
+      await waitFor(() => {
+        expect(result.current.hasConsent).toBe(false)
+        expect(result.current.error).toBe('Consent request failed')
+      })
     })
 
     it('should handle network errors during consent grant', async () => {
@@ -120,7 +129,9 @@ describe('useConsent', () => {
       if (!grantResult.success) {
         expect(grantResult.error).toBe('Network error')
       }
-      expect(result.current.error).toBe('Network error')
+      await waitFor(() => {
+        expect(result.current.error).toBe('Network error')
+      })
     })
   })
 
@@ -140,9 +151,15 @@ describe('useConsent', () => {
       const revokeResult = await result.current.revokeConsent()
 
       // Assert
-      expect(revokeResult).toBe(true)
-      expect(mockConsentManager.revokeConsent).toHaveBeenCalledWith(defaultActionType)
-      expect(result.current.hasConsent).toBe(false)
+      expect(revokeResult.success).toBe(true)
+      expect(revokeResult.data).toBe(true)
+      expect(mockConsentManager.revokeConsent).toHaveBeenCalledWith(
+        defaultActionType,
+        'current-user'
+      )
+      await waitFor(() => {
+        expect(result.current.hasConsent).toBe(false)
+      })
     })
 
     it('should handle consent revocation failure', async () => {
@@ -160,7 +177,8 @@ describe('useConsent', () => {
       const revokeResult = await result.current.revokeConsent()
 
       // Assert
-      expect(revokeResult).toBe(false)
+      expect(revokeResult.success).toBe(false)
+      expect(revokeResult.error).toBe('Failed to revoke consent')
       expect(result.current.hasConsent).toBe(true) // Should remain true on failure
     })
   })
@@ -183,7 +201,10 @@ describe('useConsent', () => {
 
       // Assert
       expect(mockConsentManager.hasConsent).toHaveBeenCalledTimes(2)
-      expect(result.current.hasConsent).toBe(true)
+      expect(mockConsentManager.hasConsent).toHaveBeenCalledWith(defaultActionType, 'current-user')
+      await waitFor(() => {
+        expect(result.current.hasConsent).toBe(true)
+      })
     })
 
     it('should handle refresh errors', async () => {
@@ -202,8 +223,10 @@ describe('useConsent', () => {
       await result.current.refreshConsent()
 
       // Assert
-      expect(result.current.error).toBe('Refresh failed')
-      expect(result.current.hasConsent).toBe(false) // Should remain false on error
+      await waitFor(() => {
+        expect(result.current.error).toBe('Refresh failed')
+        expect(result.current.hasConsent).toBe(false) // Should remain false on error
+      })
     })
   })
 
@@ -215,7 +238,7 @@ describe('useConsent', () => {
         { id: '2', action: 'DATA_COLLECTION', granted: false, timestamp: Date.now() - 500 },
       ]
       mockConsentManager.hasConsent.mockResolvedValue(true)
-      mockConsentManager.getConsentHistory.mockResolvedValue(mockHistory)
+      mockConsentManager.getConsentHistory.mockResolvedValue({ success: true, data: mockHistory })
 
       const { result } = renderHook(() => useConsent(defaultActionType))
 
@@ -227,8 +250,11 @@ describe('useConsent', () => {
       const history = await result.current.getConsentHistory()
 
       // Assert
-      expect(history).toEqual(mockHistory)
-      expect(mockConsentManager.getConsentHistory).toHaveBeenCalledWith(defaultActionType)
+      expect(history.success).toBe(true)
+      if (history.success) {
+        expect(history.data).toEqual(mockHistory)
+      }
+      expect(mockConsentManager.getConsentHistory).toHaveBeenCalledWith('current-user')
     })
 
     it('should handle consent history errors', async () => {
@@ -246,8 +272,11 @@ describe('useConsent', () => {
       const history = await result.current.getConsentHistory()
 
       // Assert
-      expect(history).toEqual([])
-      expect(result.current.error).toBe('History load failed')
+      expect(history.success).toBe(false)
+      expect(history.error).toBe('History load failed')
+      await waitFor(() => {
+        expect(result.current.error).toBe('History load failed')
+      })
     })
   })
 
@@ -268,8 +297,10 @@ describe('useConsent', () => {
       await result.current.refreshConsent()
 
       // Assert
-      expect(result.current.error).toBeNull()
-      expect(result.current.hasConsent).toBe(true)
+      await waitFor(() => {
+        expect(result.current.error).toBeNull()
+        expect(result.current.hasConsent).toBe(true)
+      })
     })
   })
 })

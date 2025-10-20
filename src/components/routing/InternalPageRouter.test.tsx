@@ -1,6 +1,6 @@
 /**
  * Internal Page Router Tests
- * 
+ *
  * Test suite for InternalPageRouter component covering
  * toubkal:// URL routing to appropriate page components (AC2, AC7).
  */
@@ -33,9 +33,7 @@ describe('InternalPageRouter', () => {
 
     it('should render privacy settings for toubkal://settings/privacy', () => {
       // Act
-      render(
-        <InternalPageRouter currentUrl={INTERNAL_PAGES.PRIVACY} onNavigate={mockOnNavigate} />
-      )
+      render(<InternalPageRouter currentUrl={INTERNAL_PAGES.PRIVACY} onNavigate={mockOnNavigate} />)
 
       // Assert
       expect(screen.getByText('Privacy Policy')).toBeInTheDocument()
@@ -57,26 +55,24 @@ describe('InternalPageRouter', () => {
   describe('new tab page routing', () => {
     it('should render new tab page for toubkal://newtab', () => {
       // Act
-      render(
-        <InternalPageRouter currentUrl={INTERNAL_PAGES.NEW_TAB} onNavigate={mockOnNavigate} />
-      )
+      render(<InternalPageRouter currentUrl={INTERNAL_PAGES.NEW_TAB} onNavigate={mockOnNavigate} />)
 
       // Assert
       expect(screen.getByText('Toubkal Browser')).toBeInTheDocument()
-      expect(screen.getByText('The intelligent browser that protects your mind')).toBeInTheDocument()
+      expect(
+        screen.getByText('The intelligent browser that protects your mind')
+      ).toBeInTheDocument()
     })
 
     it('should handle search form submission', async () => {
       // Arrange
       const user = userEvent.setup()
-      render(
-        <InternalPageRouter currentUrl={INTERNAL_PAGES.NEW_TAB} onNavigate={mockOnNavigate} />
-      )
+      render(<InternalPageRouter currentUrl={INTERNAL_PAGES.NEW_TAB} onNavigate={mockOnNavigate} />)
 
       // Act
       const searchInput = screen.getByPlaceholderText('Search the web or enter a URL')
       await user.type(searchInput, 'test query')
-      
+
       const searchButton = screen.getByText('Search')
       await user.click(searchButton)
 
@@ -87,13 +83,11 @@ describe('InternalPageRouter', () => {
     it('should handle quick access navigation', async () => {
       // Arrange
       const user = userEvent.setup()
-      render(
-        <InternalPageRouter currentUrl={INTERNAL_PAGES.NEW_TAB} onNavigate={mockOnNavigate} />
-      )
+      render(<InternalPageRouter currentUrl={INTERNAL_PAGES.NEW_TAB} onNavigate={mockOnNavigate} />)
 
       // Act
       const settingsButtons = screen.getAllByText('Settings')
-      const quickAccessButton = settingsButtons.find(button => 
+      const quickAccessButton = settingsButtons.find((button) =>
         button.closest('button')?.querySelector('.text-3xl')
       )
       expect(quickAccessButton).toBeInTheDocument()
@@ -109,13 +103,13 @@ describe('InternalPageRouter', () => {
   describe('about page routing', () => {
     it('should render about page for toubkal://about', () => {
       // Act
-      render(
-        <InternalPageRouter currentUrl={INTERNAL_PAGES.ABOUT} onNavigate={mockOnNavigate} />
-      )
+      render(<InternalPageRouter currentUrl={INTERNAL_PAGES.ABOUT} onNavigate={mockOnNavigate} />)
 
       // Assert
       expect(screen.getByText('Toubkal Browser')).toBeInTheDocument()
-      expect(screen.getByText('The intelligent browser that protects your mind')).toBeInTheDocument()
+      expect(
+        screen.getByText('The intelligent browser that protects your mind')
+      ).toBeInTheDocument()
       expect(screen.getByText('Version Information')).toBeInTheDocument()
     })
   })
@@ -123,9 +117,7 @@ describe('InternalPageRouter', () => {
   describe('version page routing', () => {
     it('should render version page for toubkal://version', () => {
       // Act
-      render(
-        <InternalPageRouter currentUrl={INTERNAL_PAGES.VERSION} onNavigate={mockOnNavigate} />
-      )
+      render(<InternalPageRouter currentUrl={INTERNAL_PAGES.VERSION} onNavigate={mockOnNavigate} />)
 
       // Assert
       expect(screen.getByText('Version Information')).toBeInTheDocument()
@@ -137,9 +129,7 @@ describe('InternalPageRouter', () => {
   describe('privacy page routing', () => {
     it('should render privacy page for toubkal://privacy', () => {
       // Act
-      render(
-        <InternalPageRouter currentUrl={INTERNAL_PAGES.PRIVACY} onNavigate={mockOnNavigate} />
-      )
+      render(<InternalPageRouter currentUrl={INTERNAL_PAGES.PRIVACY} onNavigate={mockOnNavigate} />)
 
       // Assert
       expect(screen.getByText('Privacy Policy')).toBeInTheDocument()
@@ -150,48 +140,46 @@ describe('InternalPageRouter', () => {
   describe('audit page routing', () => {
     it('should render audit page for toubkal://audit', () => {
       // Act
-      render(
-        <InternalPageRouter currentUrl={INTERNAL_PAGES.AUDIT} onNavigate={mockOnNavigate} />
-      )
+      render(<InternalPageRouter currentUrl={INTERNAL_PAGES.AUDIT} onNavigate={mockOnNavigate} />)
 
       // Assert
       expect(screen.getByText('Transparency Dashboard')).toBeInTheDocument()
-      expect(screen.getByText('View all consent decisions and data access logs for complete transparency.')).toBeInTheDocument()
+      expect(
+        screen.getByText('Real-time audit log of all Toubkal Browser operations')
+      ).toBeInTheDocument()
     })
   })
 
   describe('AI page routing', () => {
     it('should render AI page for toubkal://ai', () => {
       // Act
-      render(
-        <InternalPageRouter currentUrl={INTERNAL_PAGES.AI} onNavigate={mockOnNavigate} />
-      )
+      render(<InternalPageRouter currentUrl={INTERNAL_PAGES.AI} onNavigate={mockOnNavigate} />)
 
       // Assert
       expect(screen.getByText('AI Assistant')).toBeInTheDocument()
-      expect(screen.getByText('Chat with your local AI assistant powered by Ollama.')).toBeInTheDocument()
+      expect(
+        screen.getByText('Chat with local AI models for privacy-first assistance')
+      ).toBeInTheDocument()
     })
   })
 
   describe('MCP page routing', () => {
     it('should render MCP page for toubkal://mcp', () => {
       // Act
-      render(
-        <InternalPageRouter currentUrl={INTERNAL_PAGES.MCP} onNavigate={mockOnNavigate} />
-      )
+      render(<InternalPageRouter currentUrl={INTERNAL_PAGES.MCP} onNavigate={mockOnNavigate} />)
 
       // Assert
-      expect(screen.getByText('MCP Servers')).toBeInTheDocument()
-      expect(screen.getByText('Manage your Model Context Protocol servers for enhanced AI capabilities.')).toBeInTheDocument()
+      expect(screen.getByText('MCP Server Management')).toBeInTheDocument()
+      expect(
+        screen.getByText('Manage Model Context Protocol servers with privacy-first approach')
+      ).toBeInTheDocument()
     })
   })
 
   describe('help page routing', () => {
     it('should render help page for toubkal://help', () => {
       // Act
-      render(
-        <InternalPageRouter currentUrl={INTERNAL_PAGES.HELP} onNavigate={mockOnNavigate} />
-      )
+      render(<InternalPageRouter currentUrl={INTERNAL_PAGES.HELP} onNavigate={mockOnNavigate} />)
 
       // Assert
       expect(screen.getByText('Help & Support')).toBeInTheDocument()
@@ -203,13 +191,11 @@ describe('InternalPageRouter', () => {
   describe('error page routing', () => {
     it('should render error page for toubkal://error', () => {
       // Act
-      render(
-        <InternalPageRouter currentUrl={INTERNAL_PAGES.ERROR} onNavigate={mockOnNavigate} />
-      )
+      render(<InternalPageRouter currentUrl={INTERNAL_PAGES.ERROR} onNavigate={mockOnNavigate} />)
 
       // Assert
       expect(screen.getByText('Page Not Found')).toBeInTheDocument()
-      expect(screen.getByText('The page you\'re looking for doesn\'t exist.')).toBeInTheDocument()
+      expect(screen.getByText("The page you're looking for doesn't exist.")).toBeInTheDocument()
     })
 
     it('should render 404 error page for toubkal://404', () => {
@@ -225,9 +211,7 @@ describe('InternalPageRouter', () => {
     it('should handle error page navigation', async () => {
       // Arrange
       const user = userEvent.setup()
-      render(
-        <InternalPageRouter currentUrl={INTERNAL_PAGES.ERROR} onNavigate={mockOnNavigate} />
-      )
+      render(<InternalPageRouter currentUrl={INTERNAL_PAGES.ERROR} onNavigate={mockOnNavigate} />)
 
       // Act
       const newTabButton = screen.getByText('Go to New Tab')
@@ -241,9 +225,7 @@ describe('InternalPageRouter', () => {
   describe('unknown page routing', () => {
     it('should render error page for unknown toubkal:// URLs', () => {
       // Act
-      render(
-        <InternalPageRouter currentUrl="toubkal://unknown-page" onNavigate={mockOnNavigate} />
-      )
+      render(<InternalPageRouter currentUrl="toubkal://unknown-page" onNavigate={mockOnNavigate} />)
 
       // Assert
       expect(screen.getByText('Page Not Found')).toBeInTheDocument()
@@ -254,9 +236,7 @@ describe('InternalPageRouter', () => {
   describe('URL path extraction', () => {
     it('should handle toubkal:// URLs correctly', () => {
       // Act
-      render(
-        <InternalPageRouter currentUrl="toubkal://settings" onNavigate={mockOnNavigate} />
-      )
+      render(<InternalPageRouter currentUrl="toubkal://settings" onNavigate={mockOnNavigate} />)
 
       // Assert
       expect(screen.getByText('Toubkal Settings')).toBeInTheDocument()
@@ -264,9 +244,7 @@ describe('InternalPageRouter', () => {
 
     it('should handle non-toubkal:// URLs as unknown', () => {
       // Act
-      render(
-        <InternalPageRouter currentUrl="https://example.com" onNavigate={mockOnNavigate} />
-      )
+      render(<InternalPageRouter currentUrl="https://example.com" onNavigate={mockOnNavigate} />)
 
       // Assert
       expect(screen.getByText('Page Not Found')).toBeInTheDocument()

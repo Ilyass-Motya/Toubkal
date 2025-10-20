@@ -42,14 +42,15 @@ export const useConsent = (actionType: string): UseConsentReturn => {
       const result = await consentManager.requestConsent({
         actionType,
         userId: 'current-user',
-        context: 'hook-request'
+        context: 'hook-request',
       })
       if (result.success) {
         setHasConsent(true)
         return { success: true, data: true }
       } else {
-        setError(result.error)
-        return { success: false, error: result.error }
+        const errorMsg = result.error || 'Consent request failed'
+        setError(errorMsg)
+        return { success: false, error: errorMsg }
       }
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Failed to request consent'
@@ -84,7 +85,8 @@ export const useConsent = (actionType: string): UseConsentReturn => {
       const consent = await consentManager.hasConsent(actionType, 'current-user')
       setHasConsent(consent)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to refresh consent')
+      const errorMsg = err instanceof Error ? err.message : 'Failed to refresh consent'
+      setError(errorMsg)
     } finally {
       setIsLoading(false)
     }
@@ -93,7 +95,8 @@ export const useConsent = (actionType: string): UseConsentReturn => {
   const getConsentHistory = async (): Promise<Result<ConsentResponse[]>> => {
     try {
       setError(null)
-      return await consentManager.getConsentHistory('current-user')
+      const result = await consentManager.getConsentHistory('current-user')
+      return result
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Failed to get consent history'
       setError(errorMsg)

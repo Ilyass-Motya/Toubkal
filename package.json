@@ -26,6 +26,10 @@
     "lint:ci": "eslint . --ext .ts,.tsx --format json --output-file eslint-report.json --ignore-pattern 'node_modules/**' --ignore-pattern 'out/**' --ignore-pattern 'build/**'",
     "format": "prettier --write \"**/*.{ts,tsx,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,json,md}\"",
+    "validate-docs": "tsx src/scripts/validate-documentation.ts",
+    "validate-docs:fix": "tsx src/scripts/validate-documentation.ts --fix",
+    "validate-docs:strict": "tsx src/scripts/validate-documentation.ts --strict",
+    "generate-doc-template": "tsx src/scripts/generate-doc-template.ts",
     "prepare": "husky"
   },
   "lint-staged": {

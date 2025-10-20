@@ -1,6 +1,6 @@
 /**
  * Telemetry Manager Service
- * 
+ *
  * Implements zero-telemetry enforcement for Toubkal Browser
  * All telemetry functions are stubbed as no-ops per AC1
  * Following Toubkal coding rules: kebab-case for services
@@ -12,7 +12,7 @@ import type {
   ConsentRequest,
   ConsentResponse,
   PrivacyDashboardState,
-  TelemetryAuditLogEntry
+  TelemetryAuditLogEntry,
 } from '@/types/TelemetryTypes'
 import { Result } from '@/types/CommonTypes'
 
@@ -25,7 +25,7 @@ export class ZeroTelemetryManager implements TelemetryManager {
     enabled: false,
     consentRequired: true,
     auditLogging: true,
-    maxRetentionDays: 90
+    maxRetentionDays: 90,
   }
 
   private readonly auditLogs: TelemetryAuditLogEntry[] = []
@@ -52,7 +52,7 @@ export class ZeroTelemetryManager implements TelemetryManager {
         eventType: event.eventType,
         details: event.details,
         signature: this.generateSignature(event),
-        merkleProof: this.generateMerkleProof()
+        merkleProof: this.generateMerkleProof(),
       }
 
       this.auditLogs.push(auditEntry)
@@ -62,13 +62,13 @@ export class ZeroTelemetryManager implements TelemetryManager {
         this.auditLogs.splice(0, this.auditLogs.length - 1000)
       }
 
-      return { success: true, data: undefined }
+      return Promise.resolve({ success: true, data: undefined })
     } catch (error) {
       console.error('[ZeroTelemetryManager.logEvent] Failed:', error)
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Failed to log event' 
-      }
+      return Promise.resolve({
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to log event',
+      })
     }
   }
 
@@ -84,24 +84,24 @@ export class ZeroTelemetryManager implements TelemetryManager {
         details: {
           actionType: request.actionType,
           userId: request.userId,
-          reason: 'Telemetry disabled by default'
-        }
+          reason: 'Telemetry disabled by default',
+        },
       })
 
       const response: ConsentResponse = {
         granted: false,
         timestamp: Date.now(),
-        consentId: this.generateId()
+        consentId: this.generateId(),
       }
 
       this.consentRecords.set(response.consentId, response)
 
-      return { success: true, data: response }
+      return Promise.resolve({ success: true, data: response })
     } catch (error) {
       console.error('[ZeroTelemetryManager.requestConsent] Failed:', error)
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Failed to process consent request' 
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to process consent request',
       }
     }
   }
@@ -117,16 +117,16 @@ export class ZeroTelemetryManager implements TelemetryManager {
         details: {
           actionType,
           userId,
-          reason: 'Telemetry disabled by default'
-        }
+          reason: 'Telemetry disabled by default',
+        },
       })
 
-      return { success: true, data: false }
+      return Promise.resolve({ success: true, data: false })
     } catch (error) {
       console.error('[ZeroTelemetryManager.hasConsent] Failed:', error)
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Failed to check consent' 
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to check consent',
       }
     }
   }
@@ -142,16 +142,16 @@ export class ZeroTelemetryManager implements TelemetryManager {
         eventType: 'CONSENT_REVOKED',
         details: {
           consentId,
-          reason: 'User revoked consent'
-        }
+          reason: 'User revoked consent',
+        },
       })
 
-      return { success: true, data: undefined }
+      return Promise.resolve({ success: true, data: undefined })
     } catch (error) {
       console.error('[ZeroTelemetryManager.revokeConsent] Failed:', error)
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Failed to revoke consent' 
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to revoke consent',
       }
     }
   }
@@ -162,17 +162,15 @@ export class ZeroTelemetryManager implements TelemetryManager {
    */
   getAuditLogs(limit = 100): Promise<Result<TelemetryAuditLogEntry[]>> {
     try {
-      const logs = this.auditLogs
-        .slice(-limit)
-        .sort((a, b) => b.timestamp - a.timestamp)
+      const logs = this.auditLogs.slice(-limit).sort((a, b) => b.timestamp - a.timestamp)
 
-      return { success: true, data: logs }
+      return Promise.resolve({ success: true, data: logs })
     } catch (error) {
       console.error('[ZeroTelemetryManager.getAuditLogs] Failed:', error)
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Failed to get audit logs' 
-      }
+      return Promise.resolve({
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to get audit logs',
+      })
     }
   }
 
@@ -187,16 +185,16 @@ export class ZeroTelemetryManager implements TelemetryManager {
         dataCollected: 'zero',
         lastAuditLog: this.auditLogs[this.auditLogs.length - 1]?.timestamp ?? 0,
         consentCount: this.consentRecords.size,
-        networkRequestsBlocked: this.blockedRequests.length
+        networkRequestsBlocked: this.blockedRequests.length,
       }
 
-      return { success: true, data: state }
+      return Promise.resolve({ success: true, data: state })
     } catch (error) {
       console.error('[ZeroTelemetryManager.getPrivacyDashboardState] Failed:', error)
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Failed to get privacy dashboard state' 
-      }
+      return Promise.resolve({
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to get privacy dashboard state',
+      })
     }
   }
 
@@ -210,7 +208,7 @@ export class ZeroTelemetryManager implements TelemetryManager {
       this.blockedRequests.push({
         url,
         reason,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       })
 
       await this.logEvent({
@@ -218,16 +216,16 @@ export class ZeroTelemetryManager implements TelemetryManager {
         details: {
           url,
           reason,
-          timestamp: Date.now()
-        }
+          timestamp: Date.now(),
+        },
       })
 
-      return { success: true, data: undefined }
+      return Promise.resolve({ success: true, data: undefined })
     } catch (error) {
       console.error('[ZeroTelemetryManager.blockNetworkRequest] Failed:', error)
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Failed to block network request' 
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to block network request',
       }
     }
   }

@@ -34,12 +34,12 @@ class InMemoryConsentManager implements ConsentManager {
         consentId: `consent-${Date.now()}`,
       }
       this.consents.set(key, response)
-      return { success: true, data: response }
+      return Promise.resolve({ success: true, data: response })
     } catch (error) {
-      return {
+      return Promise.resolve({
         success: false,
         error: error instanceof Error ? error.message : 'Failed to request consent',
-      }
+      })
     }
   }
 
@@ -67,12 +67,12 @@ class InMemoryConsentManager implements ConsentManager {
           history.push(consent)
         }
       }
-      return { success: true, data: history }
+      return Promise.resolve({ success: true, data: history })
     } catch (error) {
-      return {
+      return Promise.resolve({
         success: false,
         error: error instanceof Error ? error.message : 'Failed to get consent history',
-      }
+      })
     }
   }
 }

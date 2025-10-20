@@ -226,9 +226,9 @@ export function usePrivacySettings(): UsePrivacySettingsReturn {
     setWarnings([])
   }, [])
 
-  const refresh = useCallback((): void => {
+  const refresh = useCallback((): Promise<void> => {
     if (!privacyManagerRef.current) {
-      return
+      return Promise.resolve()
     }
 
     try {
@@ -240,9 +240,11 @@ export function usePrivacySettings(): UsePrivacySettingsReturn {
 
       setSettings(newSettings)
       setStatus(newStatus)
+      return Promise.resolve()
     } catch (err) {
       console.error('[usePrivacySettings] Refresh failed:', err)
       setError(err instanceof Error ? err.message : 'Failed to refresh settings')
+      return Promise.resolve()
     } finally {
       setIsLoading(false)
     }

@@ -111,11 +111,11 @@ export class AuditLogger {
       filtered = filtered.filter((entry) => entry.details.userId === options.userId)
     }
 
-    if (options.startTime !== undefined && options.startTime != null) {
+    if (options.startTime !== undefined && options.startTime !== null) {
       filtered = filtered.filter((entry) => entry.timestamp >= options.startTime)
     }
 
-    if (options.endTime !== undefined && options.endTime != null) {
+    if (options.endTime !== undefined && options.endTime !== null) {
       filtered = filtered.filter((entry) => entry.timestamp <= options.endTime)
     }
 
@@ -123,7 +123,7 @@ export class AuditLogger {
     filtered.sort((a, b) => b.timestamp - a.timestamp)
 
     // Apply limit
-    if (options.limit != null && options.limit > 0) {
+    if (options.limit !== null && options.limit !== undefined && options.limit > 0) {
       filtered = filtered.slice(0, options.limit)
     }
 
@@ -180,19 +180,19 @@ export class AuditLogger {
 
       switch (format) {
         case 'json':
-          return { success: true, data: JSON.stringify(entries, null, 2) }
+          return Promise.resolve({ success: true, data: JSON.stringify(entries, null, 2) })
         case 'csv': {
           const csv = this.convertToCSV(entries)
-          return { success: true, data: csv }
+          return Promise.resolve({ success: true, data: csv })
         }
         case 'pdf':
-          return { success: false, error: 'PDF export not implemented yet' }
+          return Promise.resolve({ success: false, error: 'PDF export not implemented yet' })
         default:
-          return { success: false, error: 'Unsupported export format' }
+          return Promise.resolve({ success: false, error: 'Unsupported export format' })
       }
     } catch (error) {
       console.error('[AuditLogger] Export failed:', error)
-      return { success: false, error: 'Failed to export audit log' }
+      return Promise.resolve({ success: false, error: 'Failed to export audit log' })
     }
   }
 

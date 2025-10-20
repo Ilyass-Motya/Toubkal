@@ -1,6 +1,6 @@
 /**
  * URL Scheme Manager Service
- * 
+ *
  * Handles URL scheme operations including:
  * - Converting chrome:// URLs to toubkal:// URLs
  * - Redirecting legacy URLs for backward compatibility
@@ -15,7 +15,7 @@ import {
   URL_REDIRECTS,
   ToubkalUrl,
   LegacyChromeUrl,
-  RemovedBraveUrl
+  RemovedBraveUrl,
 } from '@/constants/url-schemes'
 import { Result } from '@/types/CommonTypes'
 
@@ -47,19 +47,19 @@ export class UrlSchemeManager {
   processUrl(url: string): Promise<Result<UrlValidationResult>> {
     try {
       const startTime = performance.now()
-      
+
       const validation = this.validateUrl(url)
-      
+
       const endTime = performance.now()
       this.performanceMetrics.set('processUrl', endTime - startTime)
-      
-      return { success: true, data: validation }
+
+      return Promise.resolve({ success: true, data: validation })
     } catch (error) {
       console.error('[UrlSchemeManager.processUrl] Failed:', error)
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Unknown error occurred' 
-      }
+      return Promise.resolve({
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error occurred',
+      })
     }
   }
 
@@ -151,7 +151,7 @@ export class UrlSchemeManager {
   private isValidToubkalUrl(url: string): boolean {
     // Strip query parameters and fragments for validation
     const baseUrl = url.toLowerCase().split('?')[0].split('#')[0]
-    const toubkalUrls = Object.values(INTERNAL_PAGES).map(u => u.toLowerCase())
+    const toubkalUrls = Object.values(INTERNAL_PAGES).map((u) => u.toLowerCase())
     return toubkalUrls.includes(baseUrl as string)
   }
 
@@ -254,7 +254,7 @@ export class UrlSchemeManager {
     try {
       const metrics = this.getPerformanceMetrics()
       const processUrlTime = metrics.processUrl || 0
-      
+
       // Threshold: 5% degradation (assuming baseline is 0ms for simplicity)
       const threshold = 5 // 5ms threshold
       const impact = processUrlTime

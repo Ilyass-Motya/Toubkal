@@ -26,27 +26,35 @@ describe('ConsentBanner', () => {
   })
 
   describe('rendering', () => {
-    it('should display consent message for AI query', () => {
+    it('should display consent message for AI query', async () => {
       // Arrange
+      mockConsentManager.hasConsent.mockResolvedValue(false)
       render(<ConsentBanner {...defaultProps} />)
 
-      // Act (not needed for render test)
+      // Wait for loading to complete
+      await waitFor(() => {
+        expect(screen.queryByText(/Loading consent status/i)).not.toBeInTheDocument()
+      })
 
       // Assert
       expect(screen.getByText(/AI query requires consent/i)).toBeInTheDocument()
     })
 
-    it('should display consent message for data collection', () => {
+    it('should display consent message for data collection', async () => {
       // Arrange
+      mockConsentManager.hasConsent.mockResolvedValue(false)
       render(<ConsentBanner {...defaultProps} actionType="DATA_COLLECTION" />)
 
-      // Act (not needed for render test)
+      // Wait for loading to complete
+      await waitFor(() => {
+        expect(screen.queryByText(/Loading consent status/i)).not.toBeInTheDocument()
+      })
 
       // Assert
       expect(screen.getByText(/Data collection requires consent/i)).toBeInTheDocument()
     })
 
-    it('should show loading state initially', () => {
+    it('should show loading state initially', async () => {
       // Arrange
       mockConsentManager.hasConsent.mockResolvedValue(false)
       render(<ConsentBanner {...defaultProps} />)
@@ -55,6 +63,11 @@ describe('ConsentBanner', () => {
 
       // Assert
       expect(screen.getByText(/Loading consent status/i)).toBeInTheDocument()
+
+      // Wait for loading to complete
+      await waitFor(() => {
+        expect(screen.queryByText(/Loading consent status/i)).not.toBeInTheDocument()
+      })
     })
   })
 
@@ -78,7 +91,12 @@ describe('ConsentBanner', () => {
 
       // Assert
       expect(mockOnGrant).toHaveBeenCalledTimes(1)
-      expect(mockConsentManager.requestConsent).toHaveBeenCalledWith('AI_QUERY')
+      expect(mockConsentManager.requestConsent).toHaveBeenCalledWith({
+        actionType: 'AI_QUERY',
+        userId: 'current-user',
+        context: 'banner-request',
+        timestamp: expect.any(Number),
+      })
     })
 
     it('should call onDeny when user clicks Deny button', async () => {
@@ -132,7 +150,7 @@ describe('ConsentBanner', () => {
       })
 
       // Assert
-      expect(screen.getByText(/Error checking consent status/i)).toBeInTheDocument()
+      expect(screen.getByText('Error checking consent status')).toBeInTheDocument()
     })
 
     it('should retry consent check when retry button clicked', async () => {
@@ -146,7 +164,7 @@ describe('ConsentBanner', () => {
 
       // Wait for error state
       await waitFor(() => {
-        expect(screen.getByText(/Error checking consent status/i)).toBeInTheDocument()
+        expect(screen.getByText('Error checking consent status')).toBeInTheDocument()
       })
 
       // Act
@@ -162,12 +180,15 @@ describe('ConsentBanner', () => {
   })
 
   describe('accessibility', () => {
-    it('should have proper ARIA attributes', () => {
+    it('should have proper ARIA attributes', async () => {
       // Arrange
       mockConsentManager.hasConsent.mockResolvedValue(false)
       render(<ConsentBanner {...defaultProps} />)
 
-      // Act (not needed for accessibility test)
+      // Wait for loading to complete
+      await waitFor(() => {
+        expect(screen.queryByText(/Loading consent status/i)).not.toBeInTheDocument()
+      })
 
       // Assert
       const banner = screen.getByRole('banner')
