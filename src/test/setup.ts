@@ -66,12 +66,12 @@ global.PerformanceObserver = vi.fn().mockImplementation((callback) => ({
 declare global {
   namespace NodeJS {
     interface Timeout {
-      _idleTimeout: number;
-      _idlePrev: Timeout | null;
-      _idleNext: Timeout | null;
-      _idleStart: number;
-      _onTimeout: (...args: any[]) => void;
-      _repeat: (() => void) | null;
+      idleTimeout: number;
+      idlePrev: Timeout | null;
+      idleNext: Timeout | null;
+      idleStart: number;
+      onTimeout: (...args: unknown[]) => void;
+      repeat: (() => void) | null;
     }
   }
 }
@@ -119,7 +119,7 @@ global.URL = class URL {
     }
   }
 
-  static revokeObjectURL(url: string): void {
+  static revokeObjectURL(_url: string): void {
     // Mock implementation
   }
 } as any;

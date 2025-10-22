@@ -5,7 +5,7 @@
  * for the Toubkal Browser diagnostics system.
  */
 
-import { Logger, LogLevel } from './logger';
+import { Logger } from './logger';
 
 export interface ToubkalError extends Error {
   severity?: ErrorSeverity;
@@ -17,11 +17,7 @@ export enum ErrorSeverity {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
-  CRITICAL = 'critical',
-  low = 'low',
-  medium = 'medium',
-  high = 'high',
-  critical = 'critical'
+  CRITICAL = 'critical'
 }
 
 export enum ErrorCategory {
@@ -32,15 +28,7 @@ export enum ErrorCategory {
   USER_INPUT = 'user_input',
   SYSTEM = 'system',
   THIRD_PARTY = 'third_party',
-  UNKNOWN = 'unknown',
-  network = 'network',
-  rendering = 'rendering',
-  security = 'security',
-  performance = 'performance',
-  user_input = 'user_input',
-  system = 'system',
-  third_party = 'third_party',
-  unknown = 'unknown'
+  UNKNOWN = 'unknown'
 }
 
 export interface ErrorContext {
@@ -124,7 +112,7 @@ export class ErrorTracker {
   }
 
   public static getInstance(): ErrorTracker {
-    if (!ErrorTracker.instance) {
+    if (ErrorTracker.instance == null) {
       ErrorTracker.instance = new ErrorTracker();
     }
     return ErrorTracker.instance;
@@ -158,8 +146,8 @@ export class ErrorTracker {
     const fullContext: ErrorContext = {
       timestamp: now,
       stackTrace: error.stack,
-      component: context.component || 'unknown',
-      action: context.action || 'unknown',
+      component: context.component ?? 'unknown',
+      action: context.action ?? 'unknown',
       metadata: context.metadata || {},
       ...context
     };
@@ -168,7 +156,7 @@ export class ErrorTracker {
     const existingReport = this.reports.get(errorId);
     let report: ErrorReport;
     
-    if (existingReport) {
+    if (existingReport != null) {
       // Update existing report
       existingReport.count += 1;
       existingReport.lastSeen = now;
@@ -210,7 +198,7 @@ export class ErrorTracker {
 
     // Update error counts
     const countKey = `${severity}:${category}`;
-    this.errorCounts.set(countKey, (this.errorCounts.get(countKey) || 0) + 1);
+    this.errorCounts.set(countKey, (this.errorCounts.get(countKey) ?? 0) + 1);
 
     // Auto-report if enabled
     if (this.config.enableAutoReporting && severity === ErrorSeverity.CRITICAL) {
@@ -291,7 +279,7 @@ export class ErrorTracker {
 
   public markErrorResolved(errorId: string): boolean {
     const report = this.reports.get(errorId);
-    if (report) {
+    if (report != null) {
       report.resolved = true;
       this.logger.info('ErrorTracker', 'Error marked as resolved', { errorId });
       return true;
@@ -301,7 +289,7 @@ export class ErrorTracker {
 
   public reportError(errorId: string): boolean {
     const report = this.reports.get(errorId);
-    if (!report) {
+    if (report == null) {
       return false;
     }
 
@@ -407,7 +395,7 @@ export class ErrorTracker {
 
     // Handle unhandled promise rejections
     window.addEventListener('unhandledrejection', (event) => {
-      const error = new Error(event.reason?.message || 'Unhandled promise rejection');
+      const error = new Error(event.reason?.message ?? 'Unhandled promise rejection');
       error.stack = event.reason?.stack;
       
       this.trackError(

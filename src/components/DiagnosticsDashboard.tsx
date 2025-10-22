@@ -10,7 +10,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Logger, LogLevel } from '@/toubkal/app/core/diagnostics/logger';
 import { ErrorTracker, ErrorSeverity, ErrorCategory } from '@/toubkal/app/core/diagnostics/error-tracker';
 import { PerformanceMonitor, PerformanceMetricType } from '@/toubkal/app/core/diagnostics/performance-monitor';
-import { ScalabilityManager, ScalabilityMode, LoadBalancingStrategy } from '@/toubkal/app/core/diagnostics/scalability-manager';
+import { ScalabilityManager, ScalabilityMode } from '@/toubkal/app/core/diagnostics/scalability-manager';
 
 interface DashboardState {
   logs: Array<{
@@ -18,7 +18,7 @@ interface DashboardState {
     level: LogLevel;
     message: string;
     timestamp: number;
-    context?: Record<string, any>;
+    context?: Record<string, unknown>;
   }>;
   errors: Array<{
     id: string;
@@ -26,7 +26,7 @@ interface DashboardState {
     category: ErrorCategory;
     message: string;
     timestamp: number;
-    context?: Record<string, any>;
+    context?: Record<string, unknown>;
   }>;
   metrics: Array<{
     id: string;
@@ -34,7 +34,7 @@ interface DashboardState {
     name: string;
     value: number;
     timestamp: number;
-    context?: Record<string, any>;
+    context?: Record<string, unknown>;
   }>;
   scalability: {
     totalNodes: number;
@@ -63,9 +63,9 @@ const DiagnosticsDashboard: React.FC = () => {
 
   const [selectedTab, setSelectedTab] = useState<'logs' | 'errors' | 'performance' | 'scalability'>('logs');
   const [autoRefresh, setAutoRefresh] = useState(true);
-  const [refreshInterval, setRefreshInterval] = useState(5000); // 5 seconds
+  const [refreshInterval] = useState(5000); // 5 seconds
   const [filterLevel, setFilterLevel] = useState<LogLevel>(LogLevel.DEBUG);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm] = useState('');
 
   // Initialize diagnostics systems
   useEffect(() => {
@@ -110,7 +110,7 @@ const DiagnosticsDashboard: React.FC = () => {
       }
     };
 
-    initializeDiagnostics();
+    void initializeDiagnostics();
   }, []);
 
   // Auto-refresh functionality
@@ -118,13 +118,13 @@ const DiagnosticsDashboard: React.FC = () => {
     if (!autoRefresh) return;
 
     const interval = setInterval(() => {
-      updateDashboard();
+      void updateDashboard();
     }, refreshInterval);
 
     return () => clearInterval(interval);
   }, [autoRefresh, refreshInterval]);
 
-  const updateDashboard = useCallback(async () => {
+  const updateDashboard = useCallback(() => {
     try {
       const logger = Logger.getInstance();
       const errorTracker = ErrorTracker.getInstance();
@@ -146,7 +146,7 @@ const DiagnosticsDashboard: React.FC = () => {
       setState(prev => ({
         ...prev,
         logs: recentLogs.map(log => ({
-          id: log.correlationId || `log-${Date.now()}-${Math.random()}`,
+          id: log.correlationId ?? `log-${Date.now()}-${Math.random()}`,
           level: log.level,
           message: log.message,
           timestamp: new Date(log.timestamp).getTime(),
@@ -158,7 +158,7 @@ const DiagnosticsDashboard: React.FC = () => {
           category: error.category,
           message: error.message,
           timestamp: error.firstSeen,
-          context: error.context
+          context: error.context as unknown as Record<string, unknown>
         })),
         metrics: recentMetrics.map(metric => ({
           id: metric.id,
@@ -215,7 +215,7 @@ const DiagnosticsDashboard: React.FC = () => {
     const matchesLevel = log.level >= filterLevel;
     const matchesSearch = searchTerm === '' || 
       log.message.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (log.context && JSON.stringify(log.context).toLowerCase().includes(searchTerm.toLowerCase()));
+      (log.context != null && JSON.stringify(log.context).toLowerCase().includes(searchTerm.toLowerCase()));
     return matchesLevel && matchesSearch;
   });
 
@@ -285,7 +285,7 @@ const DiagnosticsDashboard: React.FC = () => {
             {state.errors.map(error => (
               <div key={error.id} className="flex items-start space-x-3 p-2 hover:bg-gray-100 rounded">
                 <span className={`text-xs font-mono ${getSeverityColor(error.severity)}`}>
-                  {ErrorSeverity[error.severity]}
+                  {error.severity}
                 </span>
                 <span className="text-xs text-gray-500 font-mono">
                   {new Date(error.timestamp).toLocaleTimeString()}
@@ -438,7 +438,7 @@ const DiagnosticsDashboard: React.FC = () => {
               </div>
               
               <button
-                onClick={updateDashboard}
+                onClick={() => { void updateDashboard(); }}
                 className="px-3 py-1 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600"
               >
                 Refresh
@@ -460,7 +460,7 @@ const DiagnosticsDashboard: React.FC = () => {
               ].map(tab => (
                 <button
                   key={tab.id}
-                  onClick={() => setSelectedTab(tab.id as any)}
+                  onClick={() => setSelectedTab(tab.id as 'logs' | 'errors' | 'performance' | 'scalability')}
                   className={`py-4 px-1 border-b-2 font-medium text-sm ${
                     selectedTab === tab.id
                       ? 'border-blue-500 text-blue-600'
