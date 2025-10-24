@@ -25,9 +25,9 @@ export enum ErrorCategory {
   RENDERING = 'rendering',
   SECURITY = 'security',
   PERFORMANCE = 'performance',
-  USER_INPUT = 'user_input',
-  SYSTEM = 'system',
-  THIRD_PARTY = 'third_party',
+  UserInput = 'user_input',
+  System = 'system',
+  ThirdParty = 'third_party',
   UNKNOWN = 'unknown'
 }
 
@@ -249,9 +249,9 @@ export class ErrorTracker {
       [ErrorCategory.RENDERING]: 0,
       [ErrorCategory.SECURITY]: 0,
       [ErrorCategory.PERFORMANCE]: 0,
-      [ErrorCategory.USER_INPUT]: 0,
-      [ErrorCategory.SYSTEM]: 0,
-      [ErrorCategory.THIRD_PARTY]: 0,
+      [ErrorCategory.UserInput]: 0,
+      [ErrorCategory.System]: 0,
+      [ErrorCategory.ThirdParty]: 0,
       [ErrorCategory.UNKNOWN]: 0
     };
 
@@ -383,7 +383,7 @@ export class ErrorTracker {
       this.trackError(
         error,
         ErrorSeverity.HIGH,
-        ErrorCategory.SYSTEM,
+        ErrorCategory.System,
         {
           component: 'global',
           action: 'uncaught_error',
@@ -401,7 +401,7 @@ export class ErrorTracker {
       this.trackError(
         error,
         ErrorSeverity.MEDIUM,
-        ErrorCategory.SYSTEM,
+        ErrorCategory.System,
         {
           component: 'global',
           action: 'unhandled_rejection',

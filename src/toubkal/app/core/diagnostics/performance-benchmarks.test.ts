@@ -5,7 +5,7 @@
  * testing throughput, latency, and resource usage.
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { Logger, LogLevel } from './logger';
 import { ErrorTracker, ErrorSeverity, ErrorCategory } from './error-tracker';
 import { PerformanceMonitor, PerformanceMetricType } from './performance-monitor';
@@ -46,10 +46,10 @@ describe('Diagnostics System Performance Benchmarks', () => {
 
     scalabilityManager = ScalabilityManager.getInstance();
     await scalabilityManager.initialize({
-      mode: ScalabilityMode.CLUSTER,
+      mode: ScalabilityMode.Cluster,
       maxNodes: 100,
       minNodes: 1,
-      loadBalancingStrategy: LoadBalancingStrategy.ROUND_ROBIN,
+      loadBalancingStrategy: LoadBalancingStrategy.RoundRobin,
       autoScaling: true,
       scaleUpThreshold: 80,
       scaleDownThreshold: 20,
@@ -147,7 +147,7 @@ describe('Diagnostics System Performance Benchmarks', () => {
         await errorTracker.trackError(
           new Error(`Performance test error ${i}`),
           ErrorSeverity.LOW,
-          ErrorCategory.SYSTEM,
+          ErrorCategory.System,
           { index: i }
         );
       }
@@ -174,7 +174,7 @@ describe('Diagnostics System Performance Benchmarks', () => {
         await errorTracker.trackError(
           new Error('Duplicate error message'),
           ErrorSeverity.LOW,
-          ErrorCategory.SYSTEM,
+          ErrorCategory.System,
           { index: i }
         );
       }
@@ -201,7 +201,7 @@ describe('Diagnostics System Performance Benchmarks', () => {
         promises.push(errorTracker.trackError(
           new Error(`Concurrent error ${i}`),
           ErrorSeverity.LOW,
-          ErrorCategory.SYSTEM,
+          ErrorCategory.System,
           { index: i }
         ));
       }
@@ -228,7 +228,7 @@ describe('Diagnostics System Performance Benchmarks', () => {
       // Generate high volume of metrics
       for (let i = 0; i < metricCount; i++) {
         await performanceMonitor.trackMetric(
-          PerformanceMetricType.PAGE_LOAD,
+          PerformanceMetricType.PageLoad,
           `Performance test metric ${i}`,
           Math.random() * 1000,
           'ms',
@@ -257,7 +257,7 @@ describe('Diagnostics System Performance Benchmarks', () => {
       const promises = [];
       for (let i = 0; i < concurrentMetrics; i++) {
         promises.push(performanceMonitor.trackMetric(
-          PerformanceMetricType.MEMORY_USAGE,
+          PerformanceMetricType.MemoryUsage,
           `Concurrent metric ${i}`,
           Math.random() * 100,
           'MB',
@@ -285,7 +285,7 @@ describe('Diagnostics System Performance Benchmarks', () => {
       // Generate metrics for aggregation
       for (let i = 0; i < metricCount; i++) {
         await performanceMonitor.trackMetric(
-          PerformanceMetricType.PAGE_LOAD,
+          PerformanceMetricType.PageLoad,
           'Aggregation test metric',
           Math.random() * 1000,
           'ms',
@@ -330,7 +330,7 @@ describe('Diagnostics System Performance Benchmarks', () => {
       expect(duration / calculationCount).toBeLessThan(5); // Less than 5ms per calculation
     });
 
-    it('should handle load balancing calculations efficiently', async () => {
+    it('should handle load balancing calculations efficiently', () => {
       const calculationCount = 50;
       const startTime = Date.now();
 
@@ -348,7 +348,7 @@ describe('Diagnostics System Performance Benchmarks', () => {
       expect(duration / calculationCount).toBeLessThan(4); // Less than 4ms per calculation
     });
 
-    it('should handle health status calculations efficiently', async () => {
+    it('should handle health status calculations efficiently', () => {
       const calculationCount = 100;
       const startTime = Date.now();
 
@@ -394,7 +394,6 @@ describe('Diagnostics System Performance Benchmarks', () => {
 
     it('should handle memory cleanup efficiently', async () => {
       const logCount = 500;
-      const startTime = Date.now();
 
       // Generate logs
       for (let i = 0; i < logCount; i++) {
@@ -427,11 +426,11 @@ describe('Diagnostics System Performance Benchmarks', () => {
         await errorTracker.trackError(
           new Error(`Integrated error ${i}`),
           ErrorSeverity.LOW,
-          ErrorCategory.SYSTEM,
+          ErrorCategory.System,
           { index: i }
         );
         await performanceMonitor.trackMetric(
-          PerformanceMetricType.PAGE_LOAD,
+          PerformanceMetricType.PageLoad,
           `Integrated metric ${i}`,
           Math.random() * 1000,
           'ms',
@@ -460,11 +459,11 @@ describe('Diagnostics System Performance Benchmarks', () => {
           errorTracker.trackError(
             new Error(`Concurrent error ${i}`),
             ErrorSeverity.LOW,
-            ErrorCategory.SYSTEM,
+            ErrorCategory.System,
             { index: i }
           ),
           performanceMonitor.trackMetric(
-            PerformanceMetricType.PAGE_LOAD,
+            PerformanceMetricType.PageLoad,
             `Concurrent metric ${i}`,
             Math.random() * 1000,
             'ms',
@@ -518,7 +517,7 @@ describe('Diagnostics System Performance Benchmarks', () => {
         await errorTracker.trackError(
           new Error(`Load test error ${i}`),
           ErrorSeverity.LOW,
-          ErrorCategory.SYSTEM,
+          ErrorCategory.System,
           { index: i }
         );
         const endTime = Date.now();

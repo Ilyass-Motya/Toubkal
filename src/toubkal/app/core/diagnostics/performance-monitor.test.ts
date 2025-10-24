@@ -16,7 +16,7 @@ const mockLogger = {
 };
 
 vi.mock('./logger', () => ({
-  Logger: {
+  logger: {
     getInstance: vi.fn(() => mockLogger)
   }
 }));
@@ -115,7 +115,7 @@ describe('PerformanceMonitor', () => {
 
     it('should track a performance metric', () => {
       const metricId = performanceMonitor.trackMetric(
-        PerformanceMetricType.PAGE_LOAD,
+        PerformanceMetricType.PageLoad,
         'Page Load Time',
         1500,
         'ms',
@@ -127,7 +127,7 @@ describe('PerformanceMonitor', () => {
         'PerformanceMonitor',
         'Performance metric tracked',
         expect.objectContaining({
-          type: PerformanceMetricType.PAGE_LOAD,
+          type: PerformanceMetricType.PageLoad,
           name: 'Page Load Time',
           value: 1500,
           unit: 'ms'
@@ -136,8 +136,8 @@ describe('PerformanceMonitor', () => {
     });
 
     it('should track multiple metrics', () => {
-      performanceMonitor.trackMetric(PerformanceMetricType.MEMORY_USAGE, 'Memory Usage', 50, 'MB');
-      performanceMonitor.trackMetric(PerformanceMetricType.CPU_USAGE, 'CPU Usage', 75, '%');
+      performanceMonitor.trackMetric(PerformanceMetricType.MemoryUsage, 'Memory Usage', 50, 'MB');
+      performanceMonitor.trackMetric(PerformanceMetricType.CpuUsage, 'CPU Usage', 75, '%');
       
       const allMetrics = performanceMonitor.getAllMetrics();
       expect(allMetrics).toHaveLength(2);
@@ -145,14 +145,14 @@ describe('PerformanceMonitor', () => {
 
     it('should calculate performance thresholds correctly', () => {
       // Test excellent performance
-      performanceMonitor.trackMetric(PerformanceMetricType.PAGE_LOAD, 'Fast Load', 1000, 'ms');
+      performanceMonitor.trackMetric(PerformanceMetricType.PageLoad, 'Fast Load', 1000, 'ms');
       const fastMetric = performanceMonitor.getAllMetrics().find(m => m.name === 'Fast Load');
-      expect(fastMetric?.threshold).toBe(PerformanceThreshold.EXCELLENT);
+      expect(fastMetric?.threshold).toBe(PerformanceThreshold.Excellent);
       
       // Test poor performance
-      performanceMonitor.trackMetric(PerformanceMetricType.PAGE_LOAD, 'Slow Load', 5000, 'ms');
+      performanceMonitor.trackMetric(PerformanceMetricType.PageLoad, 'Slow Load', 5000, 'ms');
       const slowMetric = performanceMonitor.getAllMetrics().find(m => m.name === 'Slow Load');
-      expect(slowMetric?.threshold).toBe(PerformanceThreshold.POOR);
+      expect(slowMetric?.threshold).toBe(PerformanceThreshold.Poor);
     });
   });
 
@@ -163,7 +163,7 @@ describe('PerformanceMonitor', () => {
 
     it('should get metric by ID', () => {
       const metricId = performanceMonitor.trackMetric(
-        PerformanceMetricType.MEMORY_USAGE,
+        PerformanceMetricType.MemoryUsage,
         'Memory Usage',
         100,
         'MB'
@@ -182,35 +182,35 @@ describe('PerformanceMonitor', () => {
 
     it('should get metrics by type', () => {
       // Track metrics with different names to avoid ID conflicts
-      performanceMonitor.trackMetric(PerformanceMetricType.PAGE_LOAD, 'Page Load A', 1000, 'ms');
-      performanceMonitor.trackMetric(PerformanceMetricType.MEMORY_USAGE, 'Memory Usage', 50, 'MB');
-      performanceMonitor.trackMetric(PerformanceMetricType.PAGE_LOAD, 'Page Load B', 2000, 'ms');
+      performanceMonitor.trackMetric(PerformanceMetricType.PageLoad, 'Page Load A', 1000, 'ms');
+      performanceMonitor.trackMetric(PerformanceMetricType.MemoryUsage, 'Memory Usage', 50, 'MB');
+      performanceMonitor.trackMetric(PerformanceMetricType.PageLoad, 'Page Load B', 2000, 'ms');
       
       const allMetrics = performanceMonitor.getAllMetrics();
       expect(allMetrics.length).toBeGreaterThanOrEqual(2);
       
-      const pageLoadMetrics = performanceMonitor.getMetricsByType(PerformanceMetricType.PAGE_LOAD);
+      const pageLoadMetrics = performanceMonitor.getMetricsByType(PerformanceMetricType.PageLoad);
       expect(pageLoadMetrics.length).toBeGreaterThanOrEqual(1);
       
-      const memoryMetrics = performanceMonitor.getMetricsByType(PerformanceMetricType.MEMORY_USAGE);
+      const memoryMetrics = performanceMonitor.getMetricsByType(PerformanceMetricType.MemoryUsage);
       expect(memoryMetrics).toHaveLength(1);
     });
 
     it('should get metrics by threshold', () => {
-      performanceMonitor.trackMetric(PerformanceMetricType.PAGE_LOAD, 'Fast Load', 1000, 'ms');
-      performanceMonitor.trackMetric(PerformanceMetricType.PAGE_LOAD, 'Slow Load', 5000, 'ms');
+      performanceMonitor.trackMetric(PerformanceMetricType.PageLoad, 'Fast Load', 1000, 'ms');
+      performanceMonitor.trackMetric(PerformanceMetricType.PageLoad, 'Slow Load', 5000, 'ms');
       
-      const excellentMetrics = performanceMonitor.getMetricsByThreshold(PerformanceThreshold.EXCELLENT);
+      const excellentMetrics = performanceMonitor.getMetricsByThreshold(PerformanceThreshold.Excellent);
       expect(excellentMetrics).toHaveLength(1);
       expect(excellentMetrics[0].name).toBe('Fast Load');
       
-      const poorMetrics = performanceMonitor.getMetricsByThreshold(PerformanceThreshold.POOR);
+      const poorMetrics = performanceMonitor.getMetricsByThreshold(PerformanceThreshold.Poor);
       expect(poorMetrics).toHaveLength(1);
       expect(poorMetrics[0].name).toBe('Slow Load');
     });
 
     it('should get recent metrics', async () => {
-      performanceMonitor.trackMetric(PerformanceMetricType.PAGE_LOAD, 'Recent Metric', 1000, 'ms');
+      performanceMonitor.trackMetric(PerformanceMetricType.PageLoad, 'Recent Metric', 1000, 'ms');
       
       const recentMetrics = performanceMonitor.getRecentMetrics(60000); // 1 minute
       expect(recentMetrics).toHaveLength(1);
@@ -228,8 +228,8 @@ describe('PerformanceMonitor', () => {
     });
 
     it('should create performance snapshot', () => {
-      performanceMonitor.trackMetric(PerformanceMetricType.PAGE_LOAD, 'Page Load', 1500, 'ms');
-      performanceMonitor.trackMetric(PerformanceMetricType.MEMORY_USAGE, 'Memory Usage', 75, 'MB');
+      performanceMonitor.trackMetric(PerformanceMetricType.PageLoad, 'Page Load', 1500, 'ms');
+      performanceMonitor.trackMetric(PerformanceMetricType.MemoryUsage, 'Memory Usage', 75, 'MB');
       
       const snapshot = performanceMonitor.createSnapshot();
       
@@ -244,8 +244,8 @@ describe('PerformanceMonitor', () => {
       const startTime = Date.now() - 60000; // 1 minute ago
       const endTime = Date.now();
       
-      performanceMonitor.trackMetric(PerformanceMetricType.PAGE_LOAD, 'Page Load', 2000, 'ms');
-      performanceMonitor.trackMetric(PerformanceMetricType.MEMORY_USAGE, 'Memory Usage', 100, 'MB');
+      performanceMonitor.trackMetric(PerformanceMetricType.PageLoad, 'Page Load', 2000, 'ms');
+      performanceMonitor.trackMetric(PerformanceMetricType.MemoryUsage, 'Memory Usage', 100, 'MB');
       
       const report = performanceMonitor.generateReport(startTime, endTime);
       
@@ -261,8 +261,8 @@ describe('PerformanceMonitor', () => {
 
     it('should calculate performance score', () => {
       // Add some good performance metrics
-      performanceMonitor.trackMetric(PerformanceMetricType.PAGE_LOAD, 'Fast Load', 1000, 'ms');
-      performanceMonitor.trackMetric(PerformanceMetricType.MEMORY_USAGE, 'Low Memory', 50, 'MB');
+      performanceMonitor.trackMetric(PerformanceMetricType.PageLoad, 'Fast Load', 1000, 'ms');
+      performanceMonitor.trackMetric(PerformanceMetricType.MemoryUsage, 'Low Memory', 50, 'MB');
       
       const score = performanceMonitor.getPerformanceScore();
       expect(score).toBeGreaterThan(0);
@@ -279,13 +279,13 @@ describe('PerformanceMonitor', () => {
 
     it('should trigger alert for poor performance', () => {
       // Track a metric that should trigger an alert (exceeds threshold)
-      performanceMonitor.trackMetric(PerformanceMetricType.PAGE_LOAD, 'Very Slow Load', 10000, 'ms');
+      performanceMonitor.trackMetric(PerformanceMetricType.PageLoad, 'Very Slow Load', 10000, 'ms');
       
       expect(mockLogger.warn).toHaveBeenCalledWith(
         'PerformanceMonitor',
         'Performance alert triggered',
         expect.objectContaining({
-          type: PerformanceMetricType.PAGE_LOAD,
+          type: PerformanceMetricType.PageLoad,
           name: 'Very Slow Load',
           value: 10000
         })
@@ -294,7 +294,7 @@ describe('PerformanceMonitor', () => {
 
     it('should not trigger alert for good performance', () => {
       // Track a metric that should not trigger an alert
-      performanceMonitor.trackMetric(PerformanceMetricType.PAGE_LOAD, 'Fast Load', 1000, 'ms');
+      performanceMonitor.trackMetric(PerformanceMetricType.PageLoad, 'Fast Load', 1000, 'ms');
       
       expect(mockLogger.warn).not.toHaveBeenCalled();
     });
@@ -316,7 +316,7 @@ describe('PerformanceMonitor', () => {
       };
       
       performanceMonitor.trackMetric(
-        PerformanceMetricType.PAGE_LOAD,
+        PerformanceMetricType.PageLoad,
         'Page Load',
         1500,
         'ms',
@@ -343,7 +343,7 @@ describe('PerformanceMonitor', () => {
       };
       
       performanceMonitor.trackMetric(
-        PerformanceMetricType.PAGE_LOAD,
+        PerformanceMetricType.PageLoad,
         'Page Load',
         1500,
         'ms',
@@ -375,7 +375,7 @@ describe('PerformanceMonitor', () => {
         fetchStart: 0
       } as PerformanceNavigationTiming;
       
-      mockPerformance.getEntriesByType.mockReturnValue([mockNavigation] as any);
+      mockPerformance.getEntriesByType.mockReturnValue([mockNavigation] as unknown as never[]);
       
       // Simulate page load
       window.dispatchEvent(new Event('load'));
@@ -392,8 +392,8 @@ describe('PerformanceMonitor', () => {
     });
 
     it('should export metrics as JSON', () => {
-      performanceMonitor.trackMetric(PerformanceMetricType.PAGE_LOAD, 'Page Load', 1500, 'ms');
-      performanceMonitor.trackMetric(PerformanceMetricType.MEMORY_USAGE, 'Memory Usage', 75, 'MB');
+      performanceMonitor.trackMetric(PerformanceMetricType.PageLoad, 'Page Load', 1500, 'ms');
+      performanceMonitor.trackMetric(PerformanceMetricType.MemoryUsage, 'Memory Usage', 75, 'MB');
       
       const exported = performanceMonitor.exportMetrics();
       expect(exported).toBeDefined();
@@ -408,8 +408,8 @@ describe('PerformanceMonitor', () => {
     });
 
     it('should clear all metrics', () => {
-      performanceMonitor.trackMetric(PerformanceMetricType.PAGE_LOAD, 'Page Load', 1500, 'ms');
-      performanceMonitor.trackMetric(PerformanceMetricType.MEMORY_USAGE, 'Memory Usage', 75, 'MB');
+      performanceMonitor.trackMetric(PerformanceMetricType.PageLoad, 'Page Load', 1500, 'ms');
+      performanceMonitor.trackMetric(PerformanceMetricType.MemoryUsage, 'Memory Usage', 75, 'MB');
       
       expect(performanceMonitor.getAllMetrics()).toHaveLength(2);
       
@@ -426,7 +426,7 @@ describe('PerformanceMonitor', () => {
   describe('destroy', () => {
     it('should destroy the monitor', () => {
       performanceMonitor.initialize();
-      performanceMonitor.trackMetric(PerformanceMetricType.PAGE_LOAD, 'Page Load', 1500, 'ms');
+      performanceMonitor.trackMetric(PerformanceMetricType.PageLoad, 'Page Load', 1500, 'ms');
       
       performanceMonitor.destroy();
       
@@ -441,21 +441,21 @@ describe('PerformanceMonitor', () => {
 
     it('should calculate thresholds correctly for different metric types', () => {
       // Test page load thresholds
-      const fastLoad = performanceMonitor.trackMetric(PerformanceMetricType.PAGE_LOAD, 'Fast', 1000, 'ms');
-      const slowLoad = performanceMonitor.trackMetric(PerformanceMetricType.PAGE_LOAD, 'Slow', 5000, 'ms');
+      const fastLoad = performanceMonitor.trackMetric(PerformanceMetricType.PageLoad, 'Fast', 1000, 'ms');
+      const slowLoad = performanceMonitor.trackMetric(PerformanceMetricType.PageLoad, 'Slow', 5000, 'ms');
       
       const fastMetric = performanceMonitor.getMetric(fastLoad);
       const slowMetric = performanceMonitor.getMetric(slowLoad);
       
-      expect(fastMetric?.threshold).toBe(PerformanceThreshold.EXCELLENT);
-      expect(slowMetric?.threshold).toBe(PerformanceThreshold.POOR);
+      expect(fastMetric?.threshold).toBe(PerformanceThreshold.Excellent);
+      expect(slowMetric?.threshold).toBe(PerformanceThreshold.Poor);
     });
 
     it('should handle edge cases in threshold calculation', () => {
       // Test exactly at threshold
-      const atThreshold = performanceMonitor.trackMetric(PerformanceMetricType.PAGE_LOAD, 'At Threshold', 3000, 'ms');
+      const atThreshold = performanceMonitor.trackMetric(PerformanceMetricType.PageLoad, 'At Threshold', 3000, 'ms');
       const atThresholdMetric = performanceMonitor.getMetric(atThreshold);
-      expect(atThresholdMetric?.threshold).toBe(PerformanceThreshold.NEEDS_IMPROVEMENT);
+      expect(atThresholdMetric?.threshold).toBe(PerformanceThreshold.NeedsImprovement);
     });
   });
 
@@ -466,8 +466,8 @@ describe('PerformanceMonitor', () => {
 
     it('should generate recommendations for poor performance', () => {
       // Create poor performance metrics that exceed thresholds
-      performanceMonitor.trackMetric(PerformanceMetricType.PAGE_LOAD, 'Slow Page', 10000, 'ms'); // > 3000ms threshold
-      performanceMonitor.trackMetric(PerformanceMetricType.MEMORY_USAGE, 'High Memory', 200 * 1024 * 1024, 'bytes'); // > 100MB threshold
+      performanceMonitor.trackMetric(PerformanceMetricType.PageLoad, 'Slow Page', 10000, 'ms'); // > 3000ms threshold
+      performanceMonitor.trackMetric(PerformanceMetricType.MemoryUsage, 'High Memory', 200 * 1024 * 1024, 'bytes'); // > 100MB threshold
       
       const startTime = Date.now() - 60000;
       const endTime = Date.now();

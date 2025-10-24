@@ -53,14 +53,14 @@ Object.defineProperty(window, 'performance', {
 });
 
 // Mock PerformanceObserver
-global.PerformanceObserver = vi.fn().mockImplementation((callback) => ({
+global.PerformanceObserver = vi.fn().mockImplementation(() => ({
   observe: vi.fn(),
   disconnect: vi.fn(),
   takeRecords: vi.fn(() => [])
-})) as any;
+})) as unknown as typeof PerformanceObserver;
 
 // Add supportedEntryTypes to PerformanceObserver
-(global.PerformanceObserver as any).supportedEntryTypes = ['navigation', 'resource', 'measure', 'mark'];
+(global.PerformanceObserver as unknown as { supportedEntryTypes: string[] }).supportedEntryTypes = ['navigation', 'resource', 'measure', 'mark'] as string[];
 
 // Mock NodeJS types
 declare global {
@@ -107,13 +107,13 @@ global.URL = class URL {
     }
   }
 
-  static createObjectURL(obj: Blob | MediaSource): string {
+  static createObjectURL(_obj: Blob | MediaSource): string {
     return `blob:${Math.random().toString(36).substring(2)}`;
   }
 
-  static parse(url: string, base?: string): URL | null {
+  static parse(_url: string, _base?: string): URL | null {
     try {
-      return new URL(url, base);
+      return new URL(_url, _base);
     } catch {
       return null;
     }
@@ -122,11 +122,13 @@ global.URL = class URL {
   static revokeObjectURL(_url: string): void {
     // Mock implementation
   }
-} as any;
+  } as unknown as typeof URL;
 
 // Mock btoa/atob
 global.btoa = vi.fn((str: string) => Buffer.from(str, 'binary').toString('base64'));
 global.atob = vi.fn((str: string) => Buffer.from(str, 'base64').toString('binary'));
+
+// localStorage is already mocked above
 
 // Mock window.location
 Object.defineProperty(window, 'location', {

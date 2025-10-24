@@ -16,7 +16,7 @@ const mockLogger = {
 };
 
 vi.mock('./logger', () => ({
-  Logger: {
+  logger: {
     getInstance: vi.fn(() => mockLogger)
   }
 }));
@@ -86,7 +86,7 @@ describe('ErrorTracker', () => {
       const errorId = errorTracker.trackError(
         error,
         ErrorSeverity.HIGH,
-        ErrorCategory.SYSTEM,
+        ErrorCategory.System,
         { component: 'test-component', action: 'test-action' }
       );
 
@@ -96,7 +96,7 @@ describe('ErrorTracker', () => {
         'New error tracked',
         expect.objectContaining({
           severity: ErrorSeverity.HIGH,
-          category: ErrorCategory.SYSTEM,
+          category: ErrorCategory.System,
           message: 'Test error message'
         })
       );
@@ -200,7 +200,7 @@ describe('ErrorTracker', () => {
 
     it('should generate error statistics', () => {
       // Create some test errors
-      errorTracker.trackError(new Error('High error'), ErrorSeverity.HIGH, ErrorCategory.SYSTEM);
+      errorTracker.trackError(new Error('High error'), ErrorSeverity.HIGH, ErrorCategory.System);
       errorTracker.trackError(new Error('Medium error'), ErrorSeverity.MEDIUM, ErrorCategory.NETWORK);
       errorTracker.trackError(new Error('Another high error'), ErrorSeverity.HIGH, ErrorCategory.SECURITY);
       
@@ -209,7 +209,7 @@ describe('ErrorTracker', () => {
       expect(stats.totalErrors).toBe(3);
       expect(stats.errorsBySeverity[ErrorSeverity.HIGH]).toBe(2);
       expect(stats.errorsBySeverity[ErrorSeverity.MEDIUM]).toBe(1);
-      expect(stats.errorsByCategory[ErrorCategory.SYSTEM]).toBe(1);
+      expect(stats.errorsByCategory[ErrorCategory.System]).toBe(1);
       expect(stats.errorsByCategory[ErrorCategory.NETWORK]).toBe(1);
       expect(stats.errorsByCategory[ErrorCategory.SECURITY]).toBe(1);
       expect(stats.topErrors).toHaveLength(3);
@@ -280,7 +280,7 @@ describe('ErrorTracker', () => {
       });
       
       const error = new Error('Critical error');
-      const errorId = errorTracker.trackError(error, ErrorSeverity.CRITICAL);
+      errorTracker.trackError(error, ErrorSeverity.CRITICAL);
       
       // Should have been auto-reported - check for both the initial tracking and the report
       expect(mockLogger.error).toHaveBeenCalledWith(

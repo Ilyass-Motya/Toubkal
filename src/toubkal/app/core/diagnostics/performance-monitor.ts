@@ -6,25 +6,31 @@
  * network performance, and user interactions.
  */
 
-import { Logger, LogLevel } from './logger';
+import { Logger } from './logger';
+
+// Browser APIs - these are used in the code
+declare global {
+  function requestAnimationFrame(callback: FrameRequestCallback): number;
+  function cancelAnimationFrame(id: number): void;
+}
 
 export enum PerformanceMetricType {
-  PAGE_LOAD = 'page_load',
-  MEMORY_USAGE = 'memory_usage',
-  CPU_USAGE = 'cpu_usage',
-  NETWORK_REQUEST = 'network_request',
-  USER_INTERACTION = 'user_interaction',
-  RENDERING = 'rendering',
-  JAVASCRIPT_EXECUTION = 'javascript_execution',
-  RESOURCE_LOADING = 'resource_loading',
-  NETWORK_LATENCY = 'network_latency'
+  PageLoad = 'page_load',
+  MemoryUsage = 'memory_usage',
+  CpuUsage = 'cpu_usage',
+  NetworkRequest = 'network_request',
+  UserInteraction = 'user_interaction',
+  Rendering = 'rendering',
+  JavaScriptExecution = 'javascript_execution',
+  ResourceLoading = 'resource_loading',
+  NetworkLatency = 'network_latency'
 }
 
 export enum PerformanceThreshold {
-  EXCELLENT = 'excellent',
-  GOOD = 'good',
-  NEEDS_IMPROVEMENT = 'needs_improvement',
-  POOR = 'poor'
+  Excellent = 'excellent',
+  Good = 'good',
+  NeedsImprovement = 'needs_improvement',
+  Poor = 'poor'
 }
 
 export interface PerformanceMetric {
@@ -99,7 +105,7 @@ export class PerformanceMonitor {
   private metrics: Map<string, PerformanceMetric> = new Map();
   private snapshots: PerformanceSnapshot[] = [];
   private isInitialized = false;
-  private monitoringInterval: NodeJS.Timeout | null = null;
+  private monitoringInterval: ReturnType<typeof setInterval> | null = null;
   private observers: Map<string, PerformanceObserver> = new Map();
   private metricCounter = 0;
 
@@ -119,22 +125,22 @@ export class PerformanceMonitor {
       enableRealTimeMonitoring: true,
       enablePerformanceAlerts: true,
       alertThresholds: {
-        [PerformanceMetricType.PAGE_LOAD]: 3000, // 3 seconds
-        [PerformanceMetricType.MEMORY_USAGE]: 100 * 1024 * 1024, // 100MB
-        [PerformanceMetricType.CPU_USAGE]: 80, // 80%
-        [PerformanceMetricType.NETWORK_REQUEST]: 5000, // 5 seconds
-        [PerformanceMetricType.USER_INTERACTION]: 100, // 100ms
-        [PerformanceMetricType.RENDERING]: 16.67, // 60fps
-        [PerformanceMetricType.JAVASCRIPT_EXECUTION]: 50, // 50ms
-        [PerformanceMetricType.RESOURCE_LOADING]: 2000, // 2 seconds
-        [PerformanceMetricType.NETWORK_LATENCY]: 1000 // 1 second
+        [PerformanceMetricType.PageLoad]: 3000, // 3 seconds
+        [PerformanceMetricType.MemoryUsage]: 100 * 1024 * 1024, // 100MB
+        [PerformanceMetricType.CpuUsage]: 80, // 80%
+        [PerformanceMetricType.NetworkRequest]: 5000, // 5 seconds
+        [PerformanceMetricType.UserInteraction]: 100, // 100ms
+        [PerformanceMetricType.Rendering]: 16.67, // 60fps
+        [PerformanceMetricType.JavaScriptExecution]: 50, // 50ms
+        [PerformanceMetricType.ResourceLoading]: 2000, // 2 seconds
+        [PerformanceMetricType.NetworkLatency]: 1000 // 1 second
       },
       privacyMode: true
     };
   }
 
   public static getInstance(): PerformanceMonitor {
-    if (!PerformanceMonitor.instance) {
+    if (PerformanceMonitor.instance == null) {
       PerformanceMonitor.instance = new PerformanceMonitor();
     }
     return PerformanceMonitor.instance;
@@ -367,9 +373,9 @@ export class PerformanceMonitor {
     window.addEventListener('load', () => {
       const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
       
-      if (navigation) {
+      if (navigation != null) {
         this.trackMetric(
-          PerformanceMetricType.PAGE_LOAD,
+          PerformanceMetricType.PageLoad,
           'DOM Content Loaded',
           navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart,
           'ms',
@@ -377,7 +383,7 @@ export class PerformanceMonitor {
         );
 
         this.trackMetric(
-          PerformanceMetricType.PAGE_LOAD,
+          PerformanceMetricType.PageLoad,
           'Page Load Complete',
           navigation.loadEventEnd - navigation.loadEventStart,
           'ms',
@@ -385,7 +391,7 @@ export class PerformanceMonitor {
         );
 
         this.trackMetric(
-          PerformanceMetricType.PAGE_LOAD,
+          PerformanceMetricType.PageLoad,
           'Total Page Load Time',
           navigation.loadEventEnd - navigation.fetchStart,
           'ms',
@@ -396,13 +402,13 @@ export class PerformanceMonitor {
   }
 
   private setupMemoryObserver(): void {
-    if (typeof window === 'undefined' || !(window as any).performance.memory) return;
+    if (typeof window === 'undefined' || (window as { performance: { memory?: unknown } }).performance.memory == null) return;
 
     const trackMemory = () => {
-      const memory = (window as any).performance.memory;
+      const memory = (window as unknown as { performance: { memory: { usedJSHeapSize: number; totalJSHeapSize: number; jsHeapSizeLimit: number } } }).performance.memory;
       
       this.trackMetric(
-        PerformanceMetricType.MEMORY_USAGE,
+        PerformanceMetricType.MemoryUsage,
         'Used Memory',
         memory.usedJSHeapSize,
         'bytes',
@@ -410,7 +416,7 @@ export class PerformanceMonitor {
       );
 
       this.trackMetric(
-        PerformanceMetricType.MEMORY_USAGE,
+        PerformanceMetricType.MemoryUsage,
         'Total Memory',
         memory.totalJSHeapSize,
         'bytes',
@@ -432,7 +438,7 @@ export class PerformanceMonitor {
           const resourceEntry = entry as PerformanceResourceTiming;
           
           this.trackMetric(
-            PerformanceMetricType.NETWORK_REQUEST,
+            PerformanceMetricType.NetworkRequest,
             `Network Request: ${resourceEntry.name}`,
             resourceEntry.responseEnd - resourceEntry.requestStart,
             'ms',
@@ -461,7 +467,7 @@ export class PerformanceMonitor {
         const duration = endTime - startTime;
         
         this.trackMetric(
-          PerformanceMetricType.USER_INTERACTION,
+          PerformanceMetricType.UserInteraction,
           `User Interaction: ${event.type}`,
           duration,
           'ms',
@@ -495,7 +501,7 @@ export class PerformanceMonitor {
         lastTime = currentTime;
         
         this.trackMetric(
-          PerformanceMetricType.RENDERING,
+          PerformanceMetricType.Rendering,
           'Frames Per Second',
           fps,
           'fps',
@@ -516,7 +522,7 @@ export class PerformanceMonitor {
       for (const entry of list.getEntries()) {
         if (entry.entryType === 'measure') {
           this.trackMetric(
-            PerformanceMetricType.JAVASCRIPT_EXECUTION,
+            PerformanceMetricType.JavaScriptExecution,
             `JavaScript Execution: ${entry.name}`,
             entry.duration,
             'ms',
@@ -539,7 +545,7 @@ export class PerformanceMonitor {
           const resourceEntry = entry as PerformanceResourceTiming;
           
           this.trackMetric(
-            PerformanceMetricType.RESOURCE_LOADING,
+            PerformanceMetricType.ResourceLoading,
             `Resource Loading: ${resourceEntry.name}`,
             resourceEntry.duration,
             'ms',
@@ -566,7 +572,7 @@ export class PerformanceMonitor {
   }
 
   private stopMonitoring(): void {
-    if (this.monitoringInterval) {
+    if (this.monitoringInterval != null) {
       clearInterval(this.monitoringInterval);
       this.monitoringInterval = null;
     }
@@ -592,14 +598,14 @@ export class PerformanceMonitor {
   private calculateThreshold(type: PerformanceMetricType, value: number): PerformanceThreshold {
     const threshold = this.config.alertThresholds[type];
     
-    if (value <= threshold * 0.5) return PerformanceThreshold.EXCELLENT;
-    if (value <= threshold * 0.8) return PerformanceThreshold.GOOD;
-    if (value <= threshold) return PerformanceThreshold.NEEDS_IMPROVEMENT;
-    return PerformanceThreshold.POOR;
+    if (value <= threshold * 0.5) return PerformanceThreshold.Excellent;
+    if (value <= threshold * 0.8) return PerformanceThreshold.Good;
+    if (value <= threshold) return PerformanceThreshold.NeedsImprovement;
+    return PerformanceThreshold.Poor;
   }
 
   private shouldAlert(metric: PerformanceMetric): boolean {
-    return metric.threshold === PerformanceThreshold.POOR;
+    return metric.threshold === PerformanceThreshold.Poor;
   }
 
   private triggerPerformanceAlert(metric: PerformanceMetric): void {
@@ -623,7 +629,7 @@ export class PerformanceMonitor {
     delete sanitized.ipAddress;
     
     // Sanitize URLs
-    if (sanitized.url && typeof sanitized.url === 'string') {
+    if (typeof sanitized.url === 'string' && sanitized.url.length > 0) {
       try {
         const url = new URL(sanitized.url as string);
         sanitized.url = `${url.protocol}//${url.hostname}${url.pathname}`;
@@ -649,10 +655,10 @@ export class PerformanceMonitor {
         minValue: 0,
         maxValue: 0,
         thresholdDistribution: {
-          [PerformanceThreshold.EXCELLENT]: 0,
-          [PerformanceThreshold.GOOD]: 0,
-          [PerformanceThreshold.NEEDS_IMPROVEMENT]: 0,
-          [PerformanceThreshold.POOR]: 0
+          [PerformanceThreshold.Excellent]: 0,
+          [PerformanceThreshold.Good]: 0,
+          [PerformanceThreshold.NeedsImprovement]: 0,
+          [PerformanceThreshold.Poor]: 0
         }
       };
     }
@@ -663,14 +669,14 @@ export class PerformanceMonitor {
     const maxValue = Math.max(...values);
 
     const thresholdDistribution: Record<PerformanceThreshold, number> = {
-      [PerformanceThreshold.EXCELLENT]: 0,
-      [PerformanceThreshold.GOOD]: 0,
-      [PerformanceThreshold.NEEDS_IMPROVEMENT]: 0,
-      [PerformanceThreshold.POOR]: 0
+      [PerformanceThreshold.Excellent]: 0,
+      [PerformanceThreshold.Good]: 0,
+      [PerformanceThreshold.NeedsImprovement]: 0,
+      [PerformanceThreshold.Poor]: 0
     };
 
     metrics.forEach(metric => {
-      if (metric.threshold) {
+      if (metric.threshold != null) {
         thresholdDistribution[metric.threshold]++;
       }
     });
@@ -688,14 +694,14 @@ export class PerformanceMonitor {
     if (metrics.length === 0) return 100;
 
     const thresholdCounts = {
-      [PerformanceThreshold.EXCELLENT]: 0,
-      [PerformanceThreshold.GOOD]: 0,
-      [PerformanceThreshold.NEEDS_IMPROVEMENT]: 0,
-      [PerformanceThreshold.POOR]: 0
+      [PerformanceThreshold.Excellent]: 0,
+      [PerformanceThreshold.Good]: 0,
+      [PerformanceThreshold.NeedsImprovement]: 0,
+      [PerformanceThreshold.Poor]: 0
     };
 
     metrics.forEach(metric => {
-      if (metric.threshold) {
+      if (metric.threshold != null) {
         thresholdCounts[metric.threshold]++;
       }
     });
@@ -707,10 +713,10 @@ export class PerformanceMonitor {
     const poorWeight = 0.3;
 
     const score = (
-      (thresholdCounts[PerformanceThreshold.EXCELLENT] * excellentWeight +
-       thresholdCounts[PerformanceThreshold.GOOD] * goodWeight +
-       thresholdCounts[PerformanceThreshold.NEEDS_IMPROVEMENT] * needsImprovementWeight +
-       thresholdCounts[PerformanceThreshold.POOR] * poorWeight) / total
+      (thresholdCounts[PerformanceThreshold.Excellent] * excellentWeight +
+       thresholdCounts[PerformanceThreshold.Good] * goodWeight +
+       thresholdCounts[PerformanceThreshold.NeedsImprovement] * needsImprovementWeight +
+       thresholdCounts[PerformanceThreshold.Poor] * poorWeight) / total
     ) * 100;
 
     return Math.round(score);
@@ -719,25 +725,25 @@ export class PerformanceMonitor {
   private generateRecommendations(metrics: PerformanceMetric[]): string[] {
     const recommendations: string[] = [];
     
-    const slowMetrics = metrics.filter(m => m.threshold === PerformanceThreshold.POOR);
+    const slowMetrics = metrics.filter(m => m.threshold === PerformanceThreshold.Poor);
     
-    if (slowMetrics.some(m => m.type === PerformanceMetricType.PAGE_LOAD)) {
+    if (slowMetrics.some(m => m.type === PerformanceMetricType.PageLoad)) {
       recommendations.push('Consider optimizing page load performance by reducing bundle size and implementing lazy loading');
     }
     
-    if (slowMetrics.some(m => m.type === PerformanceMetricType.MEMORY_USAGE)) {
+    if (slowMetrics.some(m => m.type === PerformanceMetricType.MemoryUsage)) {
       recommendations.push('Memory usage is high - consider implementing memory optimization strategies');
     }
     
-    if (slowMetrics.some(m => m.type === PerformanceMetricType.NETWORK_REQUEST)) {
+    if (slowMetrics.some(m => m.type === PerformanceMetricType.NetworkRequest)) {
       recommendations.push('Network requests are slow - consider implementing caching and request optimization');
     }
     
-    if (slowMetrics.some(m => m.type === PerformanceMetricType.RENDERING)) {
+    if (slowMetrics.some(m => m.type === PerformanceMetricType.Rendering)) {
       recommendations.push('Rendering performance is poor - consider optimizing CSS and reducing layout thrashing');
     }
     
-    if (slowMetrics.some(m => m.type === PerformanceMetricType.JAVASCRIPT_EXECUTION)) {
+    if (slowMetrics.some(m => m.type === PerformanceMetricType.JavaScriptExecution)) {
       recommendations.push('JavaScript execution is slow - consider code splitting and performance optimization');
     }
     

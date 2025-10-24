@@ -5,7 +5,7 @@
  * testing the interaction between all components.
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { Logger, LogLevel } from './logger';
 import { ErrorTracker, ErrorSeverity, ErrorCategory } from './error-tracker';
 import { PerformanceMonitor, PerformanceMetricType } from './performance-monitor';
@@ -46,10 +46,10 @@ describe('Diagnostics System Integration', () => {
 
     scalabilityManager = ScalabilityManager.getInstance();
     await scalabilityManager.initialize({
-      mode: ScalabilityMode.CLUSTER,
+      mode: ScalabilityMode.Cluster,
       maxNodes: 10,
       minNodes: 1,
-      loadBalancingStrategy: LoadBalancingStrategy.ROUND_ROBIN,
+      loadBalancingStrategy: LoadBalancingStrategy.RoundRobin,
       autoScaling: true,
       scaleUpThreshold: 80,
       scaleDownThreshold: 20,
@@ -66,7 +66,7 @@ describe('Diagnostics System Integration', () => {
   });
 
   describe('System Initialization', () => {
-    it('should initialize all systems successfully', async () => {
+    it('should initialize all systems successfully', () => {
       expect(logger).toBeDefined();
       expect(errorTracker).toBeDefined();
       expect(performanceMonitor).toBeDefined();
@@ -86,7 +86,7 @@ describe('Diagnostics System Integration', () => {
       const error = await errorTracker.trackError(
         new Error('Integration test error'),
         ErrorSeverity.HIGH,
-        ErrorCategory.SYSTEM,
+        ErrorCategory.System,
         { source: 'integration-test' }
       );
 
@@ -103,7 +103,7 @@ describe('Diagnostics System Integration', () => {
 
     it('should log performance metrics', async () => {
       const metric = await performanceMonitor.trackMetric(
-        PerformanceMetricType.PAGE_LOAD,
+        PerformanceMetricType.PageLoad,
         'Integration Test Page Load',
         1500,
         'ms',
@@ -158,14 +158,14 @@ describe('Diagnostics System Integration', () => {
       const error1 = await errorTracker.trackError(
         new Error('Primary system failure'),
         ErrorSeverity.HIGH,
-        ErrorCategory.SYSTEM,
+        ErrorCategory.System,
         { system: 'primary' }
       );
 
       const error2 = await errorTracker.trackError(
         new Error('Secondary system affected'),
         ErrorSeverity.MEDIUM,
-        ErrorCategory.SYSTEM,
+        ErrorCategory.System,
         { system: 'secondary', causedBy: error1.id }
       );
 
@@ -182,7 +182,7 @@ describe('Diagnostics System Integration', () => {
     it('should track performance across all systems', async () => {
       // Track various performance metrics
       const pageLoadMetric = await performanceMonitor.trackMetric(
-        PerformanceMetricType.PAGE_LOAD,
+        PerformanceMetricType.PageLoad,
         'Integration Test Page',
         1200,
         'ms',
@@ -190,7 +190,7 @@ describe('Diagnostics System Integration', () => {
       );
 
       const memoryMetric = await performanceMonitor.trackMetric(
-        PerformanceMetricType.MEMORY_USAGE,
+        PerformanceMetricType.MemoryUsage,
         'Integration Test Memory',
         85.5,
         'MB',
@@ -208,7 +208,7 @@ describe('Diagnostics System Integration', () => {
     it('should generate performance recommendations', async () => {
       // Track poor performance metrics
       await performanceMonitor.trackMetric(
-        PerformanceMetricType.PAGE_LOAD,
+        PerformanceMetricType.PageLoad,
         'Slow Page Load',
         5000, // 5 seconds - poor performance
         'ms',
@@ -216,7 +216,7 @@ describe('Diagnostics System Integration', () => {
       );
 
       await performanceMonitor.trackMetric(
-        PerformanceMetricType.MEMORY_USAGE,
+        PerformanceMetricType.MemoryUsage,
         'High Memory Usage',
         95.0, // 95% - high memory usage
         '%',
@@ -233,7 +233,7 @@ describe('Diagnostics System Integration', () => {
     it('should handle scalability decisions based on performance', async () => {
       // Track high load metrics
       await performanceMonitor.trackMetric(
-        PerformanceMetricType.CPU_USAGE,
+        PerformanceMetricType.CpuUsage,
         'High CPU Usage',
         90.0, // 90% CPU usage
         '%',
@@ -279,11 +279,11 @@ describe('Diagnostics System Integration', () => {
       await errorTracker.trackError(
         new Error('Integration test error'),
         ErrorSeverity.LOW,
-        ErrorCategory.SYSTEM,
+        ErrorCategory.System,
         { test: 'timestamp' }
       );
       await performanceMonitor.trackMetric(
-        PerformanceMetricType.PAGE_LOAD,
+        PerformanceMetricType.PageLoad,
         'Integration Test',
         1000,
         'ms',
@@ -317,11 +317,11 @@ describe('Diagnostics System Integration', () => {
       await errorTracker.trackError(
         new Error('Context test error'),
         ErrorSeverity.LOW,
-        ErrorCategory.SYSTEM,
+        ErrorCategory.System,
         context
       );
       await performanceMonitor.trackMetric(
-        PerformanceMetricType.PAGE_LOAD,
+        PerformanceMetricType.PageLoad,
         'Context Test',
         1000,
         'ms',
@@ -340,7 +340,7 @@ describe('Diagnostics System Integration', () => {
   });
 
   describe('System Health Monitoring', () => {
-    it('should provide overall system health status', async () => {
+    it('should provide overall system health status', () => {
       // Get health status from all systems
       const loggerHealth = logger.getHealthStatus();
       const errorTrackerHealth = errorTracker.getHealthStatus();
@@ -364,7 +364,7 @@ describe('Diagnostics System Integration', () => {
       await errorTracker.trackError(
         new Error('System-wide failure'),
         ErrorSeverity.CRITICAL,
-        ErrorCategory.SYSTEM,
+        ErrorCategory.System,
         { scope: 'system-wide' }
       );
 
@@ -405,7 +405,7 @@ describe('Diagnostics System Integration', () => {
         await errorTracker.trackError(
           new Error(`High volume error ${i}`),
           ErrorSeverity.LOW,
-          ErrorCategory.SYSTEM,
+          ErrorCategory.System,
           { index: i }
         );
       }

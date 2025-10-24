@@ -69,7 +69,7 @@ const DiagnosticsDashboard: React.FC = () => {
 
   // Initialize diagnostics systems
   useEffect(() => {
-    const initializeDiagnostics = async () => {
+    const initializeDiagnostics = () => {
       try {
         // Initialize logger
         Logger.getInstance().initialize({
@@ -96,7 +96,7 @@ const DiagnosticsDashboard: React.FC = () => {
 
         // Initialize scalability manager
         ScalabilityManager.getInstance().initialize({
-          mode: ScalabilityMode.CLUSTER,
+          mode: ScalabilityMode.Cluster,
           maxNodes: 10,
           minNodes: 1,
           autoScaling: true,
@@ -112,17 +112,6 @@ const DiagnosticsDashboard: React.FC = () => {
 
     void initializeDiagnostics();
   }, []);
-
-  // Auto-refresh functionality
-  useEffect(() => {
-    if (!autoRefresh) return;
-
-    const interval = setInterval(() => {
-      void updateDashboard();
-    }, refreshInterval);
-
-    return () => clearInterval(interval);
-  }, [autoRefresh, refreshInterval]);
 
   const updateDashboard = useCallback(() => {
     try {
@@ -180,6 +169,17 @@ const DiagnosticsDashboard: React.FC = () => {
       console.error('Failed to update dashboard:', error);
     }
   }, []);
+
+  // Auto-refresh functionality
+  useEffect(() => {
+    if (!autoRefresh) return;
+
+    const interval = setInterval(() => {
+      void updateDashboard();
+    }, refreshInterval);
+
+    return () => clearInterval(interval);
+  }, [autoRefresh, refreshInterval, updateDashboard]);
 
   const getLogLevelColor = (level: LogLevel): string => {
     switch (level) {

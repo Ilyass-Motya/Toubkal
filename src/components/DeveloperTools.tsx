@@ -7,9 +7,9 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { Logger, LogLevel } from '@/toubkal/app/core/diagnostics/logger';
-import { ErrorTracker, ErrorSeverity, ErrorCategory } from '@/toubkal/app/core/diagnostics/error-tracker';
-import { PerformanceMonitor, PerformanceMetricType } from '@/toubkal/app/core/diagnostics/performance-monitor';
-import { ScalabilityManager, ScalabilityMode, LoadBalancingStrategy } from '@/toubkal/app/core/diagnostics/scalability-manager';
+import { ErrorTracker } from '@/toubkal/app/core/diagnostics/error-tracker';
+import { PerformanceMonitor } from '@/toubkal/app/core/diagnostics/performance-monitor';
+import { ScalabilityManager, ScalabilityMode } from '@/toubkal/app/core/diagnostics/scalability-manager';
 
 interface SystemInfo {
   browser: {
@@ -64,7 +64,7 @@ const DeveloperTools: React.FC = () => {
 
   // Initialize system info
   useEffect(() => {
-    const initializeSystemInfo = async () => {
+    const initializeSystemInfo = () => {
       try {
         const info: SystemInfo = {
           browser: {
@@ -76,7 +76,7 @@ const DeveloperTools: React.FC = () => {
             platform: navigator.platform,
             language: navigator.language,
             timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-            memory: (performance as any).memory?.jsHeapSizeLimit || 0
+            memory: (performance as { memory?: { jsHeapSizeLimit?: number } }).memory?.jsHeapSizeLimit ?? 0
           },
           diagnostics: {
             logger: {
@@ -95,7 +95,7 @@ const DeveloperTools: React.FC = () => {
               retentionDays: 7
             },
             scalabilityManager: {
-              mode: ScalabilityMode.CLUSTER,
+              mode: ScalabilityMode.Cluster,
               maxNodes: 10,
               autoScaling: true
             }
@@ -108,7 +108,7 @@ const DeveloperTools: React.FC = () => {
       }
     };
 
-    initializeSystemInfo();
+    void initializeSystemInfo();
   }, []);
 
   // Initialize debug commands
@@ -189,7 +189,7 @@ const DeveloperTools: React.FC = () => {
     setDebugCommands(commands);
   }, []);
 
-  const executeCommand = useCallback(async (command: DebugCommand) => {
+  const executeCommand = useCallback((command: DebugCommand) => {
     setIsExecuting(true);
     setCommandOutput('');
     
@@ -201,22 +201,24 @@ const DeveloperTools: React.FC = () => {
           output = JSON.stringify(systemInfo, null, 2);
           break;
           
-        case 'memory-usage':
-          const memory = (performance as any).memory;
+        case 'memory-usage': {
+          const memory = (performance as { memory?: { usedJSHeapSize?: number; totalJSHeapSize?: number; jsHeapSizeLimit?: number } }).memory;
           output = JSON.stringify({
-            used: memory?.usedJSHeapSize || 0,
-            total: memory?.totalJSHeapSize || 0,
-            limit: memory?.jsHeapSizeLimit || 0,
+            used: memory?.usedJSHeapSize ?? 0,
+            total: memory?.totalJSHeapSize ?? 0,
+            limit: memory?.jsHeapSizeLimit ?? 0,
             timestamp: new Date().toISOString()
           }, null, 2);
           break;
+        }
           
-        case 'performance-metrics':
+        case 'performance-metrics': {
           const metrics = PerformanceMonitor.getInstance().getRecentMetrics(100);
           output = JSON.stringify(metrics, null, 2);
           break;
+        }
           
-        case 'error-summary':
+        case 'error-summary': {
           const errors = ErrorTracker.getInstance().getRecentErrors(100);
           const errorSummary = {
             total: errors.length,
@@ -232,8 +234,9 @@ const DeveloperTools: React.FC = () => {
           };
           output = JSON.stringify(errorSummary, null, 2);
           break;
+        }
           
-        case 'log-levels':
+        case 'log-levels': {
           const logger = Logger.getInstance();
           output = JSON.stringify({
             maxLevel: LogLevel[logger.getMaxLogLevel()],
@@ -243,29 +246,34 @@ const DeveloperTools: React.FC = () => {
             jsonEnabled: logger.isJsonEnabled()
           }, null, 2);
           break;
+        }
           
-        case 'scalability-status':
+        case 'scalability-status': {
           const scalability = ScalabilityManager.getInstance();
           const scalabilityMetrics = scalability.getScalabilityMetrics();
           output = JSON.stringify(scalabilityMetrics, null, 2);
           break;
+        }
           
-        case 'clear-logs':
+        case 'clear-logs': {
           Logger.getInstance().clearLogBuffer();
           output = 'Logs cleared successfully';
           break;
+        }
           
-        case 'clear-errors':
+        case 'clear-errors': {
           ErrorTracker.getInstance().clearErrors();
           output = 'Errors cleared successfully';
           break;
+        }
           
-        case 'clear-metrics':
+        case 'clear-metrics': {
           PerformanceMonitor.getInstance().clearMetrics();
           output = 'Metrics cleared successfully';
           break;
+        }
           
-        case 'export-data':
+        case 'export-data': {
           const exportData = {
             systemInfo,
             logs: Logger.getInstance().getRecentLogs(1000),
@@ -276,6 +284,7 @@ const DeveloperTools: React.FC = () => {
           };
           output = JSON.stringify(exportData, null, 2);
           break;
+        }
           
         default:
           output = `Command "${command.command}" not implemented`;
@@ -290,7 +299,7 @@ const DeveloperTools: React.FC = () => {
   }, [systemInfo]);
 
   const copyToClipboard = useCallback(() => {
-    navigator.clipboard.writeText(commandOutput);
+    void navigator.clipboard.writeText(commandOutput);
   }, [commandOutput]);
 
   const downloadOutput = useCallback(() => {
@@ -358,7 +367,7 @@ const DeveloperTools: React.FC = () => {
                   <div
                     key={command.id}
                     className="p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer"
-                    onClick={() => executeCommand(command)}
+                    onClick={() => { void executeCommand(command); }}
                   >
                     <div className="flex justify-between items-start">
                       <div>

@@ -6,15 +6,15 @@
  * and adaptive performance optimization.
  */
 
-import { Logger, LogLevel } from './logger';
-import { PerformanceMonitor, PerformanceMetricType } from './performance-monitor';
-import { ErrorTracker, ErrorSeverity, ErrorCategory } from './error-tracker';
+import { Logger } from './logger';
+import { PerformanceMonitor } from './performance-monitor';
+import { ErrorTracker } from './error-tracker';
 
 export enum ScalabilityMode {
-  SINGLE_INSTANCE = 'single_instance',
-  CLUSTER = 'cluster',
-  DISTRIBUTED = 'distributed',
-  CLOUD = 'cloud'
+  SingleInstance = 'single_instance',
+  Cluster = 'cluster',
+  Distributed = 'distributed',
+  Cloud = 'cloud'
 }
 
 export enum ResourceType {
@@ -26,12 +26,12 @@ export enum ResourceType {
 }
 
 export enum LoadBalancingStrategy {
-  ROUND_ROBIN = 'round_robin',
-  LEAST_CONNECTIONS = 'least_connections',
-  WEIGHTED_ROUND_ROBIN = 'weighted_round_robin',
-  LEAST_RESPONSE_TIME = 'least_response_time',
-  IP_HASH = 'ip_hash',
-  RANDOM = 'random'
+  RoundRobin = 'round_robin',
+  LeastConnections = 'least_connections',
+  WeightedRoundRobin = 'weighted_round_robin',
+  LeastResponseTime = 'least_response_time',
+  IpHash = 'ip_hash',
+  Random = 'random'
 }
 
 export interface ResourceLimits {
@@ -122,7 +122,7 @@ export class ScalabilityManager {
   private config: ClusterConfig;
   private nodes: Map<string, NodeInfo> = new Map();
   private isInitialized = false;
-  private monitoringInterval: NodeJS.Timeout | null = null;
+  private monitoringInterval: ReturnType<typeof setInterval> | null = null;
   private scalingCooldown: number = 0;
 
   private constructor() {
@@ -130,7 +130,7 @@ export class ScalabilityManager {
     this.performanceMonitor = PerformanceMonitor.getInstance();
     this.errorTracker = ErrorTracker.getInstance();
     this.config = {
-      mode: ScalabilityMode.SINGLE_INSTANCE,
+      mode: ScalabilityMode.SingleInstance,
       maxNodes: 1,
       minNodes: 1,
       autoScaling: false,
@@ -138,7 +138,7 @@ export class ScalabilityManager {
       scaleDownThreshold: 20,
       cooldownPeriod: 300000, // 5 minutes
       loadBalancer: {
-        strategy: LoadBalancingStrategy.ROUND_ROBIN,
+        strategy: LoadBalancingStrategy.RoundRobin,
         healthCheckInterval: 30000, // 30 seconds
         maxRetries: 3,
         timeout: 5000, // 5 seconds
@@ -158,7 +158,7 @@ export class ScalabilityManager {
   }
 
   public static getInstance(): ScalabilityManager {
-    if (!ScalabilityManager.instance) {
+    if (ScalabilityManager.instance == null) {
       ScalabilityManager.instance = new ScalabilityManager();
     }
     return ScalabilityManager.instance;
@@ -276,17 +276,17 @@ export class ScalabilityManager {
     }
 
     switch (this.config.loadBalancer.strategy) {
-      case LoadBalancingStrategy.ROUND_ROBIN:
+      case LoadBalancingStrategy.RoundRobin:
         return this.selectRoundRobin(activeNodes);
-      case LoadBalancingStrategy.LEAST_CONNECTIONS:
+      case LoadBalancingStrategy.LeastConnections:
         return this.selectLeastConnections(activeNodes);
-      case LoadBalancingStrategy.WEIGHTED_ROUND_ROBIN:
+      case LoadBalancingStrategy.WeightedRoundRobin:
         return this.selectWeightedRoundRobin(activeNodes);
-      case LoadBalancingStrategy.LEAST_RESPONSE_TIME:
+      case LoadBalancingStrategy.LeastResponseTime:
         return this.selectLeastResponseTime(activeNodes);
-      case LoadBalancingStrategy.IP_HASH:
+      case LoadBalancingStrategy.IpHash:
         return this.selectIPHash(activeNodes, requestId);
-      case LoadBalancingStrategy.RANDOM:
+      case LoadBalancingStrategy.Random:
         return this.selectRandom(activeNodes);
       default:
         return this.selectRoundRobin(activeNodes);
@@ -456,7 +456,7 @@ export class ScalabilityManager {
   }
 
   private setupMonitoring(): void {
-    if (this.config.mode === ScalabilityMode.SINGLE_INSTANCE) {
+    if (this.config.mode === ScalabilityMode.SingleInstance) {
       return;
     }
 
@@ -618,11 +618,11 @@ export class ScalabilityManager {
   }
 
   private selectIPHash(nodes: NodeInfo[], requestId?: string): NodeInfo {
-    if (!requestId) {
+    if ((requestId ?? '').length === 0) {
       return this.selectRandom(nodes);
     }
     
-    const hash = this.hashString(requestId);
+    const hash = this.hashString(requestId!);
     const index = hash % nodes.length;
     return nodes[index];
   }
@@ -665,7 +665,7 @@ export class ScalabilityManager {
   }
 
   public destroy(): void {
-    if (this.monitoringInterval) {
+    if (this.monitoringInterval != null) {
       clearInterval(this.monitoringInterval);
       this.monitoringInterval = null;
     }
