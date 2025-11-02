@@ -64,7 +64,7 @@ C:\chromium\src\toubkal\
 
 ---
 
-### 1.2 Link ToubkalBrowser Repository
+## 1.2 Link ToubkalBrowser Repository
 
 Your existing TypeScript/React code at `C:\ToubkalBrowser\` needs to be integrated:
 
@@ -124,9 +124,9 @@ toubkal\components\privacy\
 
 ---
 
-### 2.2 Create Initial BUILD.gn Files
+## 2.2 Create Initial BUILD.gn Files
 
-#### Root Toubkal BUILD.gn
+### Root Toubkal BUILD.gn
 
 Create `C:\chromium\src\toubkal\BUILD.gn`:
 
@@ -151,7 +151,7 @@ group("toubkal_tests") {
 }
 ```
 
-#### Privacy Component BUILD.gn
+## Privacy Component BUILD.gn
 
 Create `C:\chromium\src\toubkal\components\privacy\BUILD.gn`:
 
@@ -180,7 +180,7 @@ component("privacy") {
 }
 ```
 
-#### Fingerprinting BUILD.gn
+## Fingerprinting BUILD.gn
 
 Create `C:\chromium\src\toubkal\components\privacy\fingerprinting\BUILD.gn`:
 
@@ -226,9 +226,9 @@ source_set("fingerprinting_unittests") {
 
 ---
 
-### 2.3 Create Stub Implementation Files
+## 2.3 Create Stub Implementation Files
 
-#### Canvas Randomizer Header
+### Canvas Randomizer Header
 
 Create `C:\chromium\src\toubkal\components\privacy\fingerprinting\canvas_randomizer.h`:
 
@@ -349,7 +349,7 @@ group("gn_all") {
 }
 ```
 
-### 3.2 Create DEPS Entry (Optional)
+## 3.2 Create DEPS Entry (Optional)
 
 If you want Toubkal to fetch external dependencies, edit `C:\chromium\src\DEPS`:
 
@@ -381,7 +381,7 @@ cd C:\chromium\src
 .\buildtools\win\gn.exe gen out\Toubkal --args="is_debug=true is_component_build=true"
 ```
 
-### 4.2 Build Privacy Components
+## 4.2 Build Privacy Components
 
 ```powershell
 # Build just the privacy component
@@ -391,7 +391,7 @@ cd C:\chromium\src
 .\third_party\ninja\ninja.exe -C out\Toubkal toubkal:toubkal
 ```
 
-### 4.3 Run Tests
+## 4.3 Run Tests
 
 ```powershell
 # Build and run fingerprinting tests
@@ -517,7 +517,7 @@ sources = [
 ]
 ```
 
-### Incremental Build Issues
+## Incremental Build Issues
 
 ```powershell
 # Clean and rebuild

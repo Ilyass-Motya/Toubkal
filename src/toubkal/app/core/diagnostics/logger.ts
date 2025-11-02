@@ -249,7 +249,9 @@ export class Logger {
     try {
       const jsonStr = JSON.stringify(entry) + '\n';
       // Store in localStorage for now (would be replaced with proper file access)
+      // eslint-disable-next-line no-undef
       const existing = localStorage.getItem('toubkal_logs_json') ?? '';
+      // eslint-disable-next-line no-undef
       localStorage.setItem('toubkal_logs_json', existing + jsonStr);
     } catch (error) {
       console.error('[Logger] Failed to write JSON log:', error);
@@ -258,8 +260,10 @@ export class Logger {
 
   private logToLocalStorage(entry: LogEntry): void {
     try {
+      // eslint-disable-next-line no-undef
       const existing = localStorage.getItem('toubkal_logs') ?? '';
       const logLine = `[${entry.timestamp}] ${this.getLevelString(entry.level)} ${entry.component}: ${entry.message}\n`;
+      // eslint-disable-next-line no-undef
       localStorage.setItem('toubkal_logs', existing + logLine);
     } catch (error) {
       console.error('[Logger] Failed to write to localStorage:', error);
@@ -313,15 +317,9 @@ export class Logger {
       }
     }
 
-    // Redact URLs and queries (special handling for url field)
+    // Redact URLs completely in privacy mode
     if (typeof redacted.url === 'string') {
-      try {
-        const url = new URL(redacted.url as string);
-        // Only redact query parameters, keep the path
-        redacted.url = `${url.protocol}//${url.hostname}${url.pathname}`;
-      } catch {
-        redacted.url = '[REDACTED_URL]';
-      }
+      redacted.url = '[REDACTED_URL]';
     }
 
     return redacted;

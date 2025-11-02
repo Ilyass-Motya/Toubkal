@@ -1,8 +1,8 @@
 # Toubkal Browser API
 
-**Status**: Alpha (Unstable)  
-**Last Updated**: 2025-10-18  
-**Target Stability**: Stable 1.0 (Aug 2026)  
+**Status**: Alpha (Unstable)
+**Last Updated**: 2025-10-18
+**Target Stability**: Stable 1.0 (Aug 2026)
 **Location**: `/src/toubkal/browser/api/`
 
 ⚠️ **Warning**: This API may change without notice during Alpha/Beta phases.
@@ -363,7 +363,7 @@ interface Workspace {
 
 ## Rate Limits
 
-**Alpha Phase**: No rate limits  
+**Alpha Phase**: No rate limits
 **Stable 1.0+**: TBD (likely 1000 requests/hour for local APIs)
 
 ---

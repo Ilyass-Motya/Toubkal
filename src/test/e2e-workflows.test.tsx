@@ -94,7 +94,8 @@ describe('End-to-End Workflows', () => {
       render(
         <InternalPageRouter currentUrl={INTERNAL_PAGES.AI_SETTINGS} onNavigate={mockNavigate} />
       )
-      expect(screen.getByText('AI Settings')).toBeInTheDocument()
+      // Look for the heading specifically, not the navigation links
+      expect(screen.getByRole('heading', { name: 'AI Settings' })).toBeInTheDocument()
     })
   })
 
@@ -178,17 +179,18 @@ describe('End-to-End Workflows', () => {
       // Should show audit dashboard
       expect(screen.getByText('Transparency Dashboard')).toBeInTheDocument()
 
-      // Should show audit logs
+      // Should show audit logs section
       await waitFor(() => {
-        expect(screen.getByText('AI query processed using Ollama Llama 3.2')).toBeInTheDocument()
+        expect(screen.getByRole('heading', { name: 'Audit Logs' })).toBeInTheDocument()
+        expect(screen.getByText('No logs found')).toBeInTheDocument()
       })
 
       // Should allow filtering
-      const typeFilter = screen.getByLabelText('Filter by Operation Type')
-      fireEvent.change(typeFilter, { target: { value: 'ai_query' } })
+      const levelFilter = screen.getByLabelText('Level')
+      fireEvent.change(levelFilter, { target: { value: 'info' } })
 
-      // Should show filtered results
-      expect(screen.getByText('AI Queries')).toBeInTheDocument()
+      // Should show filtered results (level filter applied)
+      expect(screen.getByText('Info (0)')).toBeInTheDocument()
     })
   })
 
@@ -323,8 +325,8 @@ describe('End-to-End Workflows', () => {
       render(<InternalPageRouter currentUrl={INTERNAL_PAGES.AUDIT} />)
 
       // Should have form labels
-      expect(screen.getByLabelText('Filter by Operation Type')).toBeInTheDocument()
-      expect(screen.getByLabelText('Search Logs')).toBeInTheDocument()
+      expect(screen.getByLabelText('Level')).toBeInTheDocument()
+      expect(screen.getByLabelText('Search')).toBeInTheDocument()
     })
 
     it('should have proper heading hierarchy', () => {

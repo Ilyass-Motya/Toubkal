@@ -24,6 +24,26 @@ fi
 # Run lint-staged (only lint changed files)
 npx lint-staged
 
+# Validate documentation (only if docs changed)
+echo "📚 Checking documentation changes..."
+DOC_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(md|xml|txt)$' || true)
+if [ ! -z "$DOC_FILES" ]; then
+  echo "📝 Found documentation changes, validating..."
+  echo "Files: $DOC_FILES"
+  npm run validate-docs:strict
+  if [ $? -ne 0 ]; then
+    echo ""
+    echo "❌ Documentation validation failed"
+    echo "💡 Fix issues with: npm run validate-docs:fix"
+    echo "📖 See src/scripts/validate-documentation.ts for details"
+    exit 1
+  else
+    echo "✅ Documentation validation passed"
+  fi
+else
+  echo "ℹ️  No documentation changes detected"
+fi
+
 # For C++ files, run clang-format (if available)
 if command -v clang-format >/dev/null 2>&1; then
   git diff --cached --name-only --diff-filter=ACM | grep -E '\.(cc|h)$' | xargs clang-format -i

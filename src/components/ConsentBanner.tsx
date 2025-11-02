@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { getConsentManager } from '@/core/consent/consent-manager'
+import { getConsentManager } from '../toubkal/app/features/consent/services/consent-manager'
 
 interface ConsentBannerProps {
   actionType: 'AI_QUERY' | 'DATA_COLLECTION'

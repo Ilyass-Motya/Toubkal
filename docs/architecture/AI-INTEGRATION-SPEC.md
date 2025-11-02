@@ -1,7 +1,7 @@
 # Toubkal Browser — AI Integration Specification
 
-**Version:** 1.0  
-**Last Updated:** 2025-10-18  
+**Version:** 1.0
+**Last Updated:** 2025-10-18
 **Owner:** Ilyass Motya
 **Audience:** Engineering, AI/ML Team, Security
 
@@ -416,8 +416,8 @@ User: "Close all YouTube tabs"
 
 ### 1. AI Overlay (Sidebar)
 
-**Location**: Right-side panel (toggleable)  
-**Hotkey**: `Ctrl+Shift+I` (Windows/Linux), `Cmd+Shift+I` (macOS)  
+**Location**: Right-side panel (toggleable)
+**Hotkey**: `Ctrl+Shift+I` (Windows/Linux), `Cmd+Shift+I` (macOS)
 **Features**:
 
 - Text input for user queries
@@ -699,7 +699,7 @@ responseContainer.innerHTML = trustedHTML;  // Safe
 
 ---
 
-**Last Updated**: 2025-10-18  
+**Last Updated**: 2025-10-18
 **Next Review**: 2025-11-01
 
 ```

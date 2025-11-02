@@ -1,8 +1,8 @@
 # BMAD Agent Initialization Bible — Toubkal Browser
 
-**Document Type**: Agent Context Loading Instructions  
-**Last Updated**: 2025-10-18  
-**Status**: Mandatory Reading for All BMAD Agents  
+**Document Type**: Agent Context Loading Instructions
+**Last Updated**: 2025-10-18
+**Status**: Mandatory Reading for All BMAD Agents
 **Purpose**: Define which files each agent MUST load before executing tasks
 
 ---
@@ -56,7 +56,7 @@
 
 ## PM Agent (John) Context
 
-**Role**: Create PRDs, feature briefs, user stories  
+**Role**: Create PRDs, feature briefs, user stories
 **Responsibilities**: Requirements gathering, product strategy
 
 ### Required Files
@@ -79,15 +79,15 @@
 
 ### Example PM Task with Correct Context
 
-**Task**: Create feature brief for "Transparency Dashboard"  
-**Context Loaded**: ✅ PRD (privacy requirements), ✅ Privacy Policy (consent model), ✅ Brand Identity (tone)  
+**Task**: Create feature brief for "Transparency Dashboard"
+**Context Loaded**: ✅ PRD (privacy requirements), ✅ Privacy Policy (consent model), ✅ Brand Identity (tone)
 **Output**: Comprehensive feature brief with privacy-first approach, clear acceptance criteria, and Toubkal brand voice
 
 ---
 
 ## Architect Agent (Winston) Context
 
-**Role**: Technical design, ADRs, system architecture  
+**Role**: Technical design, ADRs, system architecture
 **Responsibilities**: Technology selection, architectural decisions, system design
 
 ### Required Files
@@ -127,7 +127,7 @@
 
 ## Dev Agent (Amelia) Context
 
-**Role**: Code implementation, technical execution  
+**Role**: Code implementation, technical execution
 **Responsibilities**: Feature implementation, bug fixes, code quality
 
 ### Required Files
@@ -158,7 +158,7 @@
 
 ## QA Agent (Murat) Context
 
-**Role**: Test strategy, quality assurance, validation  
+**Role**: Test strategy, quality assurance, validation
 **Responsibilities**: Test design, quality gates, validation processes
 
 ### Required Files
@@ -217,7 +217,7 @@
 
 ## SM Agent (Bob) Context
 
-**Role**: Story preparation, sprint planning, task breakdown  
+**Role**: Story preparation, sprint planning, task breakdown
 **Responsibilities**: User story creation, acceptance criteria, sprint coordination
 
 ### Required Files
@@ -251,7 +251,7 @@
 
 ## UX Agent (Sally) Context
 
-**Role**: User experience design, UI/UX strategy  
+**Role**: User experience design, UI/UX strategy
 **Responsibilities**: User interface design, user experience optimization
 
 ### Required Files
@@ -278,7 +278,7 @@
 
 ## Business Analyst (Mary) Context
 
-**Role**: Requirements analysis, business process optimization  
+**Role**: Requirements analysis, business process optimization
 **Responsibilities**: Business requirements, stakeholder analysis, process improvement
 
 ### Required Files
@@ -365,8 +365,8 @@
 
 ### Emergency Escalation
 
-**Context conflicts**: Escalate to BMad Master  
-**Missing context**: Check this Bible for required files  
+**Context conflicts**: Escalate to BMad Master
+**Missing context**: Check this Bible for required files
 **Quality issues**: Reference validation questions
 
 **Contact**:
@@ -377,8 +377,8 @@
 
 ---
 
-**Last Updated**: 2025-10-18  
-**Version**: 2.0 (Updated with agent feedback and PM decisions)  
+**Last Updated**: 2025-10-18
+**Version**: 2.0 (Updated with agent feedback and PM decisions)
 **Next Review**: Phase 1 Week 4 (Implementation Progress)
 
 **Questions?** Contact BMad Master or reference `BMAD-AGENT-GUIDE.md`

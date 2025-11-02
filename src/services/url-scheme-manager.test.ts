@@ -14,6 +14,15 @@ const mockPerformanceNow = vi.fn()
 Object.defineProperty(global, 'performance', {
   value: {
     now: mockPerformanceNow,
+    getEntriesByType: vi.fn(() => []),
+    getEntries: vi.fn(() => []),
+    mark: vi.fn(),
+    measure: vi.fn(),
+    memory: {
+      usedJSHeapSize: 1000000,
+      totalJSHeapSize: 2000000,
+      jsHeapSizeLimit: 4000000
+    }
   },
   writable: true,
 })

@@ -1,8 +1,8 @@
 # BMAD Agent Workflow Guide — Toubkal Browser
 
-**Document Type:** Development Workflow & Agent Coordination Guide  
-**Last Updated:** 2025-10-18  
-**Status:** Active  
+**Document Type:** Development Workflow & Agent Coordination Guide
+**Last Updated:** 2025-10-18
+**Status:** Active
 **Audience:** Developers, Product Team, BMAD Agents
 
 ---
@@ -84,8 +84,8 @@ graph TD
 
 ### Step 1: Market Research (Analyst)
 
-**Agent:** `@analyst`  
-**When:** New feature exploration, competitive analysis  
+**Agent:** `@analyst`
+**When:** New feature exploration, competitive analysis
 **Output:** Research brief, competitive landscape
 
 **Example:**
@@ -109,10 +109,10 @@ graph TD
 
 ---
 
-### Step 2: Product Requirements (PM)
+## Step 2: Product Requirements (PM)
 
-**Agent:** `@pm`  
-**When:** After research, before architecture  
+**Agent:** `@pm`
+**When:** After research, before architecture
 **Output:** PRD (Product Requirements Document)
 
 **Example:**
@@ -173,8 +173,8 @@ graph TD
 
 ### Step 3: Technical Architecture (Architect)
 
-**Agent:** `@architect`  
-**When:** After PRD, before implementation  
+**Agent:** `@architect`
+**When:** After PRD, before implementation
 **Output:** Architecture document, ADRs
 
 **Example:**
@@ -237,8 +237,8 @@ graph TD
 
 ### Step 4: Story Creation (SM)
 
-**Agent:** `@sm`  
-**When:** After architecture  
+**Agent:** `@sm`
+**When:** After architecture
 **Output:** Detailed story file with full context
 
 **Example:**
@@ -323,8 +323,8 @@ so that I can audit what data my browser processes.
 
 ### Step 5: Code Implementation (Dev)
 
-**Agent:** `@dev`  
-**When:** After SM drafts story (status: ready)  
+**Agent:** `@dev`
+**When:** After SM drafts story (status: ready)
 **Output:** Working code, passing tests
 
 **Example:**
@@ -397,8 +397,8 @@ so that I can audit what data my browser processes.
 
 ### Step 6: Quality Review (QA)
 
-**Agent:** `@qa`  
-**When:** After dev completes story  
+**Agent:** `@qa`
+**When:** After dev completes story
 **Output:** QA gate decision, test recommendations
 
 **Example:**
@@ -481,7 +481,7 @@ so that I can audit what data my browser processes.
 
 ### Step 7: Code Review & Merge
 
-**When:** After QA PASS (or CONCERNS addressed)  
+**When:** After QA PASS (or CONCERNS addressed)
 **Who:** Human reviewer or senior dev
 
 **Review Checklist:**
@@ -623,7 +623,7 @@ story_file:
 
 ---
 
-### 2. Quality Gates
+## 2. Quality Gates
 
 **Problem:** Code merged without proper QA review.
 
@@ -649,7 +649,7 @@ cat qa/gates/epic-1.1.story-1-privacy-dashboard.yml
 
 ---
 
-### 3. Numbered Lists for Choices
+## 3. Numbered Lists for Choices
 
 **Problem:** Users have to type full commands or names.
 
@@ -672,7 +672,7 @@ cat qa/gates/epic-1.1.story-1-privacy-dashboard.yml
 
 ---
 
-### 4. Agent Coordination
+## 4. Agent Coordination
 
 **Problem:** Agents work in silos, handoffs fail.
 
@@ -838,7 +838,7 @@ toubkal-browser/
 gh pr merge --squash
 ```
 
-### Debugging Flow
+## Debugging Flow
 
 ```bash
 # 1. Analyze bug
@@ -884,12 +884,12 @@ gh pr merge --squash
 
 ---
 
-**Document Owner:** Development Team  
-**Contributors:** BMAD Core Team, Engineering  
-**Review Cycle:** Monthly  
+**Document Owner:** Development Team
+**Contributors:** BMAD Core Team, Engineering
+**Review Cycle:** Monthly
 **Next Review:** 2025-11-18
 
 ---
 
-**Last Updated**: 2025-10-18  
+**Last Updated**: 2025-10-18
 **Version**: 2.0 (Updated for Toubkal Browser project structure and rules)

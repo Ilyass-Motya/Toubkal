@@ -145,7 +145,7 @@ describe('InternalPageRouter', () => {
       // Assert
       expect(screen.getByText('Transparency Dashboard')).toBeInTheDocument()
       expect(
-        screen.getByText('Real-time audit log of all Toubkal Browser operations')
+        screen.getByText('Real-time visibility into browser operations and privacy decisions')
       ).toBeInTheDocument()
     })
   })

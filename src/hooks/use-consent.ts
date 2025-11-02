@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { getConsentManager, type ConsentResponse } from '@/core/consent/consent-manager'
-import type { Result } from '@/types'
+import { getConsentManager, type ConsentResponse } from '../toubkal/app/features/consent/services/consent-manager'
+import type { Result } from '../toubkal/app/shared/types/CommonTypes'
 
 export interface UseConsentReturn {
   isLoading: boolean

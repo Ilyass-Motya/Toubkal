@@ -181,7 +181,9 @@ export const MCPPage: React.FC<MCPPageProps> = ({ initialFilter = 'all' }) => {
 
   // Auto-scroll logs to bottom
   useEffect(() => {
-    logsEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    if (logsEndRef.current && typeof logsEndRef.current.scrollIntoView === 'function') {
+      logsEndRef.current.scrollIntoView({ behavior: 'smooth' })
+    }
   }, [selectedServer, servers])
 
   const getPrivacyLevelColor = (level: string) => {

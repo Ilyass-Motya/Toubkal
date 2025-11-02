@@ -400,7 +400,7 @@ enable_parallel_builds=true
 ninja -C out/Release toubkal
 ```
 
-### Dependencies
+## Dependencies
 - **GN**: Meta-build system (part of Chromium depot_tools)
 - **Ninja**: Build execution backend
 - **Siso**: Distributed compilation system (Google internal, open-source alternative available)

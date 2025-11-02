@@ -2,6 +2,8 @@ import("//build/config/compiler/compiler.gni")
 
 source_set("toubkal_browser") {
   sources = [
+    "toubkal_browser_main.cc",
+    "toubkal_browser_main.h",
     "toubkal_content_browser_client.cc",
     "toubkal_content_browser_client.h",
   ]
@@ -11,7 +13,8 @@ source_set("toubkal_browser") {
     "//url",
     "//base",
     ":url_scheme_registration",
-    "//toubkal/browser/branding",
+    "//toubkal/browser/branding:branding",
+    "//toubkal/browser/privacy",
   ]
 
   public_deps = [

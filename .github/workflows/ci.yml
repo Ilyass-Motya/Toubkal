@@ -30,6 +30,9 @@ jobs:
       - name: Type check
         run: npx tsc --noEmit
 
+      - name: Validate documentation
+        run: npm run validate-docs:strict
+
       - name: Run tests with coverage
         run: npm run test:ci
 
@@ -99,6 +102,9 @@ jobs:
       - name: Lint check
         run: npm run lint
 
+      - name: Validate documentation
+        run: npm run validate-docs:strict
+
       - name: Run tests
         run: npm run test:coverage
 
@@ -159,6 +165,7 @@ jobs:
           echo "## 🎉 CI Pipeline Summary" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ ESLint check passed" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ TypeScript type check passed" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Documentation validation passed" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ Vitest tests with coverage passed" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ C++ formatting check passed" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ Multi-platform build verification passed" >> $GITHUB_STEP_SUMMARY

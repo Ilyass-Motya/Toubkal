@@ -1,8 +1,8 @@
 # Toubkal MCP Server API
 
-**Status**: Alpha (Unstable)  
-**Last Updated**: 2025-10-18  
-**Target Stability**: Beta (Jun 2026)  
+**Status**: Alpha (Unstable)
+**Last Updated**: 2025-10-18
+**Target Stability**: Beta (Jun 2026)
 **Protocol**: Model Context Protocol (MCP) Specification
 
 ⚠️ **Warning**: This API may change without notice during Alpha/Beta phases.
@@ -527,8 +527,8 @@ This server can:
 
 MCP servers display privacy labels (similar to App Store):
 
-🟢 **Local** - Runs entirely locally, no network access  
-🟡 **Network** - May send data to external servers  
+🟢 **Local** - Runs entirely locally, no network access
+🟡 **Network** - May send data to external servers
 🟠 **Cloud** - Requires cloud API (e.g., weather service)
 
 ---

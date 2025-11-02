@@ -8,11 +8,7 @@
 
 import { Logger } from './logger';
 
-// Browser APIs - these are used in the code
-declare global {
-  function requestAnimationFrame(callback: FrameRequestCallback): number;
-  function cancelAnimationFrame(id: number): void;
-}
+// Browser APIs
 
 export enum PerformanceMetricType {
   PageLoad = 'page_load',
@@ -105,8 +101,10 @@ export class PerformanceMonitor {
   private metrics: Map<string, PerformanceMetric> = new Map();
   private snapshots: PerformanceSnapshot[] = [];
   private isInitialized = false;
+  private isInitializing = false;
   private monitoringInterval: ReturnType<typeof setInterval> | null = null;
   private observers: Map<string, PerformanceObserver> = new Map();
+  private animationFrameId: number | null = null;
   private metricCounter = 0;
 
   private constructor() {
@@ -147,10 +145,18 @@ export class PerformanceMonitor {
   }
 
   public initialize(config: Partial<PerformanceMonitorConfig> = {}): void {
+    if (this.isInitialized || this.isInitializing) {
+      // If already initialized, just update the config
+      this.config = { ...this.config, ...config };
+      return;
+    }
+    
+    this.isInitializing = true;
     this.config = { ...this.config, ...config };
     this.setupPerformanceObservers();
     this.startMonitoring();
     this.isInitialized = true;
+    this.isInitializing = false;
     
     this.logger.info('PerformanceMonitor', 'Performance monitoring system initialized', {
       samplingInterval: this.config.samplingInterval,
@@ -165,7 +171,7 @@ export class PerformanceMonitor {
     unit: string,
     context: Record<string, unknown> = {}
   ): string {
-    if (!this.isInitialized) {
+    if (!this.isInitialized && !this.isInitializing) {
       this.initialize();
     }
 
@@ -371,6 +377,9 @@ export class PerformanceMonitor {
     if (typeof window === 'undefined') return;
 
     window.addEventListener('load', () => {
+      // Only track if we're already initialized to avoid circular calls
+      if (!this.isInitialized) return;
+      
       const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
       
       if (navigation != null) {
@@ -462,6 +471,7 @@ export class PerformanceMonitor {
     const trackInteraction = (event: Event) => {
       const startTime = performance.now();
       
+      // eslint-disable-next-line no-undef
       requestAnimationFrame(() => {
         const endTime = performance.now();
         const duration = endTime - startTime;
@@ -509,10 +519,12 @@ export class PerformanceMonitor {
         );
       }
       
-      requestAnimationFrame(trackFrame);
+      // eslint-disable-next-line no-undef
+      this.animationFrameId = requestAnimationFrame(trackFrame);
     };
 
-    requestAnimationFrame(trackFrame);
+    // eslint-disable-next-line no-undef
+    this.animationFrameId = requestAnimationFrame(trackFrame);
   }
 
   private setupJavaScriptObserver(): void {
@@ -577,6 +589,13 @@ export class PerformanceMonitor {
       this.monitoringInterval = null;
     }
 
+    // Cancel animation frame
+    if (this.animationFrameId != null) {
+      // eslint-disable-next-line no-undef
+      cancelAnimationFrame(this.animationFrameId);
+      this.animationFrameId = null;
+    }
+
     // Disconnect all observers
     this.observers.forEach(observer => observer.disconnect());
     this.observers.clear();
@@ -628,14 +647,9 @@ export class PerformanceMonitor {
     delete sanitized.sessionId;
     delete sanitized.ipAddress;
     
-    // Sanitize URLs
+    // Completely redact URLs in privacy mode
     if (typeof sanitized.url === 'string' && sanitized.url.length > 0) {
-      try {
-        const url = new URL(sanitized.url as string);
-        sanitized.url = `${url.protocol}//${url.hostname}${url.pathname}`;
-      } catch {
-        sanitized.url = '[REDACTED_URL]';
-      }
+      sanitized.url = '[REDACTED_URL]';
     }
     
     return sanitized;
@@ -754,5 +768,34 @@ export class PerformanceMonitor {
     this.stopMonitoring();
     this.clearMetrics();
     this.isInitialized = false;
+    this.isInitializing = false;
+    
+    // Reset config to default values
+    this.config = {
+      enablePageLoadTracking: true,
+      enableMemoryTracking: true,
+      enableCPUTracking: true,
+      enableNetworkTracking: true,
+      enableUserInteractionTracking: true,
+      enableRenderingTracking: true,
+      enableJavaScriptTracking: true,
+      enableResourceTracking: true,
+      samplingInterval: 1000, // 1 second
+      maxMetricsPerSnapshot: 1000,
+      enableRealTimeMonitoring: true,
+      enablePerformanceAlerts: true,
+      alertThresholds: {
+        [PerformanceMetricType.PageLoad]: 3000, // 3 seconds
+        [PerformanceMetricType.MemoryUsage]: 100 * 1024 * 1024, // 100MB
+        [PerformanceMetricType.CpuUsage]: 80, // 80%
+        [PerformanceMetricType.NetworkRequest]: 5000, // 5 seconds
+        [PerformanceMetricType.UserInteraction]: 100, // 100ms
+        [PerformanceMetricType.Rendering]: 16.67, // 60fps
+        [PerformanceMetricType.JavaScriptExecution]: 50, // 50ms
+        [PerformanceMetricType.ResourceLoading]: 2000, // 2 seconds
+        [PerformanceMetricType.NetworkLatency]: 1000 // 1 second
+      },
+      privacyMode: true
+    };
   }
 }

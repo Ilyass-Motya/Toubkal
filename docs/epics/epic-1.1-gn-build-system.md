@@ -177,7 +177,7 @@ time autoninja -C out/Release toubkal
 # Expected: Identical checksums on Linux, macOS, Windows
 ```
 
-### GN Configuration Validation
+## GN Configuration Validation
 ```bash
 # Dependency graph validation
 gn desc out/Release //toubkal:toubkal deps --tree

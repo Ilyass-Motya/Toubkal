@@ -1,8 +1,8 @@
 # ADR-XXX: [Title]
 
 **Status**: Proposed | Accepted | Deprecated | Superseded by [ADR-XXX]
-**Date**: YYYY-MM-DD  
-**Deciders**: Ilyass Motya, Engineering Team  
+**Date**: YYYY-MM-DD
+**Deciders**: Ilyass Motya, Engineering Team
 **Technical Story**: [Link to PRD section or GitHub issue]
 
 ---

@@ -120,7 +120,7 @@ autoninja -C out/Release toubkal
 
 ---
 
-### Fix #4: MCP Spec Version
+## Fix #4: MCP Spec Version
 
 **Problem**: MCP integration section didn't specify protocol version.
 

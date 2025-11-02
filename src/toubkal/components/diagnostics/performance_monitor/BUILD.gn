@@ -1,0 +1,91 @@
+# Performance Monitor Build Configuration
+# 
+# Builds the C++ performance monitoring system for Toubkal Browser diagnostics.
+
+import("//build/config/compiler/compiler.gni")
+
+static_library("performance_monitor") {
+  sources = [
+    "performance_monitor.h",
+    "performance_monitor.cc",
+  ]
+
+  public_deps = [
+    "//base",
+    "//base:base_static",
+    "//toubkal/components/diagnostics/logging:logging",
+  ]
+
+  deps = [
+    "//base",
+    "//base:base_static",
+    "//toubkal/components/diagnostics/logging:logging",
+  ]
+
+  # Include directories
+  include_dirs = [
+    "//toubkal/components/diagnostics",
+    "//toubkal/components/diagnostics/performance_monitor",
+    "//toubkal/components/diagnostics/logging",
+  ]
+
+  # Compiler flags
+  cflags = [
+    "-std=c++17",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+  ]
+
+  cflags_cc = [
+    "-std=c++17",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+  ]
+
+  # Define macros
+  defines = [
+    "TOUBKAL_PERFORMANCE_MONITOR_IMPLEMENTATION",
+  ]
+}
+
+# Test target for performance monitor
+test("performance_monitor_test") {
+  sources = [
+    "performance_monitor_test.cc",
+  ]
+
+  deps = [
+    ":performance_monitor",
+    "//base",
+    "//base:base_static",
+    "//base/test:test_support",
+    "//testing/gtest",
+    "//toubkal/components/diagnostics/logging:logging",
+  ]
+
+  include_dirs = [
+    "//toubkal/components/diagnostics",
+    "//toubkal/components/diagnostics/performance_monitor",
+    "//toubkal/components/diagnostics/logging",
+  ]
+
+  cflags = [
+    "-std=c++17",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+  ]
+
+  cflags_cc = [
+    "-std=c++17",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+  ]
+
+  defines = [
+    "TOUBKAL_PERFORMANCE_MONITOR_IMPLEMENTATION",
+  ]
+}

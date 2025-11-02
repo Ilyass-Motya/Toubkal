@@ -255,7 +255,7 @@ grep -r "EVP_PKEY_ED25519" include/
 # Expected: openssl/evp.h:#define EVP_PKEY_ED25519
 ```
 
-### Siso Availability (P1 — High)
+## Siso Availability (P1 — High)
 
 ```bash
 # Check if Siso is enabled by default in Chromium 131
@@ -263,7 +263,7 @@ gn args out/Release --list | grep use_siso
 # Expected: use_siso = true (default)
 ```
 
-### MCP Spec Version (P1 — High)
+## MCP Spec Version (P1 — High)
 
 ```bash
 # Verify Anthropic MCP GitHub has 2024-11-05 spec
@@ -271,7 +271,7 @@ curl https://api.github.com/repos/modelcontextprotocol/specification/tags
 # Verify 2024-11-05 tag exists
 ```
 
-### Ninja Fallback (P1 — High)
+## Ninja Fallback (P1 — High)
 
 ```bash
 # Test switching from Siso to Ninja
@@ -283,7 +283,7 @@ gn gen out/Release --args="use_siso=false"
 autoninja -C out/Release chrome
 ```
 
-### URL Scheme Registration (P2 — Medium)
+## URL Scheme Registration (P2 — Medium)
 
 ```bash
 # Verify AddWebDisplayableScheme() API exists in Chromium 131

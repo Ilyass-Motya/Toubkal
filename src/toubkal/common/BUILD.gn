@@ -1,0 +1,31 @@
+# Toubkal Browser Common Module BUILD.gn
+#
+# Build configuration for common Toubkal components including
+# Mojo interfaces and shared utilities.
+
+import("//build/config/features.gni")
+import("//mojo/public/tools/bindings/mojom.gni")
+
+# Generate Mojo bindings for privacy interfaces
+mojom("privacy") {
+  sources = [
+    "privacy.mojom",
+  ]
+  
+  public_deps = [
+    "//mojo/public/mojom/base",
+  ]
+}
+
+# Common utilities (if any are added later)
+source_set("common") {
+  sources = []
+  
+  deps = [
+    "//base",
+  ]
+  
+  public_deps = [
+    "//base",
+  ]
+}

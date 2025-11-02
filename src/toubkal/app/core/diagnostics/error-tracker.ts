@@ -31,7 +31,7 @@ export enum ErrorCategory {
   UNKNOWN = 'unknown'
 }
 
-export interface ErrorContext {
+export interface ErrorContext extends Record<string, unknown> {
   userId?: string;
   sessionId?: string;
   url?: string;

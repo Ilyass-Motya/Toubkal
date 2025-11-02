@@ -6,8 +6,8 @@
  */
 
 import React from 'react'
-import { INTERNAL_PAGES } from '@/constants/url-schemes'
-import { PrivacySettings } from '@/components/settings/PrivacySettings'
+import { INTERNAL_PAGES } from '../../toubkal/app/shared/constants/url-schemes'
+import { PrivacySettings } from '../../toubkal/app/features/privacy-settings/components/PrivacySettings'
 
 interface SettingsPageProps {
   currentSection?: string

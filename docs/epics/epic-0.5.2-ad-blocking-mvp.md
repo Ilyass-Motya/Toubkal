@@ -271,7 +271,7 @@ valgrind --tool=massif ./toubkal --test-ad-blocking-memory
 # Expected: 90-95% blocking success rate
 ```
 
-### Manual Testing
+## Manual Testing
 
 1. **Top 100 Sites Test**: Visit top 100 sites, verify no ads visible
 2. **YouTube Ad Blocking**: Watch 10 videos, verify pre-roll/mid-roll ads blocked

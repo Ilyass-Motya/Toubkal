@@ -46,7 +46,7 @@ export PATH="$PATH:$(pwd)/depot_tools"
 echo 'export PATH="$PATH:$(pwd)/depot_tools"' >> ~/.bashrc
 ```
 
-#### macOS
+## macOS
 ```bash
 # Install Xcode Command Line Tools
 xcode-select --install
@@ -63,7 +63,7 @@ export PATH="$PATH:$(pwd)/depot_tools"
 echo 'export PATH="$PATH:$(pwd)/depot_tools"' >> ~/.zshrc
 ```
 
-#### Windows
+## Windows
 ```powershell
 # Install Chocolatey (if not already installed)
 Set-ExecutionPolicy Bypass -Scope Process -Force
@@ -92,9 +92,9 @@ cd C:\ToubkalBrowser
 git submodule update --init --recursive
 ```
 
-### 2. Configure Chromium Synchronization
+## 2. Configure Chromium Synchronization
 
-#### Create .gclient Configuration
+### Create .gclient Configuration
 
 Copy the provided `.gclient.template` to `.gclient`:
 
@@ -142,7 +142,7 @@ This will:
 4. Set up the build environment
 5. Verify the setup integrity
 
-#### Manual Sync (if needed)
+## Manual Sync (if needed)
 
 ```bash
 # Navigate to the src directory
@@ -155,9 +155,9 @@ gclient sync
 gclient runhooks
 ```
 
-### 4. Verify Setup
+## 4. Verify Setup
 
-#### Check Sync Integrity
+### Check Sync Integrity
 
 ```bash
 # Verify Chromium source is complete
@@ -171,7 +171,7 @@ gclient status
 gn gen out/Default --args="$(cat ../../args.gn)"
 ```
 
-#### Test Build System
+## Test Build System
 
 ```bash
 # Run a test build
@@ -206,7 +206,7 @@ use_goma = true          # Distributed compilation
 use_sccache = true       # Compilation caching
 ```
 
-### Build Targets
+## Build Targets
 
 Available build targets:
 
@@ -260,7 +260,7 @@ gclient runhooks
 ./scripts/build.sh --target=Default
 ```
 
-#### Handling Merge Conflicts
+## Handling Merge Conflicts
 
 When Chromium updates conflict with Toubkal changes:
 
@@ -273,7 +273,7 @@ When Chromium updates conflict with Toubkal changes:
    ```bash
    # Edit conflicted files
    git mergetool
-   
+
    # Test resolution
    ./scripts/build.sh --target=Default
    ```
@@ -299,7 +299,7 @@ gclient sync --force
 gclient sync --jobs=1
 ```
 
-#### Build Failures
+## Build Failures
 
 **Problem**: Build fails with missing dependencies
 **Solution**:
@@ -308,7 +308,7 @@ gclient sync --jobs=1
 ./scripts/setup-build.sh --clean
 ```
 
-#### Permission Issues
+## Permission Issues
 
 **Problem**: Permission denied errors on Linux/macOS
 **Solution**:
@@ -318,9 +318,9 @@ sudo chown -R $(whoami) .
 chmod +x scripts/*.sh
 ```
 
-### Network Monitoring
+## Network Monitoring
 
-#### Verify Zero Unsanctioned Requests
+### Verify Zero Unsanctioned Requests
 
 ```bash
 # Monitor network during build (Linux/macOS)
@@ -332,7 +332,7 @@ sudo pkill tcpdump
 tcpdump -r build-traffic.pcap | grep -v "allowed-domains"
 ```
 
-#### Allowed Network Endpoints
+## Allowed Network Endpoints
 
 The build system is configured to only access:
 - `chromium.googlesource.com` - Chromium source code

@@ -185,7 +185,7 @@ git diff --cached --name-only --diff-filter=ACM | grep -E '\.(cc|h)$' | xargs cl
 git diff --cached --name-only --diff-filter=ACM | xargs git add
 ```
 
-#### 3. Configure lint-staged
+## 3. Configure lint-staged
 
 `package.json`:
 
@@ -267,7 +267,7 @@ SpacesInAngles: false
 Standard: c++17
 ```
 
-### Add Git Hook (Already in Husky pre-commit)
+## Add Git Hook (Already in Husky pre-commit)
 
 ```bash
 # .husky/pre-commit (already added above)
@@ -947,7 +947,7 @@ Create `docs/product/ACCEPTANCE-CRITERIA-TEMPLATE.md`:
 
 ---
 
-### Mistake 2: "ESLint warnings are fine"
+## Mistake 2: "ESLint warnings are fine"
 
 **Problem**: Developers ignore warnings. Warnings become 100s of violations.
 
@@ -979,7 +979,7 @@ npx lint-staged
 
 ---
 
-### Mistake 4: "Manual testing is enough"
+## Mistake 4: "Manual testing is enough"
 
 **Problem**: Manual testing doesn't scale. QA becomes bottleneck.
 

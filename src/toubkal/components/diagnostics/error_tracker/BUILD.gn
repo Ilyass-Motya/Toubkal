@@ -1,0 +1,91 @@
+# Error Tracker Build Configuration
+# 
+# Builds the C++ error tracking system for Toubkal Browser diagnostics.
+
+import("//build/config/compiler/compiler.gni")
+
+static_library("error_tracker") {
+  sources = [
+    "error_tracker.h",
+    "error_tracker.cc",
+  ]
+
+  public_deps = [
+    "//base",
+    "//base:base_static",
+    "//toubkal/components/diagnostics/logging:logging",
+  ]
+
+  deps = [
+    "//base",
+    "//base:base_static",
+    "//toubkal/components/diagnostics/logging:logging",
+  ]
+
+  # Include directories
+  include_dirs = [
+    "//toubkal/components/diagnostics",
+    "//toubkal/components/diagnostics/error_tracker",
+    "//toubkal/components/diagnostics/logging",
+  ]
+
+  # Compiler flags
+  cflags = [
+    "-std=c++17",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+  ]
+
+  cflags_cc = [
+    "-std=c++17",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+  ]
+
+  # Define macros
+  defines = [
+    "TOUBKAL_ERROR_TRACKER_IMPLEMENTATION",
+  ]
+}
+
+# Test target for error tracker
+test("error_tracker_test") {
+  sources = [
+    "error_tracker_test.cc",
+  ]
+
+  deps = [
+    ":error_tracker",
+    "//base",
+    "//base:base_static",
+    "//base/test:test_support",
+    "//testing/gtest",
+    "//toubkal/components/diagnostics/logging:logging",
+  ]
+
+  include_dirs = [
+    "//toubkal/components/diagnostics",
+    "//toubkal/components/diagnostics/error_tracker",
+    "//toubkal/components/diagnostics/logging",
+  ]
+
+  cflags = [
+    "-std=c++17",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+  ]
+
+  cflags_cc = [
+    "-std=c++17",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+  ]
+
+  defines = [
+    "TOUBKAL_ERROR_TRACKER_IMPLEMENTATION",
+  ]
+}

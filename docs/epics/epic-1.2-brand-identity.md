@@ -203,7 +203,7 @@ src/toubkal/mojo/ui/
 4. Export audit log → Verify JSON/CSV/PDF export works
 ```
 
-### Automated Tests
+## Automated Tests
 ```cpp
 // URL scheme registration test
 TEST_F(URLSchemeTest, ToubkalSchemeRegistered) {

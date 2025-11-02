@@ -622,7 +622,7 @@ export class ScalabilityManager {
       return this.selectRandom(nodes);
     }
     
-    const hash = this.hashString(requestId!);
+    const hash = this.hashString(requestId ?? '');
     const index = hash % nodes.length;
     return nodes[index];
   }

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<story-context>
+  <metadata>
+    <story-id>1.10</story-id>
+    <story-title>Fix C++ Compilation Errors and Enable Toubkal Browser</story-title>
+    <epic-id>1</epic-id>
+    <status>Ready</status>
+    <created-date>2025-01-27</created-date>
+    <context-version>1.0</context-version>
+  </metadata>
+
+  <story>
+    <as-a>developer</as-a>
+    <i-want>the Toubkal C++ code to compile successfully and integrate with the Chromium build system</i-want>
+    <so-that>I can build and run the actual Toubkal browser with working `toubkal://` URL schemes instead of just standard Chrome</so-that>
+  </story>
+
+  <acceptance-criteria>
+    <criterion id="1">All Toubkal C++ components compile without errors</criterion>
+    <criterion id="2">Toubkal browser builds successfully using GN + Ninja</criterion>
+    <criterion id="3">`toubkal://` URL scheme is registered and functional</criterion>
+    <criterion id="4">Toubkal browser launches with proper branding</criterion>
+    <criterion id="5">`toubkal://settings` and other internal pages work correctly</criterion>
+    <criterion id="6">Privacy components integrate with the browser engine</criterion>
+    <criterion id="7">Build system includes all Toubkal components in the build</criterion>
+  </acceptance-criteria>
+
+  <artifacts>
+    <docs>
+      <doc path="docs/PRODUCT-ROADMAP.md" title="Toubkal Browser Product Roadmap" section="Phase 1: Privacy Foundation">
+        <snippet>Phase 1 establishes cryptographically verifiable privacy, zero-telemetry baseline, and Toubkal brand identity. Core deliverables include GN + Siso build system, brand identity implementation, consent fabric, and transparency dashboard.</snippet>
+      </doc>
+      <doc path="docs/PRIVACY-ETHICS-POLICY.md" title="Privacy & Ethics Policy" section="1. Foundational Privacy Principles">
+        <snippet>Toubkal's privacy model is mathematically verifiable. Every data flow is cryptographically signed (Ed25519), every AI operation requires explicit consent, and every claim is auditable by independent third parties.</snippet>
+      </doc>
+      <doc path="CODING-RULES.md" title="Toubkal Browser Coding Rules" section="C++ Rules">
+        <snippet>Critical C++ rules include: NO bare string throws (use Error objects), NO unhandled promises (always await or .catch()), NO 'any' type (use unknown + type guards), NO silent error swallowing (always log errors with context), NO non-null assertions (use proper null checking).</snippet>
+      </doc>
+    </docs>
+
+    <code>
+      <file path="src/toubkal/browser/BUILD.gn" kind="build-config" symbol="toubkal_browser" lines="1-46" reason="Main build configuration for Toubkal browser components, includes URL scheme registration and branding dependencies">
+        <snippet>source_set("toubkal_browser") with deps on content/public/browser, url, base, url_scheme_registration, and toubkal/browser/branding. Includes C++17 support.</snippet>
+      </file>
+      <file path="src/toubkal/browser/url/url_scheme_registration.cc" kind="implementation" symbol="RegisterToubkalUrlScheme" lines="45-50" reason="Core URL scheme registration function that needs to be called during browser initialization">
+        <snippet>Registers toubkal:// as a standard, secure, local, and web-displayable scheme using url::AddStandardScheme("toubkal", url::SCHEME_WITH_HOST).</snippet>
+      </file>
+      <file path="src/toubkal/browser/url/url_scheme_registration.h" kind="header" symbol="RegisterToubkalUrlScheme" reason="Header file declaring URL scheme registration functions">
+        <snippet>Declares RegisterToubkalUrlScheme(), GetToubkalRedirectUrl(), IsValidToubkalInternalUrl(), and GetSupportedToubkalInternalPages() functions.</snippet>
+      </file>
+      <file path="src/toubkal/browser/toubkal_content_browser_client.cc" kind="implementation" symbol="ToubkalContentBrowserClient" reason="Main browser client that needs to integrate URL scheme registration">
+        <snippet>Content browser client that should call RegisterToubkalUrlScheme() during initialization to register the toubkal:// scheme.</snippet>
+      </file>
+      <file path="src/toubkal/browser/branding/BUILD.gn" kind="build-config" symbol="toubkal_branding" reason="Branding build configuration that needs to be uncommented and integrated">
+        <snippet>Build configuration for Toubkal branding components including window title manager, branding config, and branding integration.</snippet>
+      </file>
+      <file path="src/toubkal/browser/privacy/BUILD.gn" kind="build-config" symbol="privacy_components" reason="Privacy components build configuration">
+        <snippet>Build configuration for privacy components including fingerprinting protection, tracker blocker, and Brave shields manager.</snippet>
+      </file>
+    </code>
+
+    <dependencies>
+      <ecosystem name="Chromium">
+        <package name="content/public/browser" version="latest" reason="Required for browser client integration"/>
+        <package name="url" version="latest" reason="Required for URL scheme registration"/>
+        <package name="base" version="latest" reason="Required for logging and basic utilities"/>
+      </ecosystem>
+      <ecosystem name="Toubkal">
+        <package name="toubkal/browser/branding" version="latest" reason="Required for Toubkal branding integration"/>
+        <package name="toubkal/browser/privacy" version="latest" reason="Required for privacy components integration"/>
+        <package name="toubkal/browser/url" version="latest" reason="Required for URL scheme registration"/>
+      </ecosystem>
+    </dependencies>
+  </artifacts>
+
+  <interfaces>
+    <interface name="RegisterToubkalUrlScheme" kind="function" signature="void RegisterToubkalUrlScheme()" path="src/toubkal/browser/url/url_scheme_registration.h" reason="Core function to register toubkal:// URL scheme with Chromium"/>
+    <interface name="GetToubkalRedirectUrl" kind="function" signature="GURL GetToubkalRedirectUrl(const GURL& chrome_url)" path="src/toubkal/browser/url/url_scheme_registration.h" reason="Function to redirect chrome:// URLs to toubkal:// URLs"/>
+    <interface name="IsValidToubkalInternalUrl" kind="function" signature="bool IsValidToubkalInternalUrl(const GURL& url)" path="src/toubkal/browser/url/url_scheme_registration.h" reason="Function to validate toubkal:// internal URLs"/>
+    <interface name="ToubkalContentBrowserClient" kind="class" signature="class ToubkalContentBrowserClient : public ContentBrowserClient" path="src/toubkal/browser/toubkal_content_browser_client.h" reason="Main browser client class that needs to integrate URL scheme registration"/>
+  </interfaces>
+
+  <constraints>
+    <constraint type="compilation">All C++ code must compile without errors or warnings</constraint>
+    <constraint type="build-system">Must integrate with Chromium GN + Ninja build system</constraint>
+    <constraint type="url-scheme">toubkal:// URL scheme must be registered as standard, secure, local, and web-displayable</constraint>
+    <constraint type="branding">Toubkal branding must replace Chrome branding in built browser</constraint>
+    <constraint type="privacy">Privacy components must integrate with browser's network stack</constraint>
+    <constraint type="compatibility">Must maintain Chromium compatibility and follow Chromium patterns</constraint>
+    <constraint type="testing">All functionality must be testable and verified</constraint>
+  </constraints>
+
+  <tests>
+    <standards>
+      All C++ code must compile without warnings, full browser build must complete successfully, toubkal:// URLs must work (not fall back to search), internal pages must load correctly, privacy components must be functional. Testing should include unit tests for individual components, integration tests for URL scheme registration, and end-to-end tests for complete browser functionality.
+    </standards>
+    <locations>
+      <location>src/toubkal/browser/url/*_test.cc</location>
+      <location>src/toubkal/browser/branding/*_test.cc</location>
+      <location>src/toubkal/browser/privacy/*_test.cc</location>
+    </locations>
+    <ideas>
+      <test id="AC1" description="Test that all Toubkal C++ components compile individually and as part of the full build"/>
+      <test id="AC2" description="Test that gn gen and autoninja commands complete successfully with Toubkal components"/>
+      <test id="AC3" description="Test that toubkal:// URLs are registered and don't fall back to Google search"/>
+      <test id="AC4" description="Test that Toubkal branding appears in browser window title and about page"/>
+      <test id="AC5" description="Test that toubkal://settings, toubkal://about, and other internal pages load correctly"/>
+      <test id="AC6" description="Test that privacy components are functional in the actual browser context"/>
+      <test id="AC7" description="Test that all Toubkal components are included in the build output"/>
+    </ideas>
+  </tests>
+
+  <current-problem>
+    <issue>Standard Chromium builds successfully (55,119 files compiled) but Toubkal C++ code has compilation errors</issue>
+    <issue>Missing includes (base/strings/string_piece.h), deprecated APIs (NonNetworkURLLoaderFactoryInfo), namespace issues (std::vector, url::AddStandardScheme)</issue>
+    <issue>toubkal:// URLs don't work - they fall back to Google search because scheme isn't registered</issue>
+    <issue>No actual Toubkal browser - just standard Chrome with different name</issue>
+  </current-problem>
+
+  <implementation-notes>
+    <note>Fix all C++ compilation errors in Toubkal components before attempting build integration</note>
+    <note>URL scheme registration must be called during browser initialization in ToubkalContentBrowserClient</note>
+    <note>Build system integration requires updating src/toubkal/browser/BUILD.gn to include all components</note>
+    <note>Branding integration requires uncommenting and fixing //toubkal/browser/branding target</note>
+    <note>Privacy components must be connected to browser's network service for proper integration</note>
+    <note>All internal pages (settings, about, audit, consent, etc.) must be implemented and functional</note>
+  </implementation-notes>
+</story-context>

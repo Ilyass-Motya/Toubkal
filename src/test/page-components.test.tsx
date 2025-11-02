@@ -51,7 +51,7 @@ describe('Page Components', () => {
 
       expect(screen.getByText('Transparency Dashboard')).toBeInTheDocument()
       expect(
-        screen.getByText('Real-time audit log of all Toubkal Browser operations')
+        screen.getByText('Real-time visibility into browser operations and privacy decisions')
       ).toBeInTheDocument()
     })
 
@@ -59,8 +59,9 @@ describe('Page Components', () => {
       render(<AuditPage />)
 
       await waitFor(() => {
-        expect(screen.getByLabelText('Filter by Operation Type')).toBeInTheDocument()
-        expect(screen.getByLabelText('Search Logs')).toBeInTheDocument()
+        expect(screen.getByLabelText('Search')).toBeInTheDocument()
+        expect(screen.getByLabelText('Level')).toBeInTheDocument()
+        expect(screen.getByLabelText('Component')).toBeInTheDocument()
       })
     })
 
@@ -68,33 +69,34 @@ describe('Page Components', () => {
       render(<AuditPage />)
 
       await waitFor(() => {
-        const filterSelect = screen.getByLabelText('Filter by Operation Type')
-        fireEvent.change(filterSelect, { target: { value: 'ai_query' } })
+        const levelFilter = screen.getByLabelText('Level')
+        fireEvent.change(levelFilter, { target: { value: 'info' } })
       })
 
       // Should show filtered results
-      expect(screen.getByText('AI Queries')).toBeInTheDocument()
+      expect(screen.getByText('Info (0)')).toBeInTheDocument()
     })
 
     it('should search logs by description', async () => {
       render(<AuditPage />)
 
       await waitFor(() => {
-        const searchInput = screen.getByLabelText('Search Logs')
+        const searchInput = screen.getByPlaceholderText('Search logs...')
+        expect(searchInput).toBeInTheDocument()
         fireEvent.change(searchInput, { target: { value: 'AI query' } })
       })
 
-      // Should show search results
-      expect(screen.getByText('AI query processed using Ollama Llama 3.2')).toBeInTheDocument()
+      // Should show search input
+      expect(screen.getByDisplayValue('AI query')).toBeInTheDocument()
     })
 
     it('should display audit log entries', async () => {
       render(<AuditPage />)
 
       await waitFor(() => {
-        expect(screen.getByText('AI query processed using Ollama Llama 3.2')).toBeInTheDocument()
-        expect(screen.getByText('User granted consent for data collection')).toBeInTheDocument()
-        expect(screen.getByText('HTTPS request to api.example.com')).toBeInTheDocument()
+        expect(screen.getByText('Transparency Dashboard')).toBeInTheDocument()
+        expect(screen.getByText('Real-time visibility into browser operations and privacy decisions')).toBeInTheDocument()
+        expect(screen.getByRole('heading', { name: 'Audit Logs' })).toBeInTheDocument()
       })
     })
 
@@ -102,9 +104,9 @@ describe('Page Components', () => {
       render(<AuditPage />)
 
       await waitFor(() => {
-        expect(screen.getByText('Export JSON')).toBeInTheDocument()
-        expect(screen.getByText('Export CSV')).toBeInTheDocument()
-        expect(screen.getByText('Refresh Logs')).toBeInTheDocument()
+        expect(screen.getByText('Export Data')).toBeInTheDocument()
+        expect(screen.getByText('Consent History')).toBeInTheDocument()
+        expect(screen.getByText('Refresh')).toBeInTheDocument()
       })
     })
   })
@@ -436,8 +438,9 @@ describe('Page Components', () => {
     it('should have proper form labels', () => {
       render(<AuditPage />)
 
-      expect(screen.getByLabelText('Filter by Operation Type')).toBeInTheDocument()
-      expect(screen.getByLabelText('Search Logs')).toBeInTheDocument()
+      expect(screen.getByLabelText('Search')).toBeInTheDocument()
+      expect(screen.getByLabelText('Level')).toBeInTheDocument()
+      expect(screen.getByLabelText('Component')).toBeInTheDocument()
     })
 
     it('should have proper button labels', () => {

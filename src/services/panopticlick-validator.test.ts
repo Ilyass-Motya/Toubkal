@@ -45,10 +45,34 @@ const mockScreen = {
   pixelDepth: 24,
 }
 
-const mockDate = {
-  getTimezoneOffset: () => 300, // EST
-  getTime: () => 1640995200000,
+// Mock Date constructor
+const OriginalDate = global.Date
+const mockDate = function(...args: unknown[]): Date {
+  if (args.length === 0) {
+    // Default constructor - return a mock date instance
+    const date = new OriginalDate(1640995200000)
+    // Override getTimezoneOffset to return standardized value
+    date.getTimezoneOffset = () => 300 // EST
+    return date
+  }
+  // Other constructors - delegate to real Date
+  return new OriginalDate(
+    args[0] as number,
+    args[1] as number,
+    args[2] as number,
+    args[3] as number,
+    args[4] as number,
+    args[5] as number,
+    args[6] as number
+  )
 }
+
+// Copy static methods from Date
+Object.setPrototypeOf(mockDate, OriginalDate)
+Object.defineProperty(mockDate, 'prototype', {
+  value: OriginalDate.prototype,
+  writable: false
+})
 
 // Mock global objects
 Object.defineProperty(global, 'navigator', {

@@ -6,14 +6,14 @@
  */
 
 import React from 'react'
-import { INTERNAL_PAGES } from '@/constants/url-schemes'
-import SettingsPage from '@/components/pages/SettingsPage'
-import NewTabPage from '@/components/pages/NewTabPage'
-import ErrorPage from '@/components/pages/ErrorPage'
-import AuditPage from '@/components/pages/AuditPage'
-import AIPage from '@/components/pages/AIPage'
-import MCPPage from '@/components/pages/MCPPage'
-import ConsentPage from '@/components/pages/ConsentPage'
+import { INTERNAL_PAGES } from '../../toubkal/app/shared/constants/url-schemes'
+import SettingsPage from '../pages/SettingsPage'
+import NewTabPage from '../pages/NewTabPage'
+import ErrorPage from '../pages/ErrorPage'
+import AuditPage from '../pages/AuditPage'
+import AIPage from '../pages/AIPage'
+import MCPPage from '../pages/MCPPage'
+import ConsentPage from '../pages/ConsentPage'
 
 interface InternalPageRouterProps {
   currentUrl: string

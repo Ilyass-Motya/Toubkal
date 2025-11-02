@@ -60,7 +60,8 @@ export function usePrivacySettings(): UsePrivacySettingsReturn {
 
   const handleWarningShown = useCallback((event: { data?: { warning?: PrivacyWarning } }) => {
     if (event.data?.warning != null) {
-      setWarnings((prev) => [...prev, event.data.warning])
+      const warning = event.data.warning
+      setWarnings((prev) => [...prev, warning])
     }
   }, [])
 

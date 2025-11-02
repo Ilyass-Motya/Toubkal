@@ -3,7 +3,7 @@
     <epicId>1.2</epicId>
     <storyId>1.6</storyId>
     <title>Chromium Fork Setup Test Suite</title>
-    <status>Ready</status>
+    <status>Ready for QA</status>
     <generatedAt>2025-10-20</generatedAt>
     <generator>BMAD Story Context Workflow</generator>
     <sourceStoryPath>docs/stories/phase1-week1-2/story-006-chromium-fork-setup-tests.md</sourceStoryPath>

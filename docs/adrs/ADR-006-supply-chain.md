@@ -314,7 +314,7 @@ sign_artifacts() {
 }
 ```
 
-### Dependencies
+## Dependencies
 - **SLSA Framework**: slsa-provenance CLI tool, slsa-verifier for validation
 - **CycloneDX**: cyclonedx-python library for SBOM generation and validation
 - **Cosign**: Cryptographic signing tool with Rekor transparency log integration

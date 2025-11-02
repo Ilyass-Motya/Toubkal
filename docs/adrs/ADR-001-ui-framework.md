@@ -463,7 +463,7 @@ action("build_ui") {
 }
 ```
 
-### Dependencies
+## Dependencies
 
 **Runtime Dependencies** (bundled in production):
 

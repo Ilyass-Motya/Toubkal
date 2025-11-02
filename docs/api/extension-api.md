@@ -1,8 +1,8 @@
 # Toubkal Extension API
 
-**Status**: Alpha (Unstable)  
-**Last Updated**: 2025-10-18  
-**Target Stability**: Stable 1.0 (Aug 2026)  
+**Status**: Alpha (Unstable)
+**Last Updated**: 2025-10-18
+**Target Stability**: Stable 1.0 (Aug 2026)
 **Extends**: Chrome Extension API (Manifest V3)
 
 ⚠️ **Warning**: This API may change without notice during Alpha/Beta phases.

@@ -258,7 +258,7 @@ toubkal://audit → Export → Verify Signature
 # Returns: ✅ All 1,234 entries verified (Merkle root: abc123...)
 ```
 
-### Universal Consent Fabric
+## Universal Consent Fabric
 
 All external operations require explicit user consent:
 

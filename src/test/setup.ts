@@ -5,15 +5,30 @@
  * that are not available in the test environment.
  */
 
-// Mock localStorage
-const localStorageMock = {
-  getItem: vi.fn(),
-  setItem: vi.fn(),
-  removeItem: vi.fn(),
-  clear: vi.fn(),
-  length: 0,
-  key: vi.fn()
-};
+// Import testing library matchers for Vitest
+import '@testing-library/jest-dom'
+
+// Mock localStorage with actual storage
+const localStorageMock = (() => {
+  let store: Record<string, string> = {};
+
+  return {
+    getItem: vi.fn((key: string) => store[key] || null),
+    setItem: vi.fn((key: string, value: string) => {
+      store[key] = value;
+    }),
+    removeItem: vi.fn((key: string) => {
+      delete store[key];
+    }),
+    clear: vi.fn(() => {
+      store = {};
+    }),
+    get length() {
+      return Object.keys(store).length;
+    },
+    key: vi.fn((index: number) => Object.keys(store)[index] || null)
+  };
+})();
 
 Object.defineProperty(window, 'localStorage', {
   value: localStorageMock,
@@ -63,66 +78,12 @@ global.PerformanceObserver = vi.fn().mockImplementation(() => ({
 (global.PerformanceObserver as unknown as { supportedEntryTypes: string[] }).supportedEntryTypes = ['navigation', 'resource', 'measure', 'mark'] as string[];
 
 // Mock NodeJS types
-declare global {
-  namespace NodeJS {
-    interface Timeout {
-      idleTimeout: number;
-      idlePrev: Timeout | null;
-      idleNext: Timeout | null;
-      idleStart: number;
-      onTimeout: (...args: unknown[]) => void;
-      repeat: (() => void) | null;
-    }
-  }
-}
 
 // Export the module to make it a proper module
 export {};
 
-// Mock URL constructor
-global.URL = class URL {
-  protocol: string;
-  hostname: string;
-  pathname: string;
-  search: string;
-  hash: string;
-  href: string;
-
-  constructor(url: string, base?: string) {
-    const parsed = new URL(url, base);
-    this.protocol = parsed.protocol;
-    this.hostname = parsed.hostname;
-    this.pathname = parsed.pathname;
-    this.search = parsed.search;
-    this.hash = parsed.hash;
-    this.href = parsed.href;
-  }
-
-  static canParse(url: string, base?: string): boolean {
-    try {
-      new URL(url, base);
-      return true;
-    } catch {
-      return false;
-    }
-  }
-
-  static createObjectURL(_obj: Blob | MediaSource): string {
-    return `blob:${Math.random().toString(36).substring(2)}`;
-  }
-
-  static parse(_url: string, _base?: string): URL | null {
-    try {
-      return new URL(_url, _base);
-    } catch {
-      return null;
-    }
-  }
-
-  static revokeObjectURL(_url: string): void {
-    // Mock implementation
-  }
-  } as unknown as typeof URL;
+// Mock URL constructor - use native URL constructor
+// The native URL constructor should work fine in Node.js test environment
 
 // Mock btoa/atob
 global.btoa = vi.fn((str: string) => Buffer.from(str, 'binary').toString('base64'));

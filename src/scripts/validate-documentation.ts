@@ -109,7 +109,7 @@ class DocumentationValidator {
   private fixMode: boolean
   private strictMode: boolean
   private verbose: boolean
-  private results: ValidationResult[] = []
+  public results: ValidationResult[] = []
 
   constructor(options: { fix?: boolean; strict?: boolean; verbose?: boolean } = {}) {
     this.fixMode = options.fix ?? false
@@ -409,7 +409,7 @@ class DocumentationValidator {
     return this.validateDirectory('docs')
   }
 
-  private printResult(result: ValidationResult): void {
+  public printResult(result: ValidationResult): void {
     const status = result.passed ? '✅' : '❌'
     const file = relative(process.cwd(), result.file)
 

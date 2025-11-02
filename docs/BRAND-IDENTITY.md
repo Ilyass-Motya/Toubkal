@@ -1,7 +1,7 @@
 # Toubkal Browser — Brand Identity Guide
 
-**Version:** 1.0  
-**Last Updated:** 2025-10-18  
+**Version:** 1.0
+**Last Updated:** 2025-10-18
 **Owner:** Ilyass Motya
 **Audience:** Marketing, Design, Community
 
@@ -30,16 +30,16 @@ Toubkal's brand embodies **trust, sovereignty, and elevation**—inspired by Mou
 
 ### Brand Pillars
 
-**Trust**  
+**Trust**
 We don't ask users to trust us—we give them cryptographic proof. Every claim is verifiable, every data flow is auditable.
 
-**Sovereignty**  
+**Sovereignty**
 Users own their data, control their AI, and dictate every permission. The browser serves the user, not advertisers or data brokers.
 
-**Elevation**  
+**Elevation**
 Like climbing a mountain, Toubkal elevates users above the noise of surveillance capitalism. Clear air, clear mind.
 
-**Intelligence**  
+**Intelligence**
 Local AI that augments thinking without compromising privacy. Smart assistance that respects boundaries.
 
 ---
@@ -226,7 +226,7 @@ Toubkal's visual identity draws from **mountain aesthetics**:
 
 ### Font Families
 
-**Primary Font (UI)**:  
+**Primary Font (UI)**:
 **Inter** (sans-serif)
 
 - **Weights**: 400 (Regular), 500 (Medium), 600 (Semibold), 700 (Bold)
@@ -234,7 +234,7 @@ Toubkal's visual identity draws from **mountain aesthetics**:
 - **Fallback**: `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`
 - **Download**: [Google Fonts - Inter](https://fonts.google.com/specimen/Inter)
 
-**Monospace Font (Code/Technical)**:  
+**Monospace Font (Code/Technical)**:
 **JetBrains Mono** (monospace)
 
 - **Weights**: 400 (Regular), 500 (Medium), 700 (Bold)
@@ -433,9 +433,9 @@ box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
 
 ### Writing Principles
 
-**Clear**: No jargon, explain technical concepts simply  
-**Confident**: We know privacy, no hedging  
-**Respectful**: Users are intelligent, not children  
+**Clear**: No jargon, explain technical concepts simply
+**Confident**: We know privacy, no hedging
+**Respectful**: Users are intelligent, not children
 **Honest**: No marketing spin, just facts
 
 ---
@@ -495,8 +495,8 @@ box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
 
 ### Social Media
 
-**Profile Image**: Icon-only logo (512×512px)  
-**Cover Image**: Mountain landscape with gradient overlay + tagline  
+**Profile Image**: Icon-only logo (512×512px)
+**Cover Image**: Mountain landscape with gradient overlay + tagline
 **Post Style**: Technical, factual, no hype
 
 **Example Tweet**:
@@ -513,16 +513,16 @@ box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
 
 ### Documentation
 
-**Style**: Technical, detailed, code examples  
-**Tone**: Professional, respectful of reader's intelligence  
+**Style**: Technical, detailed, code examples
+**Tone**: Professional, respectful of reader's intelligence
 **Visuals**: Diagrams (system architecture, data flow)
 
 ---
 
 ### Swag (Future)
 
-**T-Shirts**: Mountain silhouette + "Toubkal" wordmark  
-**Stickers**: Icon-only logo, "Local AI" badge, "Zero Telemetry" badge  
+**T-Shirts**: Mountain silhouette + "Toubkal" wordmark
+**Stickers**: Icon-only logo, "Local AI" badge, "Zero Telemetry" badge
 **Laptop Stickers**: Gradient logo (die-cut)
 
 ---
@@ -541,7 +541,7 @@ box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
 
 ---
 
-**Last Updated**: 2025-10-18  
+**Last Updated**: 2025-10-18
 **Next Review**: 2026-01-18 (Quarterly)
 
 ```

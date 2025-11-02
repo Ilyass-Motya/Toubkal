@@ -1,7 +1,7 @@
 # Extended Onboarding
 
-**Last Updated**: 2025-10-18  
-**Status**: Active  
+**Last Updated**: 2025-10-18
+**Status**: Active
 **Audience**: New Team Members
 
 Extended onboarding guide for Toubkal Browser team members, covering team structure, culture, communication, and your first contributions.
@@ -195,7 +195,7 @@ gh issue list --label "good first issue"
 
 ---
 
-### Day 3: Implement Small Feature
+## Day 3: Implement Small Feature
 
 **Goal**: Add a small feature (end-to-end experience)
 
@@ -455,7 +455,7 @@ gh issue view 123
 
 ---
 
-### Who to Ask
+## Who to Ask
 
 | Question                   | Ask                      |
 | -------------------------- | ------------------------ |

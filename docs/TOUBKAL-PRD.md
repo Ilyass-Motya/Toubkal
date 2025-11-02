@@ -2,11 +2,11 @@
 
 ---
 
-**Document Type:** PRD — Strategic & Functional Specification  
-**Project:** Toubkal Browser  
+**Document Type:** PRD — Strategic & Functional Specification
+**Project:** Toubkal Browser
 **Version:** 1.0
 **Owner:** Ilyass Motya
-**Last Updated:** 2025-10-18  
+**Last Updated:** 2025-10-18
 **Audience:** Product, Engineering, QA, Security
 
 ---

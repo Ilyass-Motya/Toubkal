@@ -80,7 +80,7 @@ $env:PATH += ";C:\depot_tools"
 
 ---
 
-### macOS
+## macOS
 
 **Requirements**:
 
@@ -108,7 +108,7 @@ echo 'export PATH="$HOME/depot_tools:$PATH"' >> ~/.zshrc
 
 ---
 
-### Linux (Ubuntu/Debian)
+## Linux (Ubuntu/Debian)
 
 **Requirements**:
 
@@ -161,7 +161,7 @@ pnpm install
 
 ---
 
-### 2. Sync Chromium Dependencies
+## 2. Sync Chromium Dependencies
 
 **This step downloads ~20GB of Chromium source code**:
 
@@ -184,7 +184,7 @@ gclient sync
 
 ---
 
-### 3. Apply Toubkal Patches
+## 3. Apply Toubkal Patches
 
 ```
 # Apply Toubkal-specific modifications to Chromium
@@ -243,7 +243,7 @@ gn gen out/Release --args='
 
 ---
 
-### Build Configuration Options
+## Build Configuration Options
 
 | Flag                   | Description                               | Debug | Release |
 | ---------------------- | ----------------------------------------- | ----- | ------- |
@@ -290,7 +290,7 @@ autoninja -C out/Release toubkal
 
 ---
 
-### Component Build (Faster Development)
+## Component Build (Faster Development)
 
 **Component build** splits Chromium into DLLs for faster incremental builds:
 
@@ -362,7 +362,7 @@ autoninja -C out/Debug //toubkal/browser/consent:consent_manager
 
 ---
 
-### Running Tests
+## Running Tests
 
 ```
 # Run unit tests
@@ -398,7 +398,7 @@ start out/Debug/all.sln
 
 ---
 
-### macOS
+## macOS
 
 **Code Signing**:
 
@@ -416,7 +416,7 @@ gn args out/Debug
 
 ---
 
-### Linux
+## Linux
 
 **Missing Libraries**:
 
@@ -451,7 +451,7 @@ rm -rf out/Debug
 
 ---
 
-### Build Fails with "Missing Dependencies"
+## Build Fails with "Missing Dependencies"
 
 **Solution**:
 
@@ -466,7 +466,7 @@ gclient sync
 
 ---
 
-### Incremental Build Not Working
+## Incremental Build Not Working
 
 **Solution**:
 
@@ -478,7 +478,7 @@ autoninja -C out/Debug toubkal
 
 ---
 
-### "ninja: error: loading 'build.ninja': No such file or directory"
+## "ninja: error: loading 'build.ninja': No such file or directory"
 
 **Solution**:
 
@@ -489,7 +489,7 @@ gn gen out/Debug
 
 ---
 
-### Build Too Slow
+## Build Too Slow
 
 **Solutions**:
 

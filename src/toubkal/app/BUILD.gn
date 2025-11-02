@@ -1,0 +1,69 @@
+# Toubkal Browser React App Build Configuration
+# This file configures the build system for the React/TypeScript UI components
+
+import("//build/config/features.gni")
+
+# React App Target
+source_set("toubkal_app") {
+  sources = [
+    # Core infrastructure
+    "core/routing/ToubkalRouter.tsx",
+    "core/routing/routes.ts",
+    "core/mojo-bindings/audit.ts",
+    "core/mojo-bindings/consent.ts", 
+    "core/mojo-bindings/privacy.ts",
+    
+    # Shared components and utilities
+    "shared/components/Button.tsx",
+    "shared/components/Modal.tsx",
+    "shared/hooks/useDebounce.ts",
+    "shared/utils/validation.ts",
+    "shared/types/CommonTypes.ts",
+    "shared/services/api-client.ts",
+    "shared/constants/app-constants.ts",
+  ]
+  
+  # Feature modules (will be added as features are migrated)
+  # "features/privacy-settings/components/PrivacySettings.tsx",
+  # "features/consent/components/ConsentBanner.tsx",
+  # "features/privacy-dashboard/components/PrivacyDashboard.tsx",
+  
+  deps = [
+    "//src/toubkal/components/privacy:privacy_components",
+    "//src/toubkal/components/consent:consent_components", 
+    "//src/toubkal/browser:ui_components",
+  ]
+  
+  public_deps = [
+    "//third_party/react:react",
+    "//third_party/typescript:typescript",
+  ]
+  
+  # TypeScript configuration
+  tsconfig = "tsconfig.json"
+  
+  # Enable strict mode and path mapping
+  defines = [
+    "TYPESCRIPT_STRICT_MODE=1",
+    "FEATURE_FIRST_ARCHITECTURE=1",
+  ]
+}
+
+# Test target for React app
+test("toubkal_app_tests") {
+  sources = [
+    "tests/unit/**/*.test.ts",
+    "tests/unit/**/*.test.tsx",
+    "tests/integration/**/*.test.ts",
+    "tests/integration/**/*.test.tsx",
+  ]
+  
+  deps = [
+    ":toubkal_app",
+    "//src/toubkal/tests:test_utilities",
+  ]
+  
+  # Test configuration
+  test_type = "unit"
+  timeout_ms = 30000
+}

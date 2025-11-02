@@ -1,7 +1,7 @@
 # Toubkal Browser — Architecture Overview
 
-**Version:** 1.0  
-**Last Updated:** 2025-10-18  
+**Version:** 1.0
+**Last Updated:** 2025-10-18
 **Owner:** Ilyass Motya
 **Audience:** Engineering, Security, Architecture Review
 
@@ -459,7 +459,7 @@ toubkal_mcp_enabled = true
 toubkal_telemetry_disabled = true   # Zero telemetry by default
 ```
 
-### Build System Fallback Strategy
+## Build System Fallback Strategy
 
 Siso is **experimental** in Chromium (introduced Q4 2024). Toubkal maintains Ninja as a fallback to ensure build reliability.
 
@@ -698,7 +698,7 @@ For detailed technical specifications, see:
 
 ---
 
-**Last Updated**: 2025-10-18  
+**Last Updated**: 2025-10-18
 **Next Review**: 2025-11-01
 
 ```

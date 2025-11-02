@@ -1,8 +1,8 @@
 # MCP Server Sandboxing Architecture
 
-**Status**: Draft  
-**Last Updated**: 2025-01-27  
-**Author**: BMad Master (Brainstorming Session Output)  
+**Status**: Draft
+**Last Updated**: 2025-01-27
+**Author**: BMad Master (Brainstorming Session Output)
 **Phase**: 2 (Weeks 9-16)
 
 ## Overview
@@ -268,5 +268,5 @@ Toubkal's MCP server sandboxing ensures security and privacy while enabling exte
 
 ---
 
-**Next Review**: Phase 2 Week 9 (Implementation Start)  
+**Next Review**: Phase 2 Week 9 (Implementation Start)
 **Owner**: Hassan (Phase 2 Lead Developer)

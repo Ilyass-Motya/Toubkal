@@ -32,11 +32,11 @@ source_set("privacy_manager") {
     "//crypto",
     "//mojo/public/cpp/bindings",
     "//net/base",
-    "//toubkal/common/privacy",
+    ":privacy",
   ]
   
   public_deps = [
-    "//toubkal/common/privacy",
+    ":privacy",
   ]
 }
 
@@ -50,11 +50,11 @@ source_set("fingerprinting_protection") {
   deps = [
     "//base",
     "//mojo/public/cpp/bindings",
-    "//toubkal/common/privacy",
+    ":privacy",
   ]
   
   public_deps = [
-    "//toubkal/common/privacy",
+    ":privacy",
   ]
 }
 
@@ -73,7 +73,7 @@ source_set("tracker_blocker") {
   ]
   
   public_deps = [
-    "//toubkal/common/privacy",
+    ":privacy",
   ]
 }
 
@@ -87,11 +87,11 @@ source_set("brave_shields_manager") {
   deps = [
     "//base",
     "//mojo/public/cpp/bindings",
-    "//toubkal/common/privacy",
+    ":privacy",
   ]
   
   public_deps = [
-    "//toubkal/common/privacy",
+    ":privacy",
   ]
 }
 
@@ -107,7 +107,7 @@ source_set("privacy") {
   ]
   
   public_deps = [
-    "//toubkal/common/privacy",
+    ":privacy",
   ]
 }
 
@@ -125,7 +125,7 @@ test("privacy_manager_unittests") {
   ]
   
   data_deps = [
-    "//toubkal/common/privacy",
+    ":privacy",
   ]
 }
 
@@ -142,7 +142,7 @@ test("fingerprinting_protection_unittests") {
   ]
   
   data_deps = [
-    "//toubkal/common/privacy",
+    ":privacy",
   ]
 }
 
@@ -159,7 +159,7 @@ test("tracker_blocker_unittests") {
   ]
   
   data_deps = [
-    "//toubkal/common/privacy",
+    ":privacy",
   ]
 }
 
@@ -176,7 +176,7 @@ test("brave_shields_manager_unittests") {
   ]
   
   data_deps = [
-    "//toubkal/common/privacy",
+    ":privacy",
   ]
 }
 
@@ -194,7 +194,7 @@ test("privacy_integration_tests") {
   ]
   
   data_deps = [
-    "//toubkal/common/privacy",
+    ":privacy",
   ]
 }
 
@@ -212,6 +212,6 @@ test("privacy_performance_tests") {
   ]
   
   data_deps = [
-    "//toubkal/common/privacy",
+    ":privacy",
   ]
 }

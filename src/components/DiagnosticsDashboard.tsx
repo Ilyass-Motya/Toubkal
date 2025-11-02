@@ -65,53 +65,128 @@ const DiagnosticsDashboard: React.FC = () => {
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [refreshInterval] = useState(5000); // 5 seconds
   const [filterLevel, setFilterLevel] = useState<LogLevel>(LogLevel.DEBUG);
-  const [searchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
 
   // Initialize diagnostics systems
   useEffect(() => {
     const initializeDiagnostics = () => {
       try {
-        // Initialize logger
-        Logger.getInstance().initialize({
-          consoleEnabled: true,
-          fileEnabled: false,
-          jsonEnabled: false,
-          maxLogLevel: LogLevel.DEBUG,
-          privacyMode: false
-        });
+        const logger = Logger.getInstance();
+        const errorTracker = ErrorTracker.getInstance();
+        const performanceMonitor = PerformanceMonitor.getInstance();
+        const scalabilityManager = ScalabilityManager.getInstance();
 
-        // Initialize error tracker
-        ErrorTracker.getInstance().initialize({
-          enableAutoReporting: true,
-          maxErrors: 1000,
-          retentionDays: 30
-        });
+        // Only initialize if not already initialized (for real systems)
+        // In test environment, mocks are already set up
+        if (logger != null && typeof logger.initialize === 'function') {
+          logger.initialize({
+            consoleEnabled: true,
+            fileEnabled: false,
+            jsonEnabled: false,
+            maxLogLevel: LogLevel.DEBUG,
+            privacyMode: false
+          });
+        }
 
-        // Initialize performance monitor
-        PerformanceMonitor.getInstance().initialize({
-          enableMetrics: true,
-          maxMetrics: 10000,
-          retentionDays: 7
-        });
+        if (errorTracker != null && typeof errorTracker.initialize === 'function') {
+          errorTracker.initialize({
+            enableAutoReporting: true,
+            maxErrors: 1000,
+            retentionDays: 30
+          });
+        }
 
-        // Initialize scalability manager
-        ScalabilityManager.getInstance().initialize({
-          mode: ScalabilityMode.Cluster,
-          maxNodes: 10,
-          minNodes: 1,
-          autoScaling: true,
-          scaleUpThreshold: 80,
-          scaleDownThreshold: 20
-        });
+        if (performanceMonitor != null && typeof performanceMonitor.initialize === 'function') {
+          performanceMonitor.initialize({
+            enableMetrics: true,
+            maxMetrics: 10000,
+            retentionDays: 7
+          });
+        }
+
+        if (scalabilityManager != null && typeof scalabilityManager.initialize === 'function') {
+          scalabilityManager.initialize({
+            mode: ScalabilityMode.Cluster,
+            maxNodes: 10,
+            minNodes: 1,
+            autoScaling: true,
+            scaleUpThreshold: 80,
+            scaleDownThreshold: 20
+          });
+        }
 
         setState(prev => ({ ...prev, isConnected: true }));
+        
+        // Load initial data after initialization
+        const loadData = () => {
+          try {
+            const logger = Logger.getInstance();
+            const errorTracker = ErrorTracker.getInstance();
+            const performanceMonitor = PerformanceMonitor.getInstance();
+            const scalabilityManager = ScalabilityManager.getInstance();
+
+            // Get recent logs
+            const recentLogs = logger.getRecentLogs(100);
+            
+            // Get recent errors
+            const recentErrors = errorTracker.getRecentErrors(100);
+            
+            // Get recent metrics
+            const recentMetrics = performanceMonitor.getRecentMetrics(100);
+            
+            // Get scalability metrics
+            const scalabilityMetrics = scalabilityManager.getScalabilityMetrics();
+
+            setState(prev => ({
+              ...prev,
+              logs: recentLogs.map(log => ({
+                id: log.correlationId ?? `log-${Date.now()}-${Math.random()}`,
+                level: log.level,
+                message: log.message,
+                timestamp: new Date(log.timestamp).getTime(),
+                context: log.context
+              })),
+              errors: recentErrors.map(error => ({
+                id: error.id,
+                severity: error.severity,
+                category: error.category,
+                message: error.message,
+                timestamp: error.firstSeen,
+                context: error.context
+              })),
+              metrics: recentMetrics.map(metric => ({
+                id: metric.id,
+                type: metric.type,
+                name: metric.name,
+                value: metric.value,
+                unit: metric.unit,
+                timestamp: metric.timestamp,
+                context: metric.context
+              })),
+              scalability: {
+                totalNodes: scalabilityMetrics.totalNodes,
+                activeNodes: scalabilityMetrics.activeNodes,
+                averageLoad: scalabilityMetrics.averageLoad,
+                healthStatus: scalabilityMetrics.healthStatus
+              },
+              lastUpdate: Date.now()
+            }));
+          } catch (error) {
+            console.error('Failed to load dashboard data:', error);
+          }
+        };
+        
+        loadData();
       } catch (error) {
         console.error('Failed to initialize diagnostics:', error);
+        // If initialization fails, mark as disconnected
+        setState(prev => ({ ...prev, isConnected: false }));
       }
     };
 
     void initializeDiagnostics();
   }, []);
+
 
   const updateDashboard = useCallback(() => {
     try {
@@ -222,20 +297,27 @@ const DiagnosticsDashboard: React.FC = () => {
   const renderLogsTab = () => (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">System Logs</h3>
-        <div className="flex space-x-2">
+        <div className="flex items-center space-x-4">
+          <input
+            type="text"
+            placeholder="Search logs..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
           <select
             value={filterLevel}
-            onChange={(e) => setFilterLevel(Number(e.target.value) as LogLevel)}
-            className="px-3 py-1 border border-gray-300 rounded-md text-sm"
+            onChange={(e) => setFilterLevel(Number(e.target.value))}
+            className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            <option value={LogLevel.DEBUG}>Debug</option>
-            <option value={LogLevel.INFO}>Info</option>
-            <option value={LogLevel.WARN}>Warn</option>
-            <option value={LogLevel.ERROR}>Error</option>
-            <option value={LogLevel.FATAL}>Fatal</option>
+            <option value={LogLevel.DEBUG}>All Levels</option>
+            <option value={LogLevel.INFO}>Info+</option>
+            <option value={LogLevel.WARN}>Warn+</option>
+            <option value={LogLevel.ERROR}>Error+</option>
+            <option value={LogLevel.FATAL}>Fatal Only</option>
           </select>
         </div>
+        <h3 className="text-lg font-semibold">System Logs</h3>
       </div>
       
       <div className="bg-gray-50 rounded-lg p-4 max-h-96 overflow-y-auto">

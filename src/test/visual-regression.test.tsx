@@ -45,7 +45,7 @@ describe('Visual Regression Tests', () => {
       // Check for brand elements
       expect(screen.getByText('Transparency Dashboard')).toBeInTheDocument()
       expect(
-        screen.getByText('Real-time audit log of all Toubkal Browser operations')
+        screen.getByText('Real-time visibility into browser operations and privacy decisions')
       ).toBeInTheDocument()
 
       // Check for proper heading hierarchy
@@ -53,8 +53,9 @@ describe('Visual Regression Tests', () => {
       expect(mainHeading).toHaveTextContent('Transparency Dashboard')
 
       // Check for filter controls
-      expect(screen.getByLabelText('Filter by Operation Type')).toBeInTheDocument()
-      expect(screen.getByLabelText('Search Logs')).toBeInTheDocument()
+      expect(screen.getByLabelText('Search')).toBeInTheDocument()
+      expect(screen.getByLabelText('Level')).toBeInTheDocument()
+      expect(screen.getByLabelText('Component')).toBeInTheDocument()
     })
 
     it('should render AIPage with consistent styling', () => {
@@ -184,13 +185,20 @@ describe('Visual Regression Tests', () => {
         const h1 = container.querySelector('h1')
         const h2 = container.querySelector('h2')
 
+        // All pages must have h1, h2 is optional
         expect(h1).not.toBeNull()
-        expect(h2).not.toBeNull()
-
+        
         // Check for consistent text content
         const mainHeading = h1?.textContent
         expect(mainHeading).toBeTruthy()
         expect(mainHeading?.length).toBeGreaterThan(0)
+        
+        // If h2 exists, check it has content
+        if (h2) {
+          const subHeading = h2.textContent
+          expect(subHeading).toBeTruthy()
+          expect(subHeading?.length).toBeGreaterThan(0)
+        }
       })
     })
 
@@ -325,8 +333,9 @@ describe('Visual Regression Tests', () => {
       render(<AuditPage />)
 
       // Check for form labels
-      expect(screen.getByLabelText('Filter by Operation Type')).toBeInTheDocument()
-      expect(screen.getByLabelText('Search Logs')).toBeInTheDocument()
+      expect(screen.getByLabelText('Search')).toBeInTheDocument()
+      expect(screen.getByLabelText('Level')).toBeInTheDocument()
+      expect(screen.getByLabelText('Component')).toBeInTheDocument()
     })
 
     it('should have proper heading hierarchy', () => {

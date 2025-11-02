@@ -171,7 +171,7 @@ export default [
         },
         {
           selector: 'objectLiteralProperty',
-          format: ['camelCase', 'UPPER_CASE']
+          format: ['camelCase', 'UPPER_CASE', 'PascalCase']
         }
       ]
     },
@@ -190,7 +190,8 @@ export default [
       'build/**',
       'dist/**',
       'coverage/**',
-      '.nyc_output/**'
+      '.nyc_output/**',
+      'src/test/disabled/**'
     ]
   }
 ];

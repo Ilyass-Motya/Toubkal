@@ -17,7 +17,12 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "@/features/*": ["./src/toubkal/app/features/*"],
+      "@/shared/*": ["./src/toubkal/app/shared/*"],
+      "@/core/*": ["./src/toubkal/app/core/*"],
+      "@/components/*": ["./src/toubkal/components/*"],
+      "@/browser/*": ["./src/toubkal/browser/*"]
     },
     "types": ["vitest/globals", "@testing-library/jest-dom"]
   },

@@ -10,7 +10,7 @@ const mockConsentManager = {
   revokeConsent: vi.fn(),
 }
 
-vi.mock('@/core/consent/consent-manager', () => ({
+vi.mock('../toubkal/app/features/consent/services/consent-manager', () => ({
   getConsentManager: () => mockConsentManager,
 }))
 

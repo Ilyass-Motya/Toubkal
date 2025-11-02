@@ -19,12 +19,12 @@ import { Result } from '@/types/CommonTypes'
 import { getAuditLogger } from './audit-logger'
 
 // Maximum number of audit log entries to keep in memory
-// const MAX_AUDIT_LOG_SIZE = 1000
+const MAX_AUDIT_LOG_SIZE = 1000
 
 export class PrivacyManager {
   private settings: PrivacySettings
   private config: PrivacyManagerConfig
-  private auditLogger = getAuditLogger()
+  private auditLogger = getAuditLogger({ maxEntries: MAX_AUDIT_LOG_SIZE })
   private blocklists: TrackerBlocklist[] = []
   private warnings: PrivacyWarning[] = []
   private eventListeners: Map<string, (event: PrivacyEvent) => void> = new Map()
@@ -390,19 +390,19 @@ export class PrivacyManager {
   private activateFingerprintingProtection(): Promise<void> {
     // In a real implementation, this would configure Chromium's fingerprinting protection
     console.log('[PrivacyManager] Activating fingerprinting protection')
-    return Promise.resolve()
+    return new Promise(resolve => setTimeout(resolve, 10))
   }
 
   private activateTrackerBlocking(): Promise<void> {
     // In a real implementation, this would configure tracker blocking
     console.log('[PrivacyManager] Activating tracker blocking')
-    return Promise.resolve()
+    return new Promise(resolve => setTimeout(resolve, 10))
   }
 
   private activateBraveShields(): Promise<void> {
     // In a real implementation, this would configure Brave Shields
     console.log('[PrivacyManager] Activating Brave Shields (Aggressive mode)')
-    return Promise.resolve()
+    return new Promise(resolve => setTimeout(resolve, 10))
   }
 
   private updateBlocklists(): Promise<Result<boolean>> {

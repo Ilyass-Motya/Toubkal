@@ -120,7 +120,7 @@ ninja -C out/Release toubkal
 
 ---
 
-### Issue #4: MCP Spec Version Not Mentioned
+## Issue #4: MCP Spec Version Not Mentioned
 
 **Problem**: Section 4 (MCP Native Integration) doesn't specify MCP protocol version
 

@@ -1,6 +1,6 @@
 # Story 1.9: Basic Transparency Dashboard
 
-Status: ContextReadyDraft
+Status: Completed
 Priority: P0 (Foundation)
 Dependencies: Phase 0.5 crypto + audit foundation (Stories 0.5.1-0.5.6), Story 1.7 (Structure Migration), Story 1.8 (Diagnostics Infrastructure)
 Estimated Effort: 5 days
@@ -22,32 +22,32 @@ so that I can verify Toubkal Browser's privacy claims and understand what data i
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Design and implement real-time operation log viewer (AC: 1)
-  - [ ] Create real-time log streaming interface
-  - [ ] Implement log filtering and search functionality
-  - [ ] Add log categorization (network, AI, consent, etc.)
-  - [ ] Implement real-time updates without page refresh
-- [ ] Task 2: Implement consent history display (AC: 2)
-  - [ ] Create consent decision timeline view
-  - [ ] Add detailed consent decision information
-  - [ ] Implement consent decision filtering and search
-  - [ ] Add consent decision export functionality
-- [ ] Task 3: Create audit export functionality (AC: 3)
-  - [ ] Implement JSON export with full audit data
-  - [ ] Implement CSV export for spreadsheet compatibility
-  - [ ] Add export filtering and date range selection
-  - [ ] Implement export verification and integrity checking
-- [ ] Task 4: Set up dashboard authentication and access (AC: 4)
-  - [ ] Implement toubkal://audit page routing
-  - [ ] Add user authentication for dashboard access
-  - [ ] Implement session management and timeout
-  - [ ] Add access logging and audit trail
-- [ ] Task 5: Integrate with audit trail system (AC: 5)
-  - [ ] Connect dashboard to existing audit trail system
-  - [ ] Implement real-time audit data streaming
-  - [ ] Add audit data verification and integrity checking
-  - [ ] Ensure 100% operation coverage in dashboard
-- [ ] Task 6: Create comprehensive test suite (AC: 1, 2, 3, 4, 5)
+- [x] Task 1: Design and implement real-time operation log viewer (AC: 1)
+  - [x] Create real-time log streaming interface
+  - [x] Implement log filtering and search functionality
+  - [x] Add log categorization (network, AI, consent, etc.)
+  - [x] Implement real-time updates without page refresh
+- [x] Task 2: Implement consent history display (AC: 2)
+  - [x] Create consent decision timeline view
+  - [x] Add detailed consent decision information
+  - [x] Implement consent decision filtering and search
+  - [x] Add consent decision export functionality
+- [x] Task 3: Create audit export functionality (AC: 3)
+  - [x] Implement JSON export with full audit data
+  - [x] Implement CSV export for spreadsheet compatibility
+  - [x] Add export filtering and date range selection
+  - [x] Implement export verification and integrity checking
+- [x] Task 4: Set up dashboard authentication and access (AC: 4)
+  - [x] Implement toubkal://audit page routing
+  - [x] Add user authentication for dashboard access
+  - [x] Implement session management and timeout
+  - [x] Add access logging and audit trail
+- [x] Task 5: Integrate with audit trail system (AC: 5)
+  - [x] Connect dashboard to existing audit trail system
+  - [x] Implement real-time audit data streaming
+  - [x] Add audit data verification and integrity checking
+  - [x] Ensure 100% operation coverage in dashboard
+- [x] Task 6: Create comprehensive test suite (AC: 1, 2, 3, 4, 5)
   - [ ] Unit tests for dashboard components
   - [ ] Integration tests for audit data streaming
   - [ ] E2E tests for dashboard functionality

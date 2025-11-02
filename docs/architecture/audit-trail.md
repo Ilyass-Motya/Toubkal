@@ -1,8 +1,8 @@
 # Cryptographic Audit Trail Architecture
 
-**Status**: Draft  
-**Last Updated**: 2025-01-27  
-**Author**: BMad Master (Brainstorming Session Output)  
+**Status**: Draft
+**Last Updated**: 2025-01-27
+**Author**: BMad Master (Brainstorming Session Output)
 **Phase**: 1 (Weeks 1-8)
 
 ## Overview
@@ -32,8 +32,8 @@ Toubkal provides four audit granularity levels to balance privacy transparency w
 - AI model loading/unloading
 - AI workspace context changes
 
-**Performance Target**: <1% CPU/memory overhead  
-**Storage**: ~1MB per 10,000 operations  
+**Performance Target**: <1% CPU/memory overhead
+**Storage**: ~1MB per 10,000 operations
 **Use Case**: Users who want basic AI transparency without performance impact
 
 #### Standard Mode (Default)
@@ -46,8 +46,8 @@ Toubkal provides four audit granularity levels to balance privacy transparency w
 - Consent decisions and changes
 - Privacy setting modifications
 
-**Performance Target**: <3% CPU/memory overhead  
-**Storage**: ~10MB per 10,000 operations  
+**Performance Target**: <3% CPU/memory overhead
+**Storage**: ~10MB per 10,000 operations
 **Use Case**: Privacy-conscious users who want comprehensive audit coverage
 
 #### Full Mode
@@ -61,8 +61,8 @@ Toubkal provides four audit granularity levels to balance privacy transparency w
 - Extension operations
 - Browser setting changes
 
-**Performance Target**: <10% CPU/memory overhead  
-**Storage**: ~100MB per 10,000 operations  
+**Performance Target**: <10% CPU/memory overhead
+**Storage**: ~100MB per 10,000 operations
 **Use Case**: Enterprise compliance, security researchers, high-threat users
 
 #### Forensic Mode
@@ -75,8 +75,8 @@ Toubkal provides four audit granularity levels to balance privacy transparency w
 - Tab switching and focus changes
 - Window management events
 
-**Performance Target**: <20% CPU/memory overhead  
-**Storage**: ~500MB per 10,000 operations  
+**Performance Target**: <20% CPU/memory overhead
+**Storage**: ~500MB per 10,000 operations
 **Use Case**: Legal proceedings, forensic analysis, security investigations
 
 ## Technical Optimizations
@@ -151,16 +151,16 @@ Toubkal provides four audit granularity levels to balance privacy transparency w
 
 ### Phase 1 Targets (Weeks 1-8)
 
-**Audit Overhead**: <5% CPU/memory impact on Standard mode  
-**Signature Verification**: 100% on export (not real-time)  
-**Storage**: 100MB per 1 million operations (compressed)  
+**Audit Overhead**: <5% CPU/memory impact on Standard mode
+**Signature Verification**: 100% on export (not real-time)
+**Storage**: 100MB per 1 million operations (compressed)
 **Latency**: <100ms for audit log queries
 
 ### Phase 2 Targets (Weeks 9-16)
 
-**Batched Signing**: 10x performance improvement  
-**Real-time Verification**: 95% of signatures verified within 1 second  
-**Storage Optimization**: 50% reduction in storage footprint  
+**Batched Signing**: 10x performance improvement
+**Real-time Verification**: 95% of signatures verified within 1 second
+**Storage Optimization**: 50% reduction in storage footprint
 **Query Performance**: <50ms for complex audit log searches
 
 ## User Configuration UI
@@ -331,5 +331,5 @@ Toubkal provides four audit granularity levels to balance privacy transparency w
 
 ---
 
-**Next Review**: Phase 1 Week 4 (Implementation Progress)  
+**Next Review**: Phase 1 Week 4 (Implementation Progress)
 **Owner**: Hassan (Phase 1 Lead Developer)

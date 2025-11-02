@@ -1,9 +1,9 @@
 # Toubkal Browser — Privacy & Ethics Policy
 
-**Version:** 1.0  
-**Effective Date:** 2025-10-18  
-**Last Updated:** 2025-10-18  
-**Owner:** Ilyass Motya  
+**Version:** 1.0
+**Effective Date:** 2025-10-18
+**Last Updated:** 2025-10-18
+**Owner:** Ilyass Motya
 **Scope:** All Toubkal Browser users, contributors, and integrators
 
 ---
@@ -421,8 +421,8 @@ Approve these actions?"
 
 ## 8. Contact & Transparency
 
-**Privacy Questions**: privacy@toubkal.app  
-**Security Issues**: security@toubkal.app (PGP key: [link])  
+**Privacy Questions**: privacy@toubkal.app
+**Security Issues**: security@toubkal.app (PGP key: [link])
 **Data Requests**: Legal team (GDPR/CCPA requests): legal@toubkal.app
 
 **Transparency Reports**: Published quarterly at toubkal.app/transparency
@@ -444,7 +444,7 @@ Approve these actions?"
 
 ---
 
-**Last Updated**: 2025-10-18  
+**Last Updated**: 2025-10-18
 **Next Review**: 2025-11-18 (monthly review during MVP phase)
 
 ```

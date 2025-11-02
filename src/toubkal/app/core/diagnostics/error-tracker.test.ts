@@ -8,27 +8,27 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { ErrorTracker, ErrorSeverity, ErrorCategory } from './error-tracker';
 
 // Mock the Logger
-const mockLogger = {
-  info: vi.fn(),
-  warn: vi.fn(),
-  error: vi.fn(),
-  debug: vi.fn()
-};
-
-vi.mock('./logger', () => ({
-  logger: {
-    getInstance: vi.fn(() => mockLogger)
-  }
-}));
+vi.mock('./logger');
 
 describe('ErrorTracker', () => {
   let errorTracker: ErrorTracker;
+  let mockLogger: {
+    info: ReturnType<typeof vi.fn>;
+    warn: ReturnType<typeof vi.fn>;
+    error: ReturnType<typeof vi.fn>;
+    debug: ReturnType<typeof vi.fn>;
+    fatal: ReturnType<typeof vi.fn>;
+  };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     errorTracker = ErrorTracker.getInstance();
     
     // Clear any existing state
     errorTracker.clearErrors();
+    
+    // Get the mock logger
+    const mockModule = await import('./__mocks__/logger');
+    mockLogger = mockModule.mockLogger;
     
     // Clear mock calls
     mockLogger.info.mockClear();
@@ -258,11 +258,12 @@ describe('ErrorTracker', () => {
       const result = errorTracker.reportError(errorId.id);
       expect(result).toBe(true);
       
-      expect(mockLogger.error).toHaveBeenCalledWith(
+      // Check that the logger was called with "Error report generated" (second call)
+      expect(mockLogger.error).toHaveBeenNthCalledWith(2,
         'ErrorTracker',
         'Error report generated',
         expect.objectContaining({
-          errorId,
+          errorId: expect.any(String),
           message: 'Test error'
         })
       );

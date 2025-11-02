@@ -1,7 +1,7 @@
 # Release Process
 
-**Last Updated**: 2025-10-18  
-**Status**: Active  
+**Last Updated**: 2025-10-18
+**Status**: Active
 **Audience**: Release Managers, Core Team
 
 Comprehensive guide for shipping Toubkal Browser releases, covering versioning, QA, code signing, SLSA provenance, and distribution.
@@ -173,7 +173,7 @@ git push origin release/v1.2.0
 
 ---
 
-### Step 2: Build Release Artifacts
+## Step 2: Build Release Artifacts
 
 ```
 # Build Release for all platforms
@@ -212,7 +212,7 @@ echo "Release build complete: out/Release/"
 
 ---
 
-### Step 3: Code Signing
+## Step 3: Code Signing
 
 **Windows** (Authenticode):
 
@@ -253,7 +253,7 @@ gpg --armor --detach-sign out/Release/toubkal
 
 ---
 
-### Step 4: Generate SLSA Provenance
+## Step 4: Generate SLSA Provenance
 
 **SLSA Level 3** (Supply Chain Levels for Software Artifacts):
 
@@ -307,7 +307,7 @@ gpg --armor --detach-sign out/Release/toubkal.intoto.jsonl
 
 ---
 
-### Step 5: Create GitHub Release
+## Step 5: Create GitHub Release
 
 ```
 # Tag release
@@ -432,7 +432,7 @@ post-release-validation:
 
 ---
 
-### Manual Rollback
+## Manual Rollback
 
 ```
 # 1. Delete GitHub release

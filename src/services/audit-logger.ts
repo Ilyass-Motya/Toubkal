@@ -112,11 +112,13 @@ export class AuditLogger {
     }
 
     if (options.startTime !== undefined && options.startTime !== null) {
-      filtered = filtered.filter((entry) => entry.timestamp >= options.startTime)
+      const startTime = options.startTime
+      filtered = filtered.filter((entry) => entry.timestamp >= startTime)
     }
 
     if (options.endTime !== undefined && options.endTime !== null) {
-      filtered = filtered.filter((entry) => entry.timestamp <= options.endTime)
+      const endTime = options.endTime
+      filtered = filtered.filter((entry) => entry.timestamp <= endTime)
     }
 
     // Sort by timestamp (newest first)
@@ -404,9 +406,9 @@ export class AuditLogger {
 // Singleton instance
 let auditLoggerInstance: AuditLogger | null = null
 
-export function getAuditLogger(): AuditLogger {
+export function getAuditLogger(config?: Partial<AuditLoggerConfig>): AuditLogger {
   if (!auditLoggerInstance) {
-    auditLoggerInstance = new AuditLogger()
+    auditLoggerInstance = new AuditLogger(config)
   }
   return auditLoggerInstance
 }

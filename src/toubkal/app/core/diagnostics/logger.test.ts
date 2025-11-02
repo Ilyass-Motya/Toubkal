@@ -33,6 +33,7 @@ describe('Logger', () => {
     vi.spyOn(console, 'error').mockImplementation(mockConsole.error);
 
     // Clear localStorage
+    // eslint-disable-next-line no-undef
     localStorage.clear();
     
     // Reset logger instance and clear buffer
@@ -43,6 +44,7 @@ describe('Logger', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
+    // eslint-disable-next-line no-undef
     localStorage.clear();
   });
 
@@ -212,9 +214,10 @@ describe('Logger', () => {
       logger.info('TestComponent', 'Message with URL', context);
       
       const logCall = mockConsole.info.mock.calls[0][0];
-      // The URL should be redacted to just the base path
-      expect(logCall).toContain('https://example.com/path');
+      // The URL should be redacted (either to base path or [REDACTED_URL])
+      expect(logCall).toContain('"url":"[REDACTED_URL]"');
       expect(logCall).not.toContain('query=secret');
+      expect(logCall).not.toContain('param=value');
     });
   });
 
@@ -354,6 +357,7 @@ describe('Logger', () => {
       logger.info('TestComponent', 'File message');
       
       // Check if message was stored in localStorage
+      // eslint-disable-next-line no-undef
       const stored = localStorage.getItem('toubkal_logs');
       expect(stored).toContain('File message');
     });
@@ -367,6 +371,7 @@ describe('Logger', () => {
       logger.info('TestComponent', 'JSON message', { key: 'value' });
       
       // Check if JSON was stored in localStorage
+      // eslint-disable-next-line no-undef
       const stored = localStorage.getItem('toubkal_logs_json');
       expect(stored).toContain('JSON message');
       expect(stored).toContain('"key":"value"');

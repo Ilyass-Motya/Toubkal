@@ -5,6 +5,7 @@ group("toubkal") {
   deps = [
     ":browser",
     ":mojo",
+    ":common",
   ]
 }
 
@@ -15,6 +16,8 @@ group("browser") {
     ":branding",
     ":ui",
     ":security",
+    ":privacy",
+    ":common",
   ]
 }
 
@@ -22,6 +25,7 @@ group("browser") {
 group("branding") {
   deps = [
     "//toubkal/browser/branding",
+    "//toubkal/common",
   ]
 }
 
@@ -29,6 +33,7 @@ group("branding") {
 group("ui") {
   deps = [
     "//toubkal/browser/ui/webui",
+    "//toubkal/common",
   ]
 }
 
@@ -36,6 +41,15 @@ group("ui") {
 group("security") {
   deps = [
     "//toubkal/browser/security",
+    "//toubkal/common",
+  ]
+}
+
+# Privacy components
+group("privacy") {
+  deps = [
+    "//toubkal/browser/privacy",
+    "//toubkal/common",
   ]
 }
 
@@ -43,5 +57,13 @@ group("security") {
 group("mojo") {
   deps = [
     "//toubkal/mojo/ui",
+    "//toubkal/common",
+  ]
+}
+
+# Common components
+group("common") {
+  deps = [
+    "//toubkal/common",
   ]
 }

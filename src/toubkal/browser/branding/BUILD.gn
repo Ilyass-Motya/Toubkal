@@ -4,6 +4,8 @@ source_set("branding") {
   sources = [
     "branding_config.cc",
     "branding_config.h",
+    "branding_integration.cc",
+    "branding_integration.h",
     "branding_manager.cc",
     "branding_manager.h",
     "window_title_manager.cc",

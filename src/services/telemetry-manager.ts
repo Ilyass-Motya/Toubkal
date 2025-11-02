@@ -45,12 +45,15 @@ export class ZeroTelemetryManager implements TelemetryManager {
    */
   logEvent(event: Omit<TelemetryEvent, 'eventId' | 'timestamp'>): Promise<Result<void>> {
     try {
+      // Sanitize sensitive data before logging
+      const sanitizedDetails = this.sanitizeSensitiveData(event.details)
+      
       // Create audit log entry for transparency
       const auditEntry: TelemetryAuditLogEntry = {
         id: this.generateId(),
         timestamp: Date.now(),
         eventType: event.eventType,
-        details: event.details,
+        details: sanitizedDetails,
         signature: this.generateSignature(event),
         merkleProof: this.generateMerkleProof(),
       }
@@ -256,6 +259,48 @@ export class ZeroTelemetryManager implements TelemetryManager {
     // In a real implementation, this would compute Merkle tree proof
     // For now, return mock proof
     return [`merkle_${this.auditLogs.length}`, `root_${Date.now()}`]
+  }
+
+  /**
+   * Sanitizes sensitive data from event details
+   * Following PRIVACY-ETHICS-POLICY.md Section 1.5
+   */
+  private sanitizeSensitiveData(details: Record<string, unknown>): Record<string, unknown> {
+    const sanitized = { ...details }
+    
+    // Remove sensitive fields that should not be logged
+    const sensitiveFields = [
+      'prompt',
+      'pageContent', 
+      'userContext',
+      'userInput',
+      'query',
+      'searchTerm',
+      'personalData',
+      'email',
+      'phone',
+      'address'
+    ]
+    
+    for (const field of sensitiveFields) {
+      if (field in sanitized) {
+        delete sanitized[field]
+      }
+    }
+    
+    // Ensure required metadata fields are present
+    if (sanitized.timestamp === undefined || sanitized.timestamp === null) {
+      sanitized.timestamp = Date.now()
+    }
+    if (sanitized.eventType === undefined || sanitized.eventType === null) {
+      sanitized.eventType = 'UNKNOWN'
+    }
+    
+    // Add sanitization metadata
+    sanitized._sanitized = true
+    sanitized._sanitizedAt = Date.now()
+    
+    return sanitized
   }
 }
 

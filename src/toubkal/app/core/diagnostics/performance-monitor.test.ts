@@ -8,18 +8,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { PerformanceMonitor, PerformanceMetricType, PerformanceThreshold } from './performance-monitor';
 
 // Mock the Logger
-const mockLogger = {
-  info: vi.fn(),
-  warn: vi.fn(),
-  error: vi.fn(),
-  debug: vi.fn()
-};
-
-vi.mock('./logger', () => ({
-  logger: {
-    getInstance: vi.fn(() => mockLogger)
-  }
-}));
+vi.mock('./logger');
 
 // Mock Performance API
 const mockPerformance = {
@@ -56,12 +45,23 @@ Object.defineProperty(global, 'requestAnimationFrame', {
 
 describe('PerformanceMonitor', () => {
   let performanceMonitor: PerformanceMonitor;
+  let mockLogger: {
+    info: ReturnType<typeof vi.fn>;
+    warn: ReturnType<typeof vi.fn>;
+    error: ReturnType<typeof vi.fn>;
+    debug: ReturnType<typeof vi.fn>;
+    fatal: ReturnType<typeof vi.fn>;
+  };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     performanceMonitor = PerformanceMonitor.getInstance();
     
-    // Clear any existing state
-    performanceMonitor.clearMetrics();
+    // Get the mock logger
+    const mockModule = await import('./__mocks__/logger');
+    mockLogger = mockModule.mockLogger;
+    
+    // Reset the monitor state for clean testing
+    performanceMonitor.destroy();
     
     // Clear mock calls
     mockLogger.info.mockClear();
@@ -71,6 +71,9 @@ describe('PerformanceMonitor', () => {
   });
 
   afterEach(() => {
+    if (performanceMonitor != null) {
+      performanceMonitor.destroy();
+    }
     vi.clearAllMocks();
   });
 
@@ -244,6 +247,9 @@ describe('PerformanceMonitor', () => {
       const startTime = Date.now() - 60000; // 1 minute ago
       const endTime = Date.now();
       
+      // Initialize the monitor first
+      performanceMonitor.initialize();
+      
       performanceMonitor.trackMetric(PerformanceMetricType.PageLoad, 'Page Load', 2000, 'ms');
       performanceMonitor.trackMetric(PerformanceMetricType.MemoryUsage, 'Memory Usage', 100, 'MB');
       
@@ -326,7 +332,7 @@ describe('PerformanceMonitor', () => {
       const metric = performanceMonitor.getAllMetrics()[0];
       expect(metric.context?.userId).toBeUndefined();
       expect(metric.context?.sessionId).toBeUndefined();
-      expect(metric.context?.url).toBe('https://example.com/');
+      expect(metric.context?.url).toBe('[REDACTED_URL]');
       expect(metric.context?.component).toBe('test-component');
     });
 

@@ -126,7 +126,7 @@ tree /F toubkal
 
 ---
 
-### Step 2: Create Root BUILD.gn
+## Step 2: Create Root BUILD.gn
 
 **File:** `C:\chromium\src\toubkal\BUILD.gn`
 
@@ -151,7 +151,7 @@ group("toubkal_tests") {
 
 ---
 
-### Step 3: Create Privacy BUILD.gn
+## Step 3: Create Privacy BUILD.gn
 
 **File:** `C:\chromium\src\toubkal\components\privacy\BUILD.gn`
 
@@ -177,7 +177,7 @@ component("privacy") {
 
 ---
 
-### Step 4: Create Fingerprinting BUILD.gn
+## Step 4: Create Fingerprinting BUILD.gn
 
 **File:** `C:\chromium\src\toubkal\components\privacy\fingerprinting\BUILD.gn`
 
@@ -222,9 +222,9 @@ source_set("fingerprinting_unittests") {
 
 ---
 
-### Step 5: Implement Canvas Randomizer
+## Step 5: Implement Canvas Randomizer
 
-#### Header File
+### Header File
 
 **File:** `C:\chromium\src\toubkal\components\privacy\fingerprinting\canvas_randomizer.h`
 

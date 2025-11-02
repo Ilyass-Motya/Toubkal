@@ -1,8 +1,8 @@
 # Toubkal Mojo Interfaces (Internal IPC)
 
-**Status**: Alpha (Unstable)  
-**Last Updated**: 2025-10-18  
-**Target Stability**: Stable 1.0 (Aug 2026)  
+**Status**: Alpha (Unstable)
+**Last Updated**: 2025-10-18
+**Target Stability**: Stable 1.0 (Aug 2026)
 **Audience**: C++ developers, Chromium contributors
 
 ⚠️ **Warning**: Internal APIs - may change without notice. Not exposed to extensions or web pages.
@@ -500,7 +500,7 @@ mojom("interfaces") {
 }
 ```
 
-### Step 3: Build
+## Step 3: Build
 
 ```
 autoninja -C out/Debug toubkal

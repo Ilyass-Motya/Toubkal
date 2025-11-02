@@ -10,7 +10,7 @@ const mockConsentManager = {
   getConsentHistory: vi.fn(),
 }
 
-vi.mock('@/core/consent/consent-manager', () => ({
+vi.mock('../toubkal/app/features/consent/services/consent-manager', () => ({
   getConsentManager: () => mockConsentManager,
 }))
 
@@ -57,8 +57,11 @@ describe('useConsent', () => {
       mockConsentManager.hasConsent.mockResolvedValue(false)
       mockConsentManager.requestConsent.mockResolvedValue({
         success: true,
-        consentId: 'consent-123',
-        timestamp: Date.now(),
+        data: {
+          granted: true,
+          consentId: 'consent-123',
+          timestamp: Date.now(),
+        },
       })
 
       const { result } = renderHook(() => useConsent(defaultActionType))
@@ -152,7 +155,9 @@ describe('useConsent', () => {
 
       // Assert
       expect(revokeResult.success).toBe(true)
-      expect(revokeResult.data).toBe(true)
+      if (revokeResult.success) {
+        expect(revokeResult.data).toBe(true)
+      }
       expect(mockConsentManager.revokeConsent).toHaveBeenCalledWith(
         defaultActionType,
         'current-user'
@@ -178,7 +183,9 @@ describe('useConsent', () => {
 
       // Assert
       expect(revokeResult.success).toBe(false)
-      expect(revokeResult.error).toBe('Failed to revoke consent')
+      if (!revokeResult.success) {
+        expect(revokeResult.error).toBe('Failed to revoke consent')
+      }
       expect(result.current.hasConsent).toBe(true) // Should remain true on failure
     })
   })
@@ -234,8 +241,8 @@ describe('useConsent', () => {
     it('should load consent history', async () => {
       // Arrange
       const mockHistory = [
-        { id: '1', action: 'AI_QUERY', granted: true, timestamp: Date.now() - 1000 },
-        { id: '2', action: 'DATA_COLLECTION', granted: false, timestamp: Date.now() - 500 },
+        { granted: true, timestamp: Date.now() - 1000, consentId: '1' },
+        { granted: false, timestamp: Date.now() - 500, consentId: '2' },
       ]
       mockConsentManager.hasConsent.mockResolvedValue(true)
       mockConsentManager.getConsentHistory.mockResolvedValue({ success: true, data: mockHistory })
@@ -273,7 +280,9 @@ describe('useConsent', () => {
 
       // Assert
       expect(history.success).toBe(false)
-      expect(history.error).toBe('History load failed')
+      if (!history.success) {
+        expect(history.error).toBe('History load failed')
+      }
       await waitFor(() => {
         expect(result.current.error).toBe('History load failed')
       })

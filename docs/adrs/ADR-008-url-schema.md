@@ -1,8 +1,8 @@
 # ADR-008: Custom URL Scheme (`toubkal://`)
 
-**Status**: Accepted  
-**Date**: 2025-10-18  
-**Deciders**: Ilyass Motya, Engineering Team  
+**Status**: Accepted
+**Date**: 2025-10-18
+**Deciders**: Ilyass Motya, Engineering Team
 **Technical Story**: [Story 1.5: Brand Identity Implementation](../stories/phase1-week1-2/story-004-brand-identity.md)
 
 ---
@@ -544,7 +544,7 @@ source_set("browser") {
 }
 ```
 
-### Dependencies
+## Dependencies
 
 **Chromium Libraries**:
 

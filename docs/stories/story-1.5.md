@@ -285,7 +285,7 @@ bmad/bmm/agents/sm.md (Scrum Master) - Story creation workflow
 
 ### QA Feedback Resolution
 - ✅ Complete logo integration (AC #4) - COMPLETED
-- ✅ Implement CSP headers (ADR-007 compliance) - COMPLETED  
+- ✅ Implement CSP headers (ADR-007 compliance) - COMPLETED
 - ✅ Finish Mojo interface implementations - COMPLETED
 - ✅ Add integration tests - COMPLETED
 

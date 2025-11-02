@@ -215,7 +215,7 @@ diff checksums_linux.txt checksums_macos.txt checksums_windows.txt
 # Expected: Identical checksums across all platforms
 ```
 
-### SLSA Provenance Validation
+## SLSA Provenance Validation
 
 ```bash
 # Generate SLSA provenance
@@ -231,7 +231,7 @@ slsa-verifier verify-artifact \
 # Expected: SLSA Level 3 verification passes
 ```
 
-### SBOM Generation & Vulnerability Scanning
+## SBOM Generation & Vulnerability Scanning
 
 ```bash
 # Generate CycloneDX SBOM
@@ -252,7 +252,7 @@ trivy sbom sbom.json --severity HIGH,CRITICAL
 # Expected: Clean scan results
 ```
 
-### Cosign Signing & Verification
+## Cosign Signing & Verification
 
 ```bash
 # Sign release artifact with Cosign (keyless)
@@ -274,7 +274,7 @@ rekor-cli search --artifact out/Release/toubkal
 # Expected: Entry found in transparency log
 ```
 
-### Dependency Verification
+## Dependency Verification
 
 ```bash
 # Verify dependency hashes
@@ -292,7 +292,7 @@ python build/verify/attack_detection.py \
 # Expected: No supply chain attacks detected
 ```
 
-### Integration Tests
+## Integration Tests
 
 ```python
 # slsa_integration_test.py
@@ -322,7 +322,7 @@ def test_end_to_end_supply_chain():
     assert rekor_entry is not None
 ```
 
-### Manual Testing
+## Manual Testing
 
 1. **Reproducible Build Verification**: Build on 3 different machines (Linux, macOS, Windows), compare checksums
 2. **SLSA Provenance Review**: Manually inspect provenance.json for completeness

@@ -38,7 +38,7 @@ npm run validate-docs:fix
 npm run validate-docs:strict
 ```
 
-### Generate Document Templates
+## Generate Document Templates
 
 ```bash
 # List available templates
@@ -132,7 +132,7 @@ tsx src/scripts/validate-documentation.ts --strict
 tsx src/scripts/validate-documentation.ts --verbose
 ```
 
-### 3. Template Generator (`src/scripts/generate-doc-template.ts`)
+## 3. Template Generator (`src/scripts/generate-doc-template.ts`)
 
 Generate consistent document templates:
 
@@ -309,7 +309,7 @@ Documentation validation is integrated with Husky pre-commit hooks:
 npm run validate-docs:fix
 ```
 
-### 4. Inconsistent Line Endings
+## 4. Inconsistent Line Endings
 
 **Issue:** Mixed Windows (`\r\n`) and Unix (`\n`) line endings
 **Fix:** Normalize to Unix style
@@ -319,7 +319,7 @@ npm run validate-docs:fix
 npm run validate-docs:fix
 ```
 
-### 5. Missing Required Sections
+## 5. Missing Required Sections
 
 **Issue:** Document missing required sections for its type
 **Fix:** Add missing sections or use template generator

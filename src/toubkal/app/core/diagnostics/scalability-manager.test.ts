@@ -8,42 +8,30 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { ScalabilityManager, ScalabilityMode, LoadBalancingStrategy } from './scalability-manager';
 
 // Mock the Logger
-const mockLogger = {
-  info: vi.fn(),
-  warn: vi.fn(),
-  error: vi.fn(),
-  debug: vi.fn()
-};
-
-vi.mock('./logger', () => ({
-  logger: {
-    getInstance: vi.fn(() => mockLogger)
-  }
-}));
+vi.mock('./logger');
 
 // Mock the PerformanceMonitor
-vi.mock('./performance-monitor', () => ({
-  performanceMonitor: {
-    getInstance: vi.fn(() => ({
-      trackMetric: vi.fn()
-    }))
-  }
-}));
+vi.mock('./performance-monitor');
 
 // Mock the ErrorTracker
-vi.mock('./error-tracker', () => ({
-  errorTracker: {
-    getInstance: vi.fn(() => ({
-      trackError: vi.fn()
-    }))
-  }
-}));
+vi.mock('./error-tracker');
 
 describe('ScalabilityManager', () => {
   let scalabilityManager: ScalabilityManager;
+  let mockLogger: {
+    info: ReturnType<typeof vi.fn>;
+    warn: ReturnType<typeof vi.fn>;
+    error: ReturnType<typeof vi.fn>;
+    debug: ReturnType<typeof vi.fn>;
+    fatal: ReturnType<typeof vi.fn>;
+  };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     scalabilityManager = ScalabilityManager.getInstance();
+    
+    // Get the mock logger
+    const mockModule = await import('./__mocks__/logger');
+    mockLogger = mockModule.mockLogger;
     
     // Clear any existing state
     scalabilityManager.clearCluster();

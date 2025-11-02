@@ -7,8 +7,8 @@
  */
 
 import React, { useState, useEffect } from 'react'
-import ToubkalRouter from '@/components/routing/ToubkalRouter'
-import InternalPageRouter from '@/components/routing/InternalPageRouter'
+import { ToubkalRouter } from '../toubkal/app/core/routing/ToubkalRouter'
+import InternalPageRouter from './routing/InternalPageRouter'
 import { urlSchemeManager } from '@/services/url-scheme-manager'
 
 interface AppState {
@@ -16,6 +16,8 @@ interface AppState {
   isInternalPage: boolean
   isLoading: boolean
   error: string | null
+  isRedirecting: boolean
+  redirectMessage: string | null
 }
 
 export const App: React.FC = () => {
@@ -24,12 +26,14 @@ export const App: React.FC = () => {
     isInternalPage: true,
     isLoading: false,
     error: null,
+    isRedirecting: false,
+    redirectMessage: null,
   })
 
   // Handle navigation to new URLs
   const handleNavigate = (url: string) => {
     void (async () => {
-      setAppState((prev) => ({ ...prev, isLoading: true, error: null }))
+      setAppState((prev) => ({ ...prev, isLoading: true, error: null, isRedirecting: false, redirectMessage: null }))
 
       try {
         // Process the URL through the URL scheme manager
@@ -53,6 +57,8 @@ export const App: React.FC = () => {
             currentUrl: validation.redirectUrl || '',
             isInternalPage: true,
             isLoading: false,
+            isRedirecting: true,
+            redirectMessage: `This chrome:// URL has been moved to ${validation.redirectUrl}`,
           }))
           return
         }
@@ -64,7 +70,7 @@ export const App: React.FC = () => {
             currentUrl: 'toubkal://error',
             isInternalPage: true,
             isLoading: false,
-            error: 'This Brave URL is no longer supported',
+            error: 'This Brave URL is no longer supported. Please use the equivalent Toubkal page.',
           }))
           return
         }
@@ -117,8 +123,24 @@ export const App: React.FC = () => {
     )
   }
 
+  // Show redirecting state for legacy URLs (AC6)
+  if (appState.isRedirecting && appState.redirectMessage != null && appState.redirectMessage !== '') {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="text-center max-w-md mx-auto p-6">
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
+            <h2 className="text-xl font-semibold text-blue-900 dark:text-blue-100 mb-4">
+              Redirecting...
+            </h2>
+            <p className="text-blue-700 dark:text-blue-300 mb-4">{appState.redirectMessage}</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   // Show error state
-  if (appState.error != null && appState.error.length > 0 && !appState.isInternalPage) {
+  if (appState.error != null && appState.error.length > 0) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
         <div className="text-center max-w-md mx-auto p-6">
